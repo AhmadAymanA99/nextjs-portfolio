@@ -1,21 +1,27 @@
 ---
 title: 'Vidills'
-date: '2022-09-20'
-till: 'now'
+date: '2022-09-01'
+till: '2024-08-31'
 ---
 
 ## Location:
-Kuwait (Remote)
+Remote
 
 ### Responsibilities:
-#### Spearhead frontend development initiatives utilizing React.js:
-"Led the development of a scalable application used by over 1M users, improving load time by 40% and reducing maintenance costs by 80%."
+Working on high-impact projects across Kuwait and the region.
 
-#### Translate business requirements:
-"Collaborated with cross-functional teams to deliver over 50 new features, resulting in a 55% increase in customer satisfaction."
+#### Projects worked on:
 
-#### Employ React Query and Redux:
-"Optimized API request management and state handling, reducing page load time by 20% and improving data synchronization by 90%."
+**TryGrip**: 
+• Developed (front-end) features for the TryGrip application, enhancing user experience, integrating APIs, and optimizing for performance.
 
-### Our Product:
-[Grip Site](https://trygrip.net/en/)
+**KPTC**: 
+• Contributed to the KPTC web app with focus on module development, data synchronization, and supporting enterprise-level clients.
+
+#### Technical contributions:
+• Built reusable React components, managed state using Redux Toolkit, integrated with REST/GraphQL back-ends.
+
+### Our Products:
+• [TryGrip](https://trygrip.net/en/)
+
+• [KPTC](https://www.kptc.com.kw/en/)

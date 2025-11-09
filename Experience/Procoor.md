@@ -1,14 +1,24 @@
 ---
 title: 'Procoor Solutions'
-date: '2022-01-23'
-till: '2022-12-01'
+date: '2022-01-01'
+till: '2022-11-30'
 ---
 
 ## Location:
-New Cairo, Egypt
+Cairo, Egypt
 
 ### Responsibilities:
-Working with react and react-native to develop web and mobile applications that helps our company to deliver latest technology features in management field.
+#### Developed and maintained multiple web applications:
+• Developed and maintained multiple web applications serving 600K+ users, increasing engagement by 95%.
+
+• Resolved 97% of critical frontend issues, significantly reducing downtime and improving customer experience.
+
+• Transitioned projects to Agile workflows, reducing delivery cycle time by 50% and boosting project completion rates by 80%.
+
+### Our Products:
+• [Procoor PM](https://www.procoor.com/pm)
+
+• [Procoor FM](https://www.procoor.com/fm)
 
 ### Website:
 [Procoor Site](https://www.procoor.com/)

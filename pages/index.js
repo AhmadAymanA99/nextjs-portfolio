@@ -13,14 +13,14 @@ export default function Home({ allPostsData, allExperiencesData }) {
             <Layout home>
                 <Head>
                     <title>{siteTitle}</title>
-                    <meta name="description" content="Experienced Front-End Developer specializing in React and React Native." />
+                    <meta name="description" content="Software Engineer specializing in React, Next.js, and full-stack development with experience in healthcare, education, and enterprise applications." />
                     <meta property="og:title" content={siteTitle} />
                     <meta property="og:description" content="Explore my experience and projects." />
                     <meta property="og:type" content="website" />
                 </Head>
 
                 <section className={utilStyles.headingMd}>
-                    <p className="para">Front-End Developer</p>
+                    <p className="para">Software Engineer</p>
                     <span className="para-span">(React.js / Next.js)</span>
                 </section>
 

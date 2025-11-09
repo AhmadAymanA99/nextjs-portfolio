@@ -9,19 +9,28 @@ const Section = ({ title, data, url }) => (
             <ul className={utilStyles.list}>
                 {data.map(({ id, date, till, title }) => (
                     <li className={utilStyles.listItem} key={id}>
-                        <Link href={`/${url}/${id}`} passHref>
-                            <a>{title}</a>
+                        <Link href={`/${url}/${id}`} className={utilStyles.listItemLink}>
+                            <div className={utilStyles.listItemContent}>
+                                <h3 className={utilStyles.listItemTitle}>{title}</h3>
+                                <div className={utilStyles.listItemMeta}>
+                                    <small className={utilStyles.lightText}>
+                                        <Date dateString={date} />
+                                        {till && (
+                                            <>
+                                                {till === "now" ? (
+                                                    <span className={utilStyles.badge}>Current</span>
+                                                ) : (
+                                                    <>
+                                                        {" to "}
+                                                        <Date dateString={till} />
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
+                                    </small>
+                                </div>
+                            </div>
                         </Link>
-                        <br />
-                        <small className={utilStyles.lightText}>
-                            <Date dateString={date} />
-                            {till && (
-                                <>
-                                    {" to "}
-                                    <Date dateString={till} />
-                                </>
-                            )}
-                        </small>
                     </li>
                 ))}
             </ul>
