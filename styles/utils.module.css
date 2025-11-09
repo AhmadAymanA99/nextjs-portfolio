@@ -1,110 +1,111 @@
 .heading2Xl {
-    font-size: 2.5rem;
-    line-height: 1.2;
-    font-weight: 800;
-    letter-spacing: -0.05rem;
-    margin: 1rem 0;
-  }
-  
-  .headingXl {
-    font-size: 2rem;
-    line-height: 1.3;
-    font-weight: 800;
-    letter-spacing: -0.05rem;
-    margin: 1rem 0;
-  }
-  
-  .headingLg {
-    font-size: 1.5rem;
-    line-height: 1.4;
-    margin: 1rem 0;
-  }
-  
-  .headingMd {
-    font-size: 1.2rem;
-    line-height: 1.5;
-  }
-  
-  .borderCircle {
-    border-radius: 9999px;
-  }
-  
-  .colorInherit {
-    color: inherit;
-  }
-  
-  .padding1px {
-    padding-top: 1px;
-  }
-  
-  .list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .listItem {
-    margin: 0 0 0.5rem;
-    transition: transform 0.2s ease;
-  }
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.05rem;
+  margin: 1rem 0;
+}
 
-  .listItem:hover {
-    transform: translateX(4px);
-  }
-  
-  .listItemLink {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    transition: all 0.2s ease;
-  }
+.headingXl {
+  font-size: 2rem;
+  line-height: 1.3;
+  font-weight: 800;
+  letter-spacing: -0.05rem;
+  margin: 1rem 0;
+}
 
-  .listItemLink:hover {
-    background-color: #f5f5f5;
-    border-color: #e0e0e0;
-    text-decoration: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
+.headingLg {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  margin: 1rem 0;
+}
 
-  .listItemContent {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+.headingMd {
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
 
-  .listItemTitle {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-    color: #0070f3;
-    transition: color 0.2s ease;
-  }
+.borderCircle {
+  border-radius: 9999px;
+}
 
-  .listItemLink:hover .listItemTitle {
-    color: #0051cc;
-  }
+.colorInherit {
+  color: inherit;
+}
 
-  .listItemMeta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .lightText {
-    color: #666;
-    font-size: 0.9rem;
-  }
+.padding1px {
+  padding-top: 1px;
+}
 
-  .badge {
-    display: inline-block;
-    background-color: #0070f3;
-    color: white;
-    padding: 0.2rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-left: 0.5rem;
-  }
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  margin: 0 0 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.listItem:hover {
+  transform: translateX(4px);
+}
+
+.listItemLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.listItemLink:hover,
+.listItemLink:focus {
+  background-color: #f5f5f5;
+  border-color: #e0e0e0;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.listItemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.listItemTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: #0070f3;
+  transition: color 0.2s ease;
+}
+
+.listItemLink:hover .listItemTitle {
+  color: #0051cc;
+}
+
+.listItemMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lightText {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.badge {
+  display: inline-block;
+  background-color: #0070f3;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
