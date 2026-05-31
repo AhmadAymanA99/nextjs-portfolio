@@ -5,8 +5,8 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="alternate icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
+        <link rel="alternate icon" href="/favicon.ico?v=2" sizes="any" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0d1117" />
         <meta name="mobile-web-app-capable" content="yes" />
