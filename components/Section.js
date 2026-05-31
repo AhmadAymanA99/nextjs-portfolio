@@ -14,49 +14,48 @@ const tagStyle = {
   lineHeight: 1.4,
 }
 
-const Section = ({ title, data, url }) => (
+const Section = ({ title, data, url }) => {
+  if (!data || data.length === 0) return null
+  return (
     <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>{title}</h2>
-        {data.length > 0 ? (
-            <ul className={utilStyles.list}>
-                {data.map(({ id, date, till, title, tags }) => (
-                    <li className={utilStyles.listItem} key={id}>
-                        <Link href={`/${url}/${id}`} className={utilStyles.listItemLink}>
-                            <div className={utilStyles.listItemContent}>
-                                <h3 className={utilStyles.listItemTitle}>{title}</h3>
-                                <div className={utilStyles.listItemMeta}>
-                                    <small className={utilStyles.lightText}>
-                                        <Date dateString={date} />
-                                        {till && (
-                                            <>
-                                                {till === "now" ? (
-                                                    <span className={utilStyles.badge}>Current</span>
-                                                ) : (
-                                                    <>
-                                                        {" to "}
-                                                        <Date dateString={till} />
-                                                    </>
-                                                )}
-                                            </>
-                                        )}
-                                    </small>
-                                </div>
-                                {tags && tags.length > 0 && (
-                                  <div style={{ marginTop: '0.35rem' }}>
-                                    {tags.map(t => (
-                                      <span key={t} style={tagStyle}>{t}</span>
-                                    ))}
-                                  </div>
-                                )}
+        <ul className={utilStyles.list}>
+            {data.map(({ id, date, till, title, tags }) => (
+                <li className={utilStyles.listItem} key={id}>
+                    <Link href={`/${url}/${id}`} className={utilStyles.listItemLink}>
+                        <div className={utilStyles.listItemContent}>
+                            <h3 className={utilStyles.listItemTitle}>{title}</h3>
+                            <div className={utilStyles.listItemMeta}>
+                                <small className={utilStyles.lightText}>
+                                    <Date dateString={date} />
+                                    {till && (
+                                        <>
+                                            {till === "now" ? (
+                                                <span className={utilStyles.badge}>Current</span>
+                                            ) : (
+                                                <>
+                                                    {" to "}
+                                                    <Date dateString={till} />
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                </small>
                             </div>
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        ) : (
-            <p>No {title.toLowerCase()} to display.</p>
-        )}
+                            {tags && tags.length > 0 && (
+                              <div style={{ marginTop: '0.35rem' }}>
+                                {tags.map(t => (
+                                  <span key={t} style={tagStyle}>{t}</span>
+                                ))}
+                              </div>
+                            )}
+                        </div>
+                    </Link>
+                </li>
+            ))}
+        </ul>
     </section>
-);
+  )
+}
 
 export default Section;
