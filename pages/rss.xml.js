@@ -1,7 +1,7 @@
 import { getSortedPostsData } from '../lib/posts'
 import { getSortedExperiencesData } from '../lib/experience'
 
-const siteUrl = 'https://ahmadayman.vercel.app'
+const siteUrl = 'https://ahmad-ayman.vercel.app'
 
 function escapeXml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')

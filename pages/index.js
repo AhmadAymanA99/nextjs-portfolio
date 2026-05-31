@@ -32,7 +32,7 @@ export default function Home({ allPostsData, allExperiencesData, allTags }) {
         "@type": "Person",
         "name": "Ahmad Ayman",
         "jobTitle": "Software Engineer",
-        "url": "https://ahmadayman.vercel.app",
+        "url": "https://ahmad-ayman.vercel.app",
         "sameAs": [
             "https://linkedin.com/in/ahmadaymana99",
             "https://github.com/AhmadAymanA99",
@@ -51,8 +51,8 @@ export default function Home({ allPostsData, allExperiencesData, allTags }) {
                     <meta property="og:title" content={siteTitle} />
                     <meta property="og:description" content="Explore my experience and projects." />
                     <meta property="og:type" content="website" />
-                    <meta property="og:url" content="https://ahmadayman.vercel.app" />
-                    <link rel="canonical" href="https://ahmadayman.vercel.app" />
+                    <meta property="og:url" content="https://ahmad-ayman.vercel.app" />
+                    <link rel="canonical" href="https://ahmad-ayman.vercel.app" />
                     <script
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -39,7 +39,7 @@ export default function Post({ postData, allPosts }) {
                     <meta name="description" content={postData.contentHtml?.replace(/<[^>]*>/g, '').slice(0, 160) || postData.title} />
                     <meta property="og:title" content={`${postData.title} - Ahmad Ayman`} />
                     <meta property="og:type" content="article" />
-                    <link rel="canonical" href={`https://ahmadayman.vercel.app/posts/${postData.id}`} />
+                    <link rel="canonical" href={`https://ahmad-ayman.vercel.app/posts/${postData.id}`} />
                     <script
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

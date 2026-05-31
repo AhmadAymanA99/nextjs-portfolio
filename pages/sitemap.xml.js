@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-const BASE_URL = 'https://ahmadayman.vercel.app'
+const BASE_URL = 'https://ahmad-ayman.vercel.app'
 
 function getSlugs(dir) {
   try {
