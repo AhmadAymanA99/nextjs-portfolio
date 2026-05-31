@@ -347,3 +347,47 @@ li {
 .skip-link:focus {
   top: 0;
 }
+
+@media print {
+  header, footer, .backToHome, .themeToggle, .skip-link,
+  nav, .nav, .tabBar, .filterBar, .logoutBtn, .refreshBtn,
+  #TableOfContents, .share-buttons, .related-posts,
+  .back-to-top, [aria-label="Back to top"],
+  button[aria-label="Toggle theme"] {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: underline;
+  }
+
+  .content {
+    max-width: 100% !important;
+  }
+
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+  }
+
+  p, li, blockquote {
+    orphans: 3;
+    widows: 3;
+  }
+
+  pre, code {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}

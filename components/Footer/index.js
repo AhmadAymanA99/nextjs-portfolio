@@ -57,6 +57,7 @@ const Footer = () => {
           href="https://linkedin.com/in/ahmadaymana99"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="LinkedIn"
         >
           <FaLinkedin />
         </a>
@@ -64,16 +65,18 @@ const Footer = () => {
           href="https://github.com/AhmadAymanA99"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="GitHub"
         >
           <FaGithub />
         </a>
-        <a href="mailto:ahmadaymana99@gmail.com">
+        <a href="mailto:ahmadaymana99@gmail.com" aria-label="Email">
           <FaEnvelope />
         </a>
         <a
           href="https://www.facebook.com/AhmadAyman.A99/"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Facebook"
         >
           <FaFacebook />
         </a>
@@ -81,6 +84,7 @@ const Footer = () => {
           href="https://x.com/A7medAyman99"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="X Twitter"
         >
           <FaXTwitter />
         </a>

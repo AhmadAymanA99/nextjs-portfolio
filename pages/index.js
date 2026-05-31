@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Head from "next/head";
+import dynamic from "next/dynamic";
 import Layout, { siteTitle } from "../components/layout";
 import Date from "../components/date";
 import { getSortedPostsData } from "../lib/posts";
@@ -9,10 +10,11 @@ import Footer from "../components/Footer";
 import Section from "../components/Section";
 import Skills from "../components/Skills";
 import TagsFilter from "../components/TagsFilter";
-import ContactForm from "../components/ContactForm";
 import { skillCategories } from "../lib/skills";
 import { getAllTags } from "../lib/tags";
 import { getCvUrl } from "../lib/siteConfig";
+
+const ContactForm = dynamic(() => import("../components/ContactForm"), { ssr: false })
 
 export default function Home({ allPostsData, allExperiencesData, allTags }) {
     const [activeTag, setActiveTag] = useState(null);
@@ -50,6 +52,7 @@ export default function Home({ allPostsData, allExperiencesData, allTags }) {
                     <meta property="og:description" content="Explore my experience and projects." />
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content="https://ahmadayman.vercel.app" />
+                    <link rel="canonical" href="https://ahmadayman.vercel.app" />
                     <script
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -92,5 +95,6 @@ export async function getStaticProps() {
             allExperiencesData,
             allTags,
         },
+        revalidate: 3600,
     };
 }

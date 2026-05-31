@@ -287,7 +287,7 @@
 
 .rowOdd {
   background-color: var(--bg-secondary);
-  background-opacity: 0.5;
+  opacity: 0.5;
 }
 
 .viewsTable tbody tr {
@@ -298,11 +298,23 @@
   background-color: var(--bg-tertiary);
 }
 
-.colPath { width: 28%; }
-.colCountry { width: 12%; }
-.colDevice { width: 10%; }
-.colReferrer { width: 28%; }
-.colTime { width: 22%; }
+.colPath { width: 20%; }
+.colCountry { width: 10%; }
+.colDevice { width: 8%; }
+.colBrowser { width: 10%; }
+.colOS { width: 10%; }
+.colIP { width: 14%; }
+.colReferrer { width: 18%; }
+.colTime { width: 10%; }
+
+.cellBrowser, .cellOS, .cellIP {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .cellPath {
   font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;

@@ -1,48 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider, useTheme } from '../lib/ThemeContext';
 import { geist } from '../lib/fonts';
-import { tsParticles } from '@tsparticles/engine';
-import { loadSlim } from '@tsparticles/slim';
-import particlesConfig from '../lib/particlesConfig';
 import PageTransition from '../components/PageTransition';
 import '../styles/global.css';
 import 'highlight.js/styles/github-dark.css';
 
-function ParticlesBackground({ theme }) {
-  const containerRef = useRef(null);
-  const loadedRef = useRef(false);
-
-  useEffect(() => {
-    if (loadedRef.current) return;
-    loadedRef.current = true;
-
-    (async () => {
-      await loadSlim(tsParticles);
-      const container = await tsParticles.load({
-        id: 'tsparticles',
-        options: particlesConfig(theme),
-      });
-      containerRef.current = container;
-    })();
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.destroy();
-        containerRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.options.load(particlesConfig(theme));
-      containerRef.current.refresh();
-    }
-  }, [theme]);
-
-  return null;
-}
+const ParticlesBackground = dynamic(() => import('../components/ParticlesBackground'), { ssr: false })
 
 function AppContent({ Component, pageProps }) {
   const { theme } = useTheme();

@@ -1,5 +1,15 @@
 import sql, { ensureDB } from '../../../lib/db';
 import { verifyToken } from '../../../lib/auth';
+import { UAParser } from 'ua-parser-js';
+
+function maskIP(ip) {
+  if (!ip) return '—';
+  const parts = ip.split('.');
+  if (parts.length === 4) return `${parts[0]}.${parts[1]}.xxx.xxx`;
+  const v6parts = ip.split(':');
+  if (v6parts.length >= 4) return `${v6parts[0]}:${v6parts[1]}:xxxx:xxxx`;
+  return '—';
+}
 
 export default async function handler(req, res) {
   const authHeader = req.headers.authorization;
@@ -49,7 +59,27 @@ export default async function handler(req, res) {
     };
 
     const recentViewsResult =
-      await sql`SELECT path, country, device_type, referrer, timestamp FROM page_views ${dateFilter} ORDER BY timestamp DESC LIMIT 50`;
+      await sql`SELECT path, country, device_type, referrer, timestamp, ip_address, user_agent FROM page_views ${dateFilter} ORDER BY timestamp DESC LIMIT 50`;
+
+    const recentViews = recentViewsResult.map((view) => {
+      const parsed = view.user_agent ? new UAParser(view.user_agent).getResult() : null;
+      let browser = '—';
+      let os = '—';
+      if (parsed) {
+        browser = parsed.browser.name || '—';
+        os = parsed.os.name || '—';
+      }
+      return {
+        path: view.path,
+        country: view.country,
+        device_type: view.device_type,
+        referrer: view.referrer,
+        timestamp: view.timestamp,
+        ip: maskIP(view.ip_address),
+        browser,
+        os,
+      };
+    });
 
     res.status(200).json({
       stats: {
@@ -58,7 +88,7 @@ export default async function handler(req, res) {
         topCountry,
         deviceDistribution,
       },
-      recentViews: recentViewsResult,
+      recentViews,
     });
   } catch (error) {
     console.error('Analytics error:', error);

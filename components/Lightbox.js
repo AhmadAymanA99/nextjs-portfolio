@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import styles from '../styles/Lightbox.module.css'
 
 export default function Lightbox({ images, postId }) {
@@ -35,7 +36,7 @@ export default function Lightbox({ images, postId }) {
             onClick={() => { setIndex(i); setOpen(true) }}
             aria-label={`View screenshot ${i + 1}`}
           >
-            <img src={src} alt={`Screenshot ${i + 1} of ${postId}`} />
+            <Image src={src} alt={`Screenshot ${i + 1} of ${postId}`} width={120} height={80} />
           </button>
         ))}
       </div>
@@ -63,12 +64,17 @@ export default function Lightbox({ images, postId }) {
               </button>
             </>
           )}
-          <img
-            className={styles.full}
-            src={images[index]}
-            alt={`Screenshot ${index + 1} of ${postId}`}
-            onClick={(e) => e.stopPropagation()}
-          />
+          <div className={styles.imageWrapper}>
+            <Image
+              className={styles.full}
+              src={images[index]}
+              alt={`Screenshot ${index + 1} of ${postId}`}
+              fill
+              sizes="90vw"
+              priority
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
           <div className={styles.counter}>{index + 1} / {images.length}</div>
         </div>
       )}

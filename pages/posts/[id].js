@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import Head from 'next/head'
+import dynamic from 'next/dynamic'
 
 import Layout from '../../components/layout'
 import Date from '../../components/date'
@@ -9,9 +10,10 @@ import ShareButtons from '../../components/ShareButtons'
 import TableOfContents from '../../components/TableOfContents'
 import ViewCounter from '../../components/ViewCounter'
 import RelatedProjects from '../../components/RelatedProjects'
-import Lightbox from '../../components/Lightbox'
 import useScrollReveal from '../../lib/useScrollReveal'
 import { postScreenshots } from '../../lib/screenshots'
+
+const Lightbox = dynamic(() => import('../../components/Lightbox'), { ssr: false })
 
 import utilStyles from '../../styles/utils.module.css'
 
@@ -39,6 +41,7 @@ export default function Post({ postData, allPosts }) {
                     <meta name="description" content={postData.contentHtml?.replace(/<[^>]*>/g, '').slice(0, 160) || postData.title} />
                     <meta property="og:title" content={`${postData.title} - Ahmad Ayman`} />
                     <meta property="og:type" content="article" />
+                    <link rel="canonical" href={url} />
                     <script
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -85,6 +88,7 @@ export async function getStaticProps({ params }) {
         props: {
             postData,
             allPosts,
-        }
+        },
+        revalidate: 3600,
     }
 }

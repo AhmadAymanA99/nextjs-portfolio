@@ -255,6 +255,9 @@ export default function AnalyticsDashboard() {
                     <th className={styles.colPath}>Path</th>
                     <th className={styles.colCountry}>Country</th>
                     <th className={styles.colDevice}>Device</th>
+                    <th className={styles.colBrowser}>Browser</th>
+                    <th className={styles.colOS}>OS</th>
+                    <th className={styles.colIP}>IP</th>
                     <th className={styles.colReferrer}>Referrer</th>
                     <th className={styles.colTime}>Time</th>
                   </tr>
@@ -274,8 +277,13 @@ export default function AnalyticsDashboard() {
                             {view.device_type || 'desktop'}
                           </span>
                         </td>
+                        <td className={styles.cellBrowser}>{view.browser || '—'}</td>
+                        <td className={styles.cellOS}>{view.os || '—'}</td>
+                        <td className={styles.cellIP} title={view.ip}>
+                          {view.ip || '—'}
+                        </td>
                         <td className={styles.cellReferrer} title={view.referrer}>
-                          {view.referrer && !view.referrer.startsWith('direct') ? truncate(view.referrer, 35) : '—'}
+                          {view.referrer && !view.referrer.startsWith('direct') ? truncate(view.referrer, 30) : '—'}
                         </td>
                         <td className={styles.cellTime} title={new Date(view.timestamp).toLocaleString()}>
                           {timeAgo(view.timestamp)}
@@ -284,7 +292,7 @@ export default function AnalyticsDashboard() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className={styles.emptyRow}>
+                      <td colSpan={8} className={styles.emptyRow}>
                         No page views yet
                       </td>
                     </tr>

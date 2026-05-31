@@ -30,6 +30,7 @@ export default function Experience({ data }) {
                     <meta name="description" content={`${data.title} - ${data.date}${data.till === 'now' ? ' to Present' : ` to ${data.till}`}`} />
                     <meta property="og:title" content={`${data.title} - Ahmad Ayman`} />
                     <meta property="og:type" content="article" />
+                    <link rel="canonical" href={url} />
                     <script
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -70,5 +71,6 @@ export async function getStaticProps({ params }) {
         props: {
             data,
         },
+        revalidate: 3600,
     };
 }

@@ -1,12 +1,13 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import BackToTop from "./BackToTop";
 
 import styles from "./layout.module.css";
 import utilStyles from "../styles/utils.module.css";
 
 const name = "Ahmad Ayman";
-export const siteTitle = "Ahmad Ayman Protoflio";
+export const siteTitle = "Ahmad Ayman Portfolio";
 
 export default function Layout({ children, home }) {
     return (
@@ -44,6 +45,7 @@ export default function Layout({ children, home }) {
                 </div>
             )}
             <main id="main-content">{children}</main>
+            <BackToTop />
         </div>
     );
 }
