@@ -18,8 +18,6 @@ const Lightbox = dynamic(() => import('../../components/Lightbox'), { ssr: false
 import utilStyles from '../../styles/utils.module.css'
 
 export default function Post({ postData, allPosts }) {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ahmadayman.vercel.app'
-    const url = `${origin}/posts/${postData.id}`
     const articleRef = useScrollReveal()
     const jsonLd = {
         "@context": "https://schema.org",
@@ -37,11 +35,11 @@ export default function Post({ postData, allPosts }) {
         <>
             <Layout>
                 <Head>
-                    <title>{postData.title} - Ahmad Ayman</title>
+                    <title>{`${postData.title} - Ahmad Ayman`}</title>
                     <meta name="description" content={postData.contentHtml?.replace(/<[^>]*>/g, '').slice(0, 160) || postData.title} />
                     <meta property="og:title" content={`${postData.title} - Ahmad Ayman`} />
                     <meta property="og:type" content="article" />
-                    <link rel="canonical" href={url} />
+                    <link rel="canonical" href={`https://ahmadayman.vercel.app/posts/${postData.id}`} />
                     <script
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -60,7 +58,7 @@ export default function Post({ postData, allPosts }) {
                         <TableOfContents headings={postData.headings || []} />
                     </div>
                     <Lightbox images={postScreenshots[postData.id]} postId={postData.id} />
-                    <ShareButtons url={url} title={postData.title} />
+                    <ShareButtons title={postData.title} />
                     <RelatedProjects
                         currentId={postData.id}
                         tags={postData.tags}

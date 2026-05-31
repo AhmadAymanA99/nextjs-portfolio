@@ -1,7 +1,14 @@
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'
 import { FaLink } from 'react-icons/fa'
 
-export default function ShareButtons({ url, title }) {
+export default function ShareButtons({ title }) {
+  const router = useRouter()
+  const [url, setUrl] = useState('')
+  useEffect(() => {
+    setUrl(window.location.origin + router.asPath)
+  }, [router.asPath])
   const encodedUrl = encodeURIComponent(url)
   const encodedTitle = encodeURIComponent(title)
 

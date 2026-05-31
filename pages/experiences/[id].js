@@ -11,8 +11,6 @@ import ViewCounter from "../../components/ViewCounter";
 import utilStyles from "../../styles/utils.module.css";
 
 export default function Experience({ data }) {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ahmadayman.vercel.app'
-    const url = `${origin}/experiences/${data.id}`
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "OrganizationRole",
@@ -26,11 +24,11 @@ export default function Experience({ data }) {
         <>
             <Layout>
                 <Head>
-                    <title>{data.title} - Ahmad Ayman</title>
+                    <title>{`${data.title} - Ahmad Ayman`}</title>
                     <meta name="description" content={`${data.title} - ${data.date}${data.till === 'now' ? ' to Present' : ` to ${data.till}`}`} />
                     <meta property="og:title" content={`${data.title} - Ahmad Ayman`} />
                     <meta property="og:type" content="article" />
-                    <link rel="canonical" href={url} />
+                    <link rel="canonical" href={`https://ahmadayman.vercel.app/experiences/${data.id}`} />
                     <script
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -49,7 +47,7 @@ export default function Experience({ data }) {
                         <div className="content" dangerouslySetInnerHTML={{ __html: data.contentHtml }} />
                         <TableOfContents headings={data.headings || []} />
                     </div>
-                    <ShareButtons url={url} title={data.title} />
+                    <ShareButtons title={data.title} />
                 </article>
             </Layout>
             <Footer />
