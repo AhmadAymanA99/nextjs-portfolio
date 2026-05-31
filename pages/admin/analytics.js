@@ -1,101 +1,260 @@
-import { useState, useEffect } from "react";
-import Layout from "../../components/layout";
-import styles from "../../styles/Admin.module.css";
-import { useRouter } from "next/router";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { formatDistanceToNow } from 'date-fns';
+import Layout from '../../components/layout';
+import styles from '../../styles/Admin.module.css';
 
 export default function AnalyticsDashboard() {
-    const [stats, setStats] = useState(null);
-    const [pageViews, setPageViews] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState(null);
+  const [pageViews, setPageViews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [days, setDays] = useState(null);
+  const [refreshedAt, setRefreshedAt] = useState(null);
+  const router = useRouter();
 
-    useEffect(() => {
-        fetch("/api/admin/analytics")
-            .then((res) => res.json())
-            .then((data) => {
-                setStats(data.stats);
-                setPageViews(data.recentViews);
-                setIsLoading(false);
-            });
-    }, []);
+  const fetchAnalytics = (filterDays) => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      router.replace('/admin/login');
+      return;
+    }
 
-    const router = useRouter();
-    const [authenticated, setAuthenticated] = useState(false);
+    setIsLoading(true);
+    setError(null);
 
-    useEffect(() => {
-        const password = prompt("Enter admin password:");
+    let url = '/api/admin/analytics';
+    if (filterDays) url += `?days=${filterDays}`;
 
-        if (password === process.env.NEXT_PUBLIC_ADMIN_SECRET) {
-            setAuthenticated(true);
-        } else {
-            router.push("/");
+    fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          localStorage.removeItem('admin_token');
+          router.replace('/admin/login');
+          throw new Error('Session expired');
         }
-    }, []);
+        if (!res.ok) throw new Error('Failed to fetch analytics');
+        return res.json();
+      })
+      .then((data) => {
+        setStats(data.stats);
+        setPageViews(data.recentViews);
+        setRefreshedAt(new Date().toLocaleTimeString());
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setIsLoading(false);
+      });
+  };
 
-    if (!authenticated)
-        return (
-            <Layout>
-                <div>Unauthorized</div>
-            </Layout>
-        );
+  useEffect(() => {
+    fetchAnalytics(days);
+  }, [days]);
 
-    if (isLoading)
-        return (
-            <Layout>
-                <div>Loading...</div>
-            </Layout>
-        );
+  const timeAgo = (ts) => {
+    try { return formatDistanceToNow(new Date(ts), { addSuffix: true }); }
+    catch { return '—'; }
+  };
 
+  const deviceClass = (type) => {
+    if (type === 'mobile') return styles.badgeMobile;
+    if (type === 'tablet') return styles.badgeTablet;
+    return styles.badgeDesktop;
+  };
+
+  const truncate = (str, len) => {
+    if (!str || str.length <= len) return str || '—';
+    return str.slice(0, len) + '…';
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    router.replace('/admin/login');
+  };
+
+  const handleFilter = (d) => {
+    setDays(d);
+  };
+
+  if (isLoading && !stats) {
     return (
-        <Layout>
-            <div className={styles.adminContainer}>
-                <h1>Website Analytics</h1>
-
-                <div className={styles.statsGrid}>
-                    <div className={styles.statCard}>
-                        <h3>Total Views</h3>
-                        <p>{stats?.totalViews}</p>
-                    </div>
-                    <div className={styles.statCard}>
-                        <h3>Unique Visitors</h3>
-                        <p>{stats?.uniqueVisitors}</p>
-                    </div>
-                    <div className={styles.statCard}>
-                        <h3>Top Country</h3>
-                        <p>{stats?.topCountry}</p>
-                    </div>
-                    <div className={styles.statCard}>
-                        <h3>Device Distribution</h3>
-                        <p>Mobile: {stats?.deviceDistribution.mobile}%</p>
-                        <p>Desktop: {stats?.deviceDistribution.desktop}%</p>
-                    </div>
-                </div>
-
-                <h2>Recent Page Views</h2>
-                <div className={styles.tableWrapper}>
-                    <table className={styles.viewsTable}>
-                        <thead>
-                            <tr>
-                                <th>Path</th>
-                                <th>Country</th>
-                                <th>Device</th>
-                                <th>Referrer</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pageViews?.map((view, index) => (
-                                <tr key={index}>
-                                    <td>{view.path}</td>
-                                    <td>{view.country}</td>
-                                    <td>{view.device_type}</td>
-                                    <td>{view.referrer}</td>
-                                    <td>{new Date(view.timestamp).toLocaleString()}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </Layout>
+      <Layout>
+        <div className={styles.adminContainer}>
+          <h1>Website Analytics</h1>
+          <p>Loading...</p>
+        </div>
+      </Layout>
     );
+  }
+
+  if (error && !stats) {
+    return (
+      <Layout>
+        <div className={styles.adminContainer}>
+          <h1>Website Analytics</h1>
+          <p style={{ color: 'red' }}>{error}</p>
+          <button onClick={() => fetchAnalytics(days)}>Retry</button>
+        </div>
+      </Layout>
+    );
+  }
+
+  const { mobile = 0, desktop = 0 } = stats?.deviceDistribution || {};
+
+  return (
+    <Layout>
+      <div className={styles.adminContainer}>
+        <nav className={styles.nav}>
+          <span className={`${styles.navLink} ${styles.navLinkActive}`}>
+            Dashboard
+          </span>
+          <Link href="/" className={styles.navLink}>
+            View Site
+          </Link>
+          <div className={styles.navRight}>
+            <button className={styles.logoutBtn} onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+        </nav>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <h1>Website Analytics</h1>
+        </div>
+
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <h3>Total Views</h3>
+            <p>{stats?.totalViews}</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>Unique Visitors</h3>
+            <p>{stats?.uniqueVisitors}</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>Top Country</h3>
+            <p>{stats?.topCountry || 'N/A'}</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>Device Distribution</h3>
+            <div className={styles.chartSection}>
+              <div className={styles.chartRow}>
+                <span className={styles.chartLabel}>Desktop</span>
+                <div className={styles.chartBar}>
+                  <div
+                    className={styles.chartBarFill}
+                    style={{ width: `${desktop}%` }}
+                  />
+                </div>
+                <span className={styles.chartValue}>{desktop}%</span>
+              </div>
+              <div className={styles.chartRow}>
+                <span className={styles.chartLabel}>Mobile</span>
+                <div className={styles.chartBar}>
+                  <div
+                    className={styles.chartBarFill}
+                    style={{ width: `${mobile}%` }}
+                  />
+                </div>
+                <span className={styles.chartValue}>{mobile}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.filterBar}>
+          <button
+            className={`${styles.filterBtn} ${days === null ? styles.filterBtnActive : ''}`}
+            onClick={() => handleFilter(null)}
+          >
+            All time
+          </button>
+          <button
+            className={`${styles.filterBtn} ${days === 7 ? styles.filterBtnActive : ''}`}
+            onClick={() => handleFilter(7)}
+          >
+            Last 7 days
+          </button>
+          <button
+            className={`${styles.filterBtn} ${days === 30 ? styles.filterBtnActive : ''}`}
+            onClick={() => handleFilter(30)}
+          >
+            Last 30 days
+          </button>
+          {refreshedAt && (
+            <span className={styles.refreshedAt}>
+              Refreshed: {refreshedAt}
+            </span>
+          )}
+          <button
+            className={styles.refreshBtn}
+            onClick={() => fetchAnalytics(days)}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
+
+        <h2>Recent Page Views</h2>
+        {isLoading && <p>Loading...</p>}
+        <div className={styles.tableWrapper}>
+          <table className={styles.viewsTable}>
+            <thead>
+              <tr>
+                <th className={styles.colPath}>Path</th>
+                <th className={styles.colCountry}>Country</th>
+                <th className={styles.colDevice}>Device</th>
+                <th className={styles.colReferrer}>Referrer</th>
+                <th className={styles.colTime}>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pageViews?.length > 0 ? (
+                pageViews.map((view, index) => (
+                  <tr key={index} className={index % 2 === 0 ? styles.rowEven : styles.rowOdd}>
+                    <td className={styles.cellPath} title={view.path}>
+                      {truncate(view.path, 40)}
+                    </td>
+                    <td>
+                      <span className={styles.countryChip}>{view.country || '—'}</span>
+                    </td>
+                    <td>
+                      <span className={`${styles.deviceBadge} ${deviceClass(view.device_type)}`}>
+                        {view.device_type || 'desktop'}
+                      </span>
+                    </td>
+                    <td className={styles.cellReferrer} title={view.referrer}>
+                      {view.referrer && !view.referrer.startsWith('direct') ? truncate(view.referrer, 35) : '—'}
+                    </td>
+                    <td className={styles.cellTime} title={new Date(view.timestamp).toLocaleString()}>
+                      {timeAgo(view.timestamp)}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className={styles.emptyRow}
+                  >
+                    No page views yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Layout>
+  );
 }

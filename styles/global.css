@@ -1,10 +1,72 @@
 :root {
   --primary-color: #0070f3;
   --secondary-color: #666;
-  --font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  --font-family: var(--font-geist), -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   --base-font-size: 18px;
   --line-height: 1.6;
   --heading-font-weight: 700;
+  --content-max-width: 42rem;
+
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #f8f9fa;
+  --bg-card: #f5f5f5;
+
+  --text-primary: #111111;
+  --text-secondary: #666666;
+  --text-muted: #666666;
+  --text-link: #0070f3;
+  --text-link-hover: #0051cc;
+
+  --border-color: #dddddd;
+  --border-light: #e0e0e0;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  --badge-bg: #0070f3;
+  --badge-text: #ffffff;
+
+  --social-color: #555555;
+  --social-hover: #0073b1;
+
+  --admin-nav-bg: #f0f0f0;
+}
+
+[data-theme="dark"] {
+  --primary-color: #58a6ff;
+  --secondary-color: #8b949e;
+
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #161b22;
+  --bg-card: #161b22;
+
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --text-muted: #8b949e;
+  --text-link: #58a6ff;
+  --text-link-hover: #79c0ff;
+
+  --border-color: #30363d;
+  --border-light: #30363d;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  --badge-bg: #58a6ff;
+  --badge-text: #0d1117;
+
+  --social-color: #8b949e;
+  --social-hover: #58a6ff;
+
+  --admin-nav-bg: #1c2333;
+}
+
+html {
+  transition: background-color 0.3s ease;
 }
 
 html,
@@ -14,6 +76,9 @@ body {
   font-family: var(--font-family);
   font-size: var(--base-font-size);
   line-height: var(--line-height);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 *,
@@ -23,7 +88,7 @@ body {
 }
 
 a {
-  color: var(--primary-color);
+  color: var(--text-link);
   text-decoration: none;
   transition: color 0.3s ease-in-out;
 }
@@ -31,7 +96,7 @@ a {
 a:hover,
 a:focus {
   text-decoration: underline;
-  color: darken(var(--primary-color), 10%);
+  color: var(--text-link-hover);
 }
 
 a:focus {
@@ -52,8 +117,7 @@ img {
   display: block;
   text-align: center;
   font-size: 1rem;
-  /* Set font-size in rem for better scaling */
-  color: var(--secondary-color);
+  color: var(--text-secondary);
 }
 
 h1,
@@ -76,10 +140,144 @@ li {
   margin-bottom: 1rem;
 }
 
+.content-with-toc {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.content-with-toc > .content {
+  min-width: 0;
+  flex: 1;
+}
+
+.content {
+  margin-top: 0;
+}
+
+.content h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 2rem 0 0.75rem;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.content h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.5rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.content h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.content p {
+  margin: 0.75rem 0;
+  line-height: 1.75;
+  color: var(--text-primary);
+}
+
+.content ul,
+.content ol {
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.content ul {
+  list-style: disc;
+}
+
+.content ol {
+  list-style: decimal;
+}
+
+.content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+}
+
+.content li:last-child {
+  margin-bottom: 0;
+}
+
+.content a {
+  color: var(--text-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.content a:hover {
+  color: var(--text-link-hover);
+}
+
+.content strong {
+  font-weight: 600;
+}
+
+.content code {
+  background-color: var(--bg-secondary);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+}
+
+.content pre {
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  margin: 1rem 0;
+}
+
+.content pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.85rem;
+}
+
+.content blockquote {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.25rem;
+  border-left: 4px solid var(--primary-color);
+  background-color: var(--bg-secondary);
+  border-radius: 0 8px 8px 0;
+}
+
+.content blockquote p {
+  margin: 0;
+}
+
+.content hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 2rem 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.article {
+  animation: fadeIn 0.3s ease-out;
+}
+
 @media (max-width: 768px) {
   body {
     font-size: 16px;
-    /* Reduce font size on smaller screens */
   }
 
   .para {
@@ -88,10 +286,64 @@ li {
 
   .para-span {
     font-size: 0.875rem;
-    /* Slightly smaller font size for mobile view */
   }
 
-  .headingLg {
+  .content h2 {
     font-size: 1.25rem;
   }
+
+  .content h3 {
+    font-size: 1.1rem;
+  }
+
+  .content h4 {
+    font-size: 1rem;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.btn-cv {
+  display: inline-block;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-cv:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 1000;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: 0 0 6px 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
 }

@@ -64,10 +64,10 @@
 
 .listItemLink:hover,
 .listItemLink:focus {
-  background-color: #f5f5f5;
-  border-color: #e0e0e0;
+  background-color: var(--bg-secondary);
+  border-color: var(--border-light);
   text-decoration: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .listItemContent {
@@ -80,12 +80,12 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0;
-  color: #0070f3;
+  color: var(--text-link);
   transition: color 0.2s ease;
 }
 
 .listItemLink:hover .listItemTitle {
-  color: #0051cc;
+  color: var(--text-link-hover);
 }
 
 .listItemMeta {
@@ -95,14 +95,14 @@
 }
 
 .lightText {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
 .badge {
   display: inline-block;
-  background-color: #0070f3;
-  color: white;
+  background-color: var(--badge-bg);
+  color: var(--badge-text);
   padding: 0.2rem 0.5rem;
   border-radius: 12px;
   font-size: 0.75rem;

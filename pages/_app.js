@@ -1,20 +1,94 @@
-import '../styles/global.css'
-
-import Particles from 'react-tsparticles';
+import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
+import { AnimatePresence } from 'framer-motion';
+import { ThemeProvider, useTheme } from '../lib/ThemeContext';
+import { geist } from '../lib/fonts';
+import { tsParticles } from '@tsparticles/engine';
+import { loadSlim } from '@tsparticles/slim';
 import particlesConfig from '../lib/particlesConfig';
+import PageTransition from '../components/PageTransition';
+import '../styles/global.css';
+import 'highlight.js/styles/github-dark.css';
+
+function ParticlesBackground({ theme }) {
+  const containerRef = useRef(null);
+  const loadedRef = useRef(false);
+
+  useEffect(() => {
+    if (loadedRef.current) return;
+    loadedRef.current = true;
+
+    (async () => {
+      await loadSlim(tsParticles);
+      const container = await tsParticles.load({
+        id: 'tsparticles',
+        options: particlesConfig(theme),
+      });
+      containerRef.current = container;
+    })();
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.destroy();
+        containerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.options.load(particlesConfig(theme));
+      containerRef.current.refresh();
+    }
+  }, [theme]);
+
+  return null;
+}
+
+function AppContent({ Component, pageProps }) {
+  const { theme } = useTheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    const track = (url) => {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          path: url,
+          referrer: document.referrer || 'direct',
+        }),
+      }).catch((err) => console.error('Track error:', err));
+    };
+
+    track(router.asPath);
+
+    router.events.on('routeChangeComplete', track);
+    return () => router.events.off('routeChangeComplete', track);
+  }, [router.events]);
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {})
+    }
+  }, []);
+
+  return (
+    <div className={`App ${geist.variable}`} style={{ position: 'relative', overflow: 'hidden' }}>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+      <ParticlesBackground theme={theme} />
+      <AnimatePresence mode="wait">
+        <PageTransition key={router.route}>
+          <Component {...pageProps} />
+        </PageTransition>
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function App({ Component, pageProps }) {
-    return(
-        <div className="App" style={{ position: 'relative', overflow: "hidden" }}>
-            <div style={{ position: 'absolute'}}>
-                <Particles 
-                    height="100vh" 
-                    width="100vw" 
-                    options={particlesConfig} 
-                />
-            </div>
-        
-            <Component {...pageProps} />
-        </div>
-        )
+  return (
+    <ThemeProvider>
+      <AppContent Component={Component} pageProps={pageProps} />
+    </ThemeProvider>
+  );
 }
