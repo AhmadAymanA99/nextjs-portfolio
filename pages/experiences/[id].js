@@ -11,7 +11,8 @@ import ViewCounter from "../../components/ViewCounter";
 import utilStyles from "../../styles/utils.module.css";
 
 export default function Experience({ data }) {
-    const url = `https://ahmadayman.vercel.app/experiences/${data.id}`
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ahmadayman.vercel.app'
+    const url = `${origin}/experiences/${data.id}`
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "OrganizationRole",

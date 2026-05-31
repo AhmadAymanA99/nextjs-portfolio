@@ -59,13 +59,11 @@ export default function Home({ allPostsData, allExperiencesData, allTags }) {
                 <section className={utilStyles.headingMd}>
                     <p className="para">Software Engineer</p>
                     <span className="para-span">(React.js / Next.js)</span>
-                    <p style={{ marginTop: '1rem' }}>
+                    <p style={{ marginTop: '1rem', textAlign: 'center' }}>
                         <a
                             href={getCvUrl()}
                             className="btn-cv"
                             download
-                            target="_blank"
-                            rel="noopener noreferrer"
                         >
                             Download CV
                         </a>

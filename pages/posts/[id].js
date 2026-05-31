@@ -16,7 +16,8 @@ import { postScreenshots } from '../../lib/screenshots'
 import utilStyles from '../../styles/utils.module.css'
 
 export default function Post({ postData, allPosts }) {
-    const url = `https://ahmadayman.vercel.app/posts/${postData.id}`
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ahmadayman.vercel.app'
+    const url = `${origin}/posts/${postData.id}`
     const articleRef = useScrollReveal()
     const jsonLd = {
         "@context": "https://schema.org",
