@@ -8,6 +8,8 @@ import styles from '../../styles/Admin.module.css';
 export default function AnalyticsDashboard() {
   const [stats, setStats] = useState(null);
   const [pageViews, setPageViews] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [tab, setTab] = useState('analytics');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [days, setDays] = useState(null);
@@ -70,6 +72,28 @@ export default function AnalyticsDashboard() {
     if (!str || str.length <= len) return str || '—';
     return str.slice(0, len) + '…';
   };
+
+  const fetchMessages = () => {
+    const token = localStorage.getItem('admin_token');
+    fetch('/api/admin/messages', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          localStorage.removeItem('admin_token');
+          router.replace('/admin/login');
+          throw new Error('Session expired');
+        }
+        if (!res.ok) throw new Error('Failed to fetch messages');
+        return res.json();
+      })
+      .then((data) => setMessages(data.messages))
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    if (tab === 'messages') fetchMessages();
+  }, [tab]);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
@@ -205,55 +229,115 @@ export default function AnalyticsDashboard() {
           </button>
         </div>
 
-        <h2>Recent Page Views</h2>
-        {isLoading && <p>Loading...</p>}
-        <div className={styles.tableWrapper}>
-          <table className={styles.viewsTable}>
-            <thead>
-              <tr>
-                <th className={styles.colPath}>Path</th>
-                <th className={styles.colCountry}>Country</th>
-                <th className={styles.colDevice}>Device</th>
-                <th className={styles.colReferrer}>Referrer</th>
-                <th className={styles.colTime}>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pageViews?.length > 0 ? (
-                pageViews.map((view, index) => (
-                  <tr key={index} className={index % 2 === 0 ? styles.rowEven : styles.rowOdd}>
-                    <td className={styles.cellPath} title={view.path}>
-                      {truncate(view.path, 40)}
-                    </td>
-                    <td>
-                      <span className={styles.countryChip}>{view.country || '—'}</span>
-                    </td>
-                    <td>
-                      <span className={`${styles.deviceBadge} ${deviceClass(view.device_type)}`}>
-                        {view.device_type || 'desktop'}
-                      </span>
-                    </td>
-                    <td className={styles.cellReferrer} title={view.referrer}>
-                      {view.referrer && !view.referrer.startsWith('direct') ? truncate(view.referrer, 35) : '—'}
-                    </td>
-                    <td className={styles.cellTime} title={new Date(view.timestamp).toLocaleString()}>
-                      {timeAgo(view.timestamp)}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className={styles.emptyRow}
-                  >
-                    No page views yet
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className={styles.tabBar}>
+          <button
+            className={`${styles.tab} ${tab === 'analytics' ? styles.tabActive : ''}`}
+            onClick={() => setTab('analytics')}
+          >
+            Analytics
+          </button>
+          <button
+            className={`${styles.tab} ${tab === 'messages' ? styles.tabActive : ''}`}
+            onClick={() => setTab('messages')}
+          >
+            Messages {messages.length > 0 && `(${messages.length})`}
+          </button>
         </div>
+
+        {tab === 'analytics' && (
+          <>
+            <h2>Recent Page Views</h2>
+            {isLoading && <p>Loading...</p>}
+            <div className={styles.tableWrapper}>
+              <table className={styles.viewsTable}>
+                <thead>
+                  <tr>
+                    <th className={styles.colPath}>Path</th>
+                    <th className={styles.colCountry}>Country</th>
+                    <th className={styles.colDevice}>Device</th>
+                    <th className={styles.colReferrer}>Referrer</th>
+                    <th className={styles.colTime}>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pageViews?.length > 0 ? (
+                    pageViews.map((view, index) => (
+                      <tr key={index} className={index % 2 === 0 ? styles.rowEven : styles.rowOdd}>
+                        <td className={styles.cellPath} title={view.path}>
+                          {truncate(view.path, 40)}
+                        </td>
+                        <td>
+                          <span className={styles.countryChip}>{view.country || '—'}</span>
+                        </td>
+                        <td>
+                          <span className={`${styles.deviceBadge} ${deviceClass(view.device_type)}`}>
+                            {view.device_type || 'desktop'}
+                          </span>
+                        </td>
+                        <td className={styles.cellReferrer} title={view.referrer}>
+                          {view.referrer && !view.referrer.startsWith('direct') ? truncate(view.referrer, 35) : '—'}
+                        </td>
+                        <td className={styles.cellTime} title={new Date(view.timestamp).toLocaleString()}>
+                          {timeAgo(view.timestamp)}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className={styles.emptyRow}>
+                        No page views yet
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {tab === 'messages' && (
+          <>
+            <h2>Contact Messages</h2>
+            <div className={styles.tableWrapper}>
+              <table className={styles.viewsTable}>
+                <thead>
+                  <tr>
+                    <th className={styles.colName}>Name</th>
+                    <th className={styles.colEmail}>Email</th>
+                    <th className={styles.colSubject}>Subject</th>
+                    <th className={styles.colMessage}>Message</th>
+                    <th className={styles.colTime}>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {messages.length > 0 ? (
+                    messages.map((msg, index) => (
+                      <tr key={msg.id} className={index % 2 === 0 ? styles.rowEven : styles.rowOdd}>
+                        <td className={styles.cellName}>{msg.name}</td>
+                        <td className={styles.cellEmail}>
+                          <a href={`mailto:${msg.email}`} className={styles.emailLink}>{msg.email}</a>
+                        </td>
+                        <td className={styles.cellSubject}>{msg.subject || '—'}</td>
+                        <td className={styles.cellMessage} title={msg.message}>
+                          {truncate(msg.message, 80)}
+                        </td>
+                        <td className={styles.cellTime} title={new Date(msg.created_at).toLocaleString()}>
+                          {timeAgo(msg.created_at)}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className={styles.emptyRow}>
+                        No messages yet
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
     </Layout>
   );
