@@ -69,8 +69,10 @@ export default function Lightbox({ images, postId }) {
               className={styles.full}
               src={images[index]}
               alt={`Screenshot ${index + 1} of ${postId}`}
-              fill
+              width={0}
+              height={0}
               sizes="90vw"
+              unoptimized
               priority
               onClick={(e) => e.stopPropagation()}
             />
