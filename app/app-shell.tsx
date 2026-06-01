@@ -3,7 +3,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import { AnimatePresence, motion } from 'framer-motion'
+
 import { ThemeProvider, useTheme } from '../lib/ThemeContext'
 import SmoothScroll from '../components/SmoothScroll'
 
@@ -25,6 +25,7 @@ function ShellInner({ children }: { children: ReactNode }) {
         referrer: document.referrer || 'direct',
       }),
     }).catch(() => {})
+    ;(window as any).__lenis?.scrollTo(0, { immediate: true })
   }, [pathname])
 
   useEffect(() => {
@@ -39,19 +40,7 @@ function ShellInner({ children }: { children: ReactNode }) {
         Skip to main content
       </a>
       <ParticlesBackground theme={theme} />
-      <SmoothScroll>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={pathname}
-          initial={{ opacity: 0, y: 16, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -16, scale: 0.98 }}
-          transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
-      </SmoothScroll>
+      <SmoothScroll>{children}</SmoothScroll>
     </div>
   )
 }

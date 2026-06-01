@@ -21,17 +21,23 @@ function getSystemTheme() {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<string | null>(null)
 
+  function applyTheme(t: string) {
+    document.documentElement.setAttribute('data-theme', t)
+    document.documentElement.style.backgroundColor =
+      t === 'dark' ? '#0d1117' : '#ffffff'
+  }
+
   useEffect(() => {
     const initial = getInitialTheme() || getSystemTheme()
     setTheme(initial)
-    document.documentElement.setAttribute('data-theme', initial)
+    applyTheme(initial)
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const handler = (e) => {
       if (localStorage.getItem('theme') === null) {
         const next = e.matches ? 'dark' : 'light'
         setTheme(next)
-        document.documentElement.setAttribute('data-theme', next)
+        applyTheme(next)
       }
     }
     mq.addEventListener('change', handler)
@@ -41,7 +47,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light'
     setTheme(next)
-    document.documentElement.setAttribute('data-theme', next)
+    applyTheme(next)
     localStorage.setItem('theme', next)
   }
 
