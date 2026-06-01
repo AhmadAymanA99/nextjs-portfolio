@@ -3,7 +3,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint \"lib\" \"components\" \"pages\" && prettier --check \"lib/**/*.ts\" \"lib/**/*.tsx\" \"components/**/*.tsx\" \"pages/**/*.tsx\" \"styles/**/*.css\"",
+    "format": "prettier --write \"lib/**/*.ts\" \"lib/**/*.tsx\" \"components/**/*.tsx\" \"pages/**/*.tsx\" \"styles/**/*.css\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -24,5 +29,21 @@
     "remark": "^15.0.1",
     "remark-rehype": "^11.1.2",
     "ua-parser-js": "^2.0.10"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/parser": "^8.60.0",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.6",
+    "eslint-config-prettier": "^10.1.8",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
   }
 }

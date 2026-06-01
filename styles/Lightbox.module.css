@@ -24,7 +24,9 @@
   padding: 0;
   cursor: pointer;
   background: none;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .thumb:hover {
@@ -52,8 +54,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .imageWrapper {
@@ -129,8 +135,12 @@
   cursor: default;
 }
 
-.prev { left: 1rem; }
-.next { right: 1rem; }
+.prev {
+  left: 1rem;
+}
+.next {
+  right: 1rem;
+}
 
 .bottomBar {
   position: fixed;

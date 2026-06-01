@@ -1,0 +1,9 @@
+'use client'
+
+import styles from '../styles/Spinner.module.css'
+
+export default function Spinner({ size = 20 }: { size?: number }) {
+  return (
+    <span className={styles.spinner} style={{ width: size, height: size }} aria-hidden="true" />
+  )
+}
