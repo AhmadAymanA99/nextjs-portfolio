@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ThemeProvider, useTheme } from '../lib/ThemeContext'
+import SmoothScroll from '../components/SmoothScroll'
 
 const ParticlesBackground = dynamic(
   () => import('../components/ParticlesBackground'),
@@ -33,22 +34,24 @@ function ShellInner({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <div style={{ position: 'relative', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', overflowX: 'hidden' }}>
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
       <ParticlesBackground theme={theme} />
+      <SmoothScroll>
       <AnimatePresence mode="wait">
         <motion.div
           key={pathname}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0, y: 16, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -16, scale: 0.98 }}
+          transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] as const }}
         >
           {children}
         </motion.div>
       </AnimatePresence>
+      </SmoothScroll>
     </div>
   )
 }

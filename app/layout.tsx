@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Geist } from 'next/font/google'
+import Script from 'next/script'
 import '../styles/global.css'
 import 'highlight.js/styles/github-dark.css'
 import AppShell from './app-shell'
@@ -28,9 +29,12 @@ export const viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={geist.variable}>
+    <html lang="en" className={geist.variable} suppressHydrationWarning>
       <head>
         <link rel="alternate icon" href="/favicon.ico?v=2" sizes="any" />
+        <Script id="theme-init" strategy="beforeInteractive" dangerouslySetInnerHTML={{
+          __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.backgroundColor=t==='dark'?'#0d1117':'#ffffff';}catch(e){}})();`,
+        }} />
       </head>
       <body>
         <AppShell>{children}</AppShell>

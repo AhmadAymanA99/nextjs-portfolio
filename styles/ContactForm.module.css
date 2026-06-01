@@ -2,8 +2,9 @@
   margin: 3rem 0;
   padding: 2rem;
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  background-color: var(--bg-card);
+  border-radius: 1rem;
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .title {
