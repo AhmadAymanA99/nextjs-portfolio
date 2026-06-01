@@ -27,12 +27,12 @@ export default function ShareButtons({ title }) {
       paddingTop: '1.5rem',
       borderTop: '1px solid var(--border-color)',
     }}>
-      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Share</span>
+      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1 }}>Share</span>
       <a
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', transition: 'color 0.2s' }}
+        style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', lineHeight: 1 }}
         onMouseOver={e => e.currentTarget.style.color = '#0a66c2'}
         onMouseOut={e => e.currentTarget.style.color = 'var(--text-secondary)'}
         aria-label="Share on LinkedIn"
@@ -43,7 +43,7 @@ export default function ShareButtons({ title }) {
         href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', transition: 'color 0.2s' }}
+        style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', transition: 'color 0.2s', display: 'inline-flex', alignItems: 'center', lineHeight: 1 }}
         onMouseOver={e => e.currentTarget.style.color = '#000'}
         onMouseOut={e => e.currentTarget.style.color = 'var(--text-secondary)'}
         aria-label="Share on X"
@@ -55,7 +55,7 @@ export default function ShareButtons({ title }) {
         style={{
           background: 'none', border: 'none', cursor: 'pointer',
           color: 'var(--text-secondary)', fontSize: '1.2rem',
-          padding: 0, display: 'inline-flex', transition: 'color 0.2s',
+          padding: 0, display: 'inline-flex', alignItems: 'center', lineHeight: 1,
         }}
         onMouseOver={e => e.currentTarget.style.color = 'var(--text-link)'}
         onMouseOut={e => e.currentTarget.style.color = 'var(--text-secondary)'}
