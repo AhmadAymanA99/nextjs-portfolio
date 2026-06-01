@@ -20,7 +20,10 @@ export default async function handler(req, res) {
 
     const activities = events
       .filter((e) => {
-        if (!['PushEvent', 'CreateEvent', 'IssuesEvent', 'WatchEvent', 'ForkEvent'].includes(e.type)) return false
+        if (
+          !['PushEvent', 'CreateEvent', 'IssuesEvent', 'WatchEvent', 'ForkEvent'].includes(e.type)
+        )
+          return false
         if (e.type === 'PushEvent' && !e.payload.size && !e.payload.commits?.length) return false
         return true
       })

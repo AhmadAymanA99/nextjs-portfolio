@@ -192,6 +192,28 @@
   white-space: nowrap;
 }
 
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.chartCard {
+  background: var(--bg-card);
+  padding: 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.chartCard h3 {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
 .filterBar {
   display: flex;
   align-items: center;
@@ -298,8 +320,7 @@
 }
 
 .rowOdd {
-  background-color: var(--bg-secondary);
-  opacity: 0.5;
+  background-color: var(--bg-tertiary);
 }
 
 .viewsTable tbody tr {
@@ -361,13 +382,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--text-secondary);
 }
 
 .cellTime {
   font-size: 0.85rem;
   white-space: nowrap;
-  color: var(--text-secondary);
 }
 
 .countryChip {
@@ -378,7 +397,6 @@
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  color: var(--text-secondary);
 }
 
 .deviceBadge {

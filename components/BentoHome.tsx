@@ -16,6 +16,7 @@ import styles from '../styles/BentoGrid.module.css'
 import utilStyles from '../styles/utils.module.css'
 import { FaEnvelope, FaGithub, FaLinkedin, FaWhatsapp, FaTelegramPlane } from 'react-icons/fa'
 
+
 const ContactForm = dynamic(() => import('./ContactForm'), { ssr: false })
 
 const name = 'Ahmad Ayman'
@@ -74,11 +75,15 @@ export default function BentoHome({
             <div className={styles.heroContent}>
               <h1 className={styles.heroName}>{name}</h1>
               <p className={styles.heroTitle}>
-                Software Engineer <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>(React.js / Next.js)</span>
+                Software Engineer{' '}
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+                  (React.js / Next.js)
+                </span>
               </p>
               <p className={styles.heroBio}>
                 Building scalable, performant web applications with modern JavaScript. Focused on
-                creating exceptional user experiences through clean architecture and thoughtful design.
+                creating exceptional user experiences through clean architecture and thoughtful
+                design.
               </p>
               <a href={cvUrl} className={styles.cvButton} download>
                 <span>↓</span> Download CV
@@ -99,7 +104,10 @@ export default function BentoHome({
                   {latestExp.till === 'now' ? (
                     <span className={utilStyles.badge}>Current</span>
                   ) : latestExp.till ? (
-                    <> — <Date dateString={latestExp.till} /></>
+                    <>
+                      {' '}
+                      — <Date dateString={latestExp.till} />
+                    </>
                   ) : null}
                 </p>
                 <Link href={`/experiences/${latestExp.id}`} className={styles.midCardLink}>
@@ -169,7 +177,13 @@ export default function BentoHome({
               </a>
             </div>
             <NowPlaying />
-            <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
+            <div
+              style={{
+                marginTop: '0.75rem',
+                paddingTop: '0.75rem',
+                borderTop: '1px solid var(--border-color)',
+              }}
+            >
               <GitHubActivity />
             </div>
           </TiltCard>
@@ -211,7 +225,9 @@ export default function BentoHome({
                       </div>
                       <div className={styles.projectTags}>
                         {post.tags?.map((t) => (
-                          <span key={t} className={styles.projectTag}>{t}</span>
+                          <span key={t} className={styles.projectTag}>
+                            {t}
+                          </span>
                         ))}
                       </div>
                     </Link>
@@ -239,13 +255,18 @@ export default function BentoHome({
                         {exp.till === 'now' ? (
                           <span className={utilStyles.badge}>Current</span>
                         ) : exp.till ? (
-                          <> — <Date dateString={exp.till} /></>
+                          <>
+                            {' '}
+                            — <Date dateString={exp.till} />
+                          </>
                         ) : null}
                       </span>
                     </div>
                     <div className={styles.projectTags}>
                       {exp.tags?.map((t) => (
-                        <span key={t} className={styles.projectTag}>{t}</span>
+                        <span key={t} className={styles.projectTag}>
+                          {t}
+                        </span>
                       ))}
                     </div>
                   </Link>

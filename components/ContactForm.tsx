@@ -1,10 +1,16 @@
 import { useState } from 'react'
+import { Turnstile } from '@marsidev/react-turnstile'
 import Spinner from './Spinner'
+import { useTheme } from '../lib/ThemeContext'
 import styles from '../styles/ContactForm.module.css'
 
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
+
 export default function ContactForm() {
+  const { theme } = useTheme()
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [status, setStatus] = useState('idle')
+  const [token, setToken] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -12,6 +18,10 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!token) {
+      setStatus('error: Please complete the security check')
+      return
+    }
     setStatus('sending')
 
     const payload = {
@@ -19,6 +29,7 @@ export default function ContactForm() {
       email: form.email.trim(),
       subject: form.subject.trim(),
       message: form.message.trim(),
+      turnstileToken: token,
     }
 
     try {
@@ -31,6 +42,7 @@ export default function ContactForm() {
       if (res.ok) {
         setStatus('success')
         setForm({ name: '', email: '', subject: '', message: '' })
+        setToken('')
       } else {
         const data = await res.json()
         setStatus(`error: ${data.error || 'Something went wrong'}`)
@@ -94,7 +106,15 @@ export default function ContactForm() {
             rows={5}
             className={styles.textarea}
           />
-          <button type="submit" disabled={status === 'sending'} className={styles.button}>
+          {SITE_KEY && (
+            <Turnstile
+              siteKey={SITE_KEY}
+              onSuccess={setToken}
+              onError={() => setToken('')}
+              options={{ size: 'normal', theme: theme === 'dark' ? 'dark' : 'light' }}
+            />
+          )}
+          <button type="submit" disabled={status === 'sending' || !token} className={styles.button}>
             {status === 'sending' ? (
               <>
                 <Spinner size={16} /> Sending...

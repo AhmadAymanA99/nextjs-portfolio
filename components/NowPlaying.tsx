@@ -43,7 +43,15 @@ export default function NowPlaying() {
   if (!data) {
     return (
       <div style={dividerStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontSize: '0.8rem',
+            color: 'var(--text-muted)',
+          }}
+        >
           <FaSpotify size={14} />
           <span>Loading...</span>
         </div>
@@ -92,7 +100,16 @@ export default function NowPlaying() {
           >
             {data.title}
           </a>
-          <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>
+          <span
+            style={{
+              color: 'var(--text-muted)',
+              fontSize: '0.72rem',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: 'block',
+            }}
+          >
             {data.artist}
           </span>
         </div>

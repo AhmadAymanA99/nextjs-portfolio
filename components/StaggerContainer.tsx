@@ -12,7 +12,11 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
 }
 
 export function StaggerContainer({
@@ -35,13 +39,7 @@ export function StaggerContainer({
   )
 }
 
-export function StaggerItem({
-  children,
-  className,
-}: {
-  children: ReactNode
-  className?: string
-}) {
+export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <motion.div variants={itemVariants} className={className}>
       {children}

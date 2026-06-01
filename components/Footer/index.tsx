@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import styles from './Footer.module.css'
 import { FaLinkedin, FaFacebook, FaGithub, FaEnvelope } from 'react-icons/fa'
-import { FaXTwitter, FaSun, FaMoon } from 'react-icons/fa6'
+import { FaXTwitter, FaTelegram, FaWhatsapp, FaSun, FaMoon } from 'react-icons/fa6'
 import { useTheme } from '../../lib/ThemeContext'
 
 const Footer = () => {
@@ -45,11 +45,13 @@ const Footer = () => {
         <p>
           Email: <a href="mailto:ahmadaymana99@gmail.com">ahmadaymana99@gmail.com</a>
         </p>
-        {showAdmin && (
-          <div className={`${styles.adminLink} ${showAdmin ? styles.adminLinkVisible : ''}`}>
-            <Link href="/admin/login">Admin</Link>
-          </div>
-        )}
+        <div className={styles.footerLinks}>
+          <Link href="/guestbook" className={styles.guestBtn}>Guestbook</Link>
+          <Link href="/faq" className={styles.guestBtn}>FAQ</Link>
+          {showAdmin && (
+            <Link href="/admin/login" className={styles.adminLink}>Admin</Link>
+          )}
+        </div>
       </div>
       <div className={styles.links}>
         <a
@@ -80,6 +82,22 @@ const Footer = () => {
           <FaFacebook />
         </a>
         <a
+          href="https://wa.me/201023874473"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="WhatsApp"
+        >
+          <FaWhatsapp />
+        </a>
+        <a
+          href="https://t.me/A7medAyman99"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Telegram"
+        >
+          <FaTelegram />
+        </a>
+        <a
           href="https://x.com/A7medAyman99"
           target="_blank"
           rel="noopener noreferrer"
@@ -101,6 +119,9 @@ const Footer = () => {
         {theme === 'dark' ? <FaSun /> : <FaMoon />}
         {theme === 'dark' ? 'Light' : 'Dark'} Mode
       </button>
+      <p className={styles.copyright}>
+        All rights reserved. &copy; {new Date().getFullYear()}.
+      </p>
     </footer>
   )
 }

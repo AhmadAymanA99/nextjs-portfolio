@@ -35,13 +35,26 @@ export default function GitHubActivity() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: 600 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.4rem',
+          fontSize: '0.75rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          color: 'var(--text-muted)',
+          fontWeight: 600,
+        }}
+      >
         <FaGithub size={12} /> Recent Activity
       </div>
       {!loaded ? (
         <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Loading...</span>
       ) : activities.length === 0 ? (
-        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>No recent public activity</span>
+        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+          No recent public activity
+        </span>
       ) : (
         activities.map((a, i) => {
           const Icon = iconMap[a.type] || VscGitCommit

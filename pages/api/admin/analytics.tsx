@@ -53,6 +53,38 @@ export default async function handler(req, res) {
       ),
     }
 
+    const dailyViewsResult = await sql`
+      SELECT DATE(timestamp) as date, COUNT(*) as count
+      FROM page_views ${dateFilter}
+      GROUP BY DATE(timestamp)
+      ORDER BY date ASC
+      LIMIT 90
+    `
+    const dailyViews = dailyViewsResult.map((r) => ({
+      date: r.date instanceof Date ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10),
+      views: Number(r.count),
+    }))
+
+    const topPagesResult = await sql`
+      SELECT path, COUNT(*) as count
+      FROM page_views ${dateFilter}
+      WHERE path IS NOT NULL
+      GROUP BY path
+      ORDER BY count DESC
+      LIMIT 10
+    `
+    const topPages = topPagesResult.map((r) => ({ path: r.path, views: Number(r.count) }))
+
+    const countryBreakdownResult = await sql`
+      SELECT country, COUNT(*) as count
+      FROM page_views ${dateFilter}
+      WHERE country IS NOT NULL
+      GROUP BY country
+      ORDER BY count DESC
+      LIMIT 10
+    `
+    const countryBreakdown = countryBreakdownResult.map((r) => ({ country: r.country, views: Number(r.count) }))
+
     const recentViewsResult =
       await sql`SELECT path, country, device_type, referrer, timestamp, ip_address, user_agent FROM page_views ${dateFilter} ORDER BY timestamp DESC LIMIT 50`
 
@@ -83,6 +115,9 @@ export default async function handler(req, res) {
         topCountry,
         deviceDistribution,
       },
+      dailyViews,
+      topPages,
+      countryBreakdown,
       recentViews,
     })
   } catch (error) {

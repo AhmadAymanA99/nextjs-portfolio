@@ -23,8 +23,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   function applyTheme(t: string) {
     document.documentElement.setAttribute('data-theme', t)
-    document.documentElement.style.backgroundColor =
-      t === 'dark' ? '#0d1117' : '#ffffff'
+    document.documentElement.style.backgroundColor = t === 'dark' ? '#0d1117' : '#ffffff'
   }
 
   useEffect(() => {

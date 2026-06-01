@@ -41,6 +41,14 @@ export async function ensureDB() {
       message TEXT NOT NULL,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )`
+    await db`CREATE TABLE IF NOT EXISTS guestbook_entries (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      message TEXT NOT NULL,
+      website TEXT DEFAULT '',
+      approved BOOLEAN DEFAULT false,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )`
     return db
   })()
   return await initPromise

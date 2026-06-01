@@ -13,13 +13,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const postData = await getPostData(id)
   return {
     title: `${postData.title} - Ahmad Ayman`,
-    description: postData.contentHtml?.replace(/<[^>]*>/g, '').slice(0, 160) || postData.title,
+    description: postData.description || postData.title,
     openGraph: {
       title: `${postData.title} - Ahmad Ayman`,
       type: 'article',
-    },
-    other: {
-      canonical: `https://ahmad-ayman.vercel.app/posts/${id}`,
+      description: postData.description || postData.title,
     },
     alternates: {
       canonical: `https://ahmad-ayman.vercel.app/posts/${id}`,

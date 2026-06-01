@@ -1,5 +1,6 @@
 import { ensureDB } from '../../lib/db'
 import rateLimit from '../../lib/rateLimit'
+import { verifyTurnstileToken } from '../../lib/turnstile'
 import nodemailer from 'nodemailer'
 
 const limiter = rateLimit({ windowMs: 60000, max: 5 })
@@ -49,7 +50,7 @@ export default async function handler(req, res) {
 
   if (!limiter(req, res)) return
 
-  const { name, email, subject, message } = req.body
+  const { name, email, subject, message, turnstileToken } = req.body
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'Name, email, and message are required' })
@@ -57,6 +58,13 @@ export default async function handler(req, res) {
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Invalid email address' })
+  }
+
+  if (turnstileToken) {
+    const valid = await verifyTurnstileToken(turnstileToken)
+    if (!valid) {
+      return res.status(400).json({ error: 'Security check failed. Please try again.' })
+    }
   }
 
   try {
