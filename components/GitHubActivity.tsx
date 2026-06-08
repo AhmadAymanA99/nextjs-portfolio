@@ -34,7 +34,7 @@ export default function GitHubActivity() {
   }, [])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', overflow: 'hidden' }}>
       <div
         style={{
           display: 'flex',
@@ -70,18 +70,38 @@ export default function GitHubActivity() {
               }}
             >
               <Icon size={12} style={{ flexShrink: 0, color: 'var(--text-muted)' }} />
-              <span
+              <div
                 style={{
                   flex: 1,
                   minWidth: 0,
+                  display: 'flex',
+                  gap: '0.25rem',
                   overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
                 }}
               >
-                <span style={{ color: 'var(--text-link)' }}>{a.repo?.split('/')[1]}</span>
-                <span style={{ color: 'var(--text-muted)' }}> — {a.action}</span>
-              </span>
+                <span
+                  style={{
+                    color: 'var(--text-link)',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {a.repo?.split('/')[1]}
+                </span>
+                <span
+                  style={{
+                    color: 'var(--text-muted)',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    flex: 1,
+                    minWidth: 0,
+                  }}
+                >
+                  — {a.action}
+                </span>
+              </div>
             </div>
           )
         })
