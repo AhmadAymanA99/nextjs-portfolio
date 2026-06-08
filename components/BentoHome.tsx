@@ -61,7 +61,13 @@ export default function BentoHome({
     <main id="main-content" className={styles.layout}>
       <div className={styles.grid}>
         {/* Hero */}
-        <Reveal direction="up" distance={30} duration={0.6} style={{ gridColumn: '1 / -1' }}>
+        <Reveal
+          direction="up"
+          distance={30}
+          duration={0.6}
+          style={{ gridColumn: '1 / -1' }}
+          className={styles.gridItem}
+        >
           <TiltCard className={`${styles.card} ${styles.heroRow}`} maxTilt={3}>
             <Image
               priority
@@ -92,7 +98,7 @@ export default function BentoHome({
         </Reveal>
 
         {/* Latest Experience */}
-        <Reveal direction="up" delay={0.1}>
+        <Reveal direction="up" delay={0.1} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
             <span className={styles.midCardLabel}>Latest Experience</span>
             {latestExp ? (
@@ -120,7 +126,7 @@ export default function BentoHome({
         </Reveal>
 
         {/* Skills Mini Grid */}
-        <Reveal direction="up" delay={0.15}>
+        <Reveal direction="up" delay={0.15} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
             <span className={styles.midCardLabel}>Skills</span>
             <div className={styles.skillsGrid}>
@@ -135,7 +141,7 @@ export default function BentoHome({
         </Reveal>
 
         {/* Contact Quick Card */}
-        <Reveal direction="up" delay={0.2}>
+        <Reveal direction="up" delay={0.2} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
             <span className={styles.midCardLabel}>Connect</span>
             <div className={styles.contactLinks}>
@@ -189,7 +195,12 @@ export default function BentoHome({
         </Reveal>
 
         {/* Projects */}
-        <Reveal direction="up" delay={0.1} style={{ gridColumn: '1 / -1' }}>
+        <Reveal
+          direction="up"
+          delay={0.1}
+          style={{ gridColumn: '1 / -1' }}
+          className={styles.gridItem}
+        >
           <div className={`${styles.card} ${styles.bottomSection}`}>
             <h2 className={styles.bottomSectionTitle}>Projects</h2>
             <div className={styles.filterRow}>
@@ -238,7 +249,12 @@ export default function BentoHome({
         </Reveal>
 
         {/* All Experiences */}
-        <Reveal direction="up" delay={0.1} style={{ gridColumn: '1 / -1' }}>
+        <Reveal
+          direction="up"
+          delay={0.1}
+          style={{ gridColumn: '1 / -1' }}
+          className={styles.gridItem}
+        >
           <div className={`${styles.card} ${styles.bottomSection}`}>
             <h2 className={styles.bottomSectionTitle}>Experience</h2>
             <div className={styles.projectList}>

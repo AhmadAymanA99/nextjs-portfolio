@@ -63,28 +63,31 @@ export default function GitHubActivity() {
               key={i}
               style={{
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 gap: '0.5rem',
                 fontSize: '0.8rem',
                 color: 'var(--text-primary)',
               }}
             >
-              <Icon size={12} style={{ flexShrink: 0, color: 'var(--text-muted)' }} />
+              <Icon
+                size={12}
+                style={{ flexShrink: 0, color: 'var(--text-muted)', marginTop: '0.2rem' }}
+              />
               <div
                 style={{
                   flex: 1,
                   minWidth: 0,
-                  display: 'flex',
-                  gap: '0.25rem',
                   overflow: 'hidden',
                 }}
               >
                 <span
                   style={{
                     color: 'var(--text-link)',
-                    whiteSpace: 'nowrap',
+                    fontSize: '0.8rem',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    display: 'block',
                   }}
                 >
                   {a.repo?.split('/')[1]}
@@ -92,11 +95,12 @@ export default function GitHubActivity() {
                 <span
                   style={{
                     color: 'var(--text-muted)',
-                    whiteSpace: 'nowrap',
+                    fontSize: '0.75rem',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    flex: 1,
-                    minWidth: 0,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
                   }}
                 >
                   — {a.action}
