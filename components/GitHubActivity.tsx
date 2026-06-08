@@ -70,7 +70,7 @@ export default function GitHubActivity() {
               }}
             >
               <Icon size={12} style={{ flexShrink: 0, color: 'var(--text-muted)' }} />
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 <span style={{ color: 'var(--text-link)' }}>{a.repo?.split('/')[1]}</span>
                 <span style={{ color: 'var(--text-muted)' }}> — {a.action}</span>
               </span>
