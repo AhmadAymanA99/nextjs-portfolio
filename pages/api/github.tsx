@@ -48,10 +48,10 @@ function formatAction(event) {
       const count = event.payload.size || event.payload.commits?.length || 1
       const branch = event.payload.ref?.replace('refs/heads/', '') || ''
       const msg = event.payload.commits?.[0]?.message?.split('\n')[0] || ''
-      return `Pushed ${count} commit${count !== 1 ? 's' : ''}${branch ? ` to ${branch}` : ''}${msg ? ` — ${truncate(msg, 50)}` : ''}`
+      return `Pushed ${count} commit${count !== 1 ? 's' : ''}${branch ? ` to ${truncate(branch, 20)}` : ''}${msg ? ` — ${truncate(msg, 50)}` : ''}`
     }
     case 'CreateEvent':
-      return `Created ${event.payload.ref_type}${event.payload.ref ? ` (${event.payload.ref})` : ''}`
+      return `Created ${event.payload.ref_type}${event.payload.ref ? ` (${truncate(event.payload.ref, 25)})` : ''}`
     case 'IssuesEvent':
       return `${event.payload.action === 'opened' ? 'Opened' : event.payload.action === 'closed' ? 'Closed' : event.payload.action} issue`
     case 'WatchEvent':
