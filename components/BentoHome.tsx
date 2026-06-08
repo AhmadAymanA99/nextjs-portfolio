@@ -75,6 +75,7 @@ export default function BentoHome({
               className={utilStyles.borderCircle}
               height={140}
               width={140}
+              sizes="140px"
               alt={name}
             />
             <div className={styles.heroContent}>

@@ -17,6 +17,21 @@ export const metadata = {
     'Software Engineer specializing in React, Next.js, and full-stack development with experience in healthcare, education, and enterprise applications.',
   icons: { icon: '/favicon.svg?v=2' },
   manifest: '/manifest.json',
+  openGraph: {
+    title: 'Ahmad Ayman Portfolio',
+    description:
+      'Software Engineer specializing in React, Next.js, and full-stack development with experience in healthcare, education, and enterprise applications.',
+    url: 'https://ahmad-ayman.vercel.app',
+    siteName: 'Ahmad Ayman Portfolio',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ahmad Ayman Portfolio',
+    description:
+      'Software Engineer specializing in React, Next.js, and full-stack development with experience in healthcare, education, and enterprise applications.',
+  },
   other: {
     'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black-translucent',

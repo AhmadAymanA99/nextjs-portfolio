@@ -235,10 +235,8 @@ export default function Lightbox({ images, postId }) {
                 className={styles.full}
                 src={images[index]}
                 alt={`Screenshot ${index + 1} of ${postId}`}
-                width={0}
-                height={0}
+                fill
                 sizes="90vw"
-                unoptimized
                 priority
                 draggable={false}
               />

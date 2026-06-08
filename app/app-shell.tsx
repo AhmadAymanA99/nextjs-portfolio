@@ -2,6 +2,7 @@
 
 import { useEffect, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
+import { MotionConfig } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
 import { ThemeProvider, useTheme } from '../lib/ThemeContext'
@@ -40,7 +41,9 @@ function ShellInner({ children }: { children: ReactNode }) {
         Skip to main content
       </a>
       <ParticlesBackground theme={theme} />
-      <SmoothScroll>{children}</SmoothScroll>
+      <MotionConfig reducedMotion="user">
+        <SmoothScroll>{children}</SmoothScroll>
+      </MotionConfig>
     </div>
   )
 }

@@ -77,6 +77,7 @@ export default function ContactForm() {
               required
               className={styles.input}
               autoComplete="off"
+              aria-label="Your name"
             />
             <input
               name="email"
@@ -87,6 +88,7 @@ export default function ContactForm() {
               required
               className={styles.input}
               autoComplete="off"
+              aria-label="Your email"
             />
           </div>
           <input
@@ -96,6 +98,7 @@ export default function ContactForm() {
             onChange={handleChange}
             className={styles.input}
             autoComplete="off"
+            aria-label="Subject"
           />
           <textarea
             name="message"
@@ -105,6 +108,7 @@ export default function ContactForm() {
             required
             rows={5}
             className={styles.textarea}
+            aria-label="Your message"
           />
           {SITE_KEY && (
             <Turnstile

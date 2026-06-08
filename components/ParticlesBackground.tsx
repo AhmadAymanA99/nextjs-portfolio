@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { tsParticles, type Container } from '@tsparticles/engine'
 import { loadSlim } from '@tsparticles/slim'
 import particlesConfig from '../lib/particlesConfig'
@@ -6,9 +6,18 @@ import particlesConfig from '../lib/particlesConfig'
 export default function ParticlesBackground({ theme }: { theme: string | null }) {
   const containerRef = useRef<Container | null>(null)
   const loadedRef = useRef(false)
+  const [disabled, setDisabled] = useState(true)
 
   useEffect(() => {
-    if (loadedRef.current) return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setDisabled(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setDisabled(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  useEffect(() => {
+    if (disabled || loadedRef.current) return
     loadedRef.current = true
     ;(async () => {
       await loadSlim(tsParticles)
@@ -24,7 +33,7 @@ export default function ParticlesBackground({ theme }: { theme: string | null })
         containerRef.current = null
       }
     }
-  }, [])
+  }, [disabled])
 
   useEffect(() => {
     if (containerRef.current) {

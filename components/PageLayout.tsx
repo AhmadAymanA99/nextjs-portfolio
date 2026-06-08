@@ -19,6 +19,7 @@ export function HomeLayout({ children }: { children: ReactNode }) {
           className={utilStyles.borderCircle}
           height={200}
           width={200}
+          sizes="200px"
           alt={name}
         />
         <h1 className={utilStyles.heading2Xl}>{name}</h1>
@@ -40,6 +41,7 @@ export function DetailLayout({ children }: { children: ReactNode }) {
             className={utilStyles.borderCircle}
             height={100}
             width={100}
+            sizes="100px"
             alt={name}
           />
         </Link>

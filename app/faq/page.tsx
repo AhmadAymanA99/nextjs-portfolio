@@ -5,6 +5,10 @@ import { faqData } from '../../lib/faq'
 export const metadata = {
   title: 'FAQ - Ahmad Ayman',
   description: 'Frequently asked questions about Ahmad Ayman\'s work, availability, and process.',
+  openGraph: {
+    title: 'FAQ - Ahmad Ayman',
+    description: 'Frequently asked questions about Ahmad Ayman\'s work, availability, and process.',
+  },
 }
 
 export default function FAQPage() {

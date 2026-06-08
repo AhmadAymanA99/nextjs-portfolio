@@ -6,6 +6,10 @@ export const dynamic = 'force-dynamic'
 export const metadata = {
   title: 'Guestbook - Ahmad Ayman',
   description: 'Leave a message for Ahmad Ayman.',
+  openGraph: {
+    title: 'Guestbook - Ahmad Ayman',
+    description: 'Leave a message for Ahmad Ayman.',
+  },
 }
 
 export default async function GuestbookPage() {

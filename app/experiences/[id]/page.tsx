@@ -13,6 +13,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: `${data.title} - Ahmad Ayman`,
     description: `${data.title} - ${data.date}${data.till === 'now' ? ' to Present' : ` to ${data.till}`}`,
+    openGraph: {
+      title: `${data.title} - Ahmad Ayman`,
+      description: `${data.title} - ${data.date}${data.till === 'now' ? ' to Present' : ` to ${data.till}`}`,
+      type: 'article',
+    },
   }
 }
 

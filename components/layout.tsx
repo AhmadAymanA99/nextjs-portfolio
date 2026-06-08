@@ -35,6 +35,7 @@ export default function Layout({ children, home }: { children: React.ReactNode; 
               className={utilStyles.borderCircle}
               height={200}
               width={200}
+              sizes="200px"
               alt={name}
             />
             <h1 className={utilStyles.heading2Xl}>{name}</h1>
@@ -48,6 +49,7 @@ export default function Layout({ children, home }: { children: React.ReactNode; 
                 className={utilStyles.borderCircle}
                 height={100}
                 width={100}
+                sizes="100px"
                 alt={name}
               />
             </Link>

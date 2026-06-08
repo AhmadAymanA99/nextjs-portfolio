@@ -104,6 +104,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           maxLength={100}
           required
           disabled={loading}
+          aria-label="Your name"
         />
         <input
           className={styles.input}
@@ -112,6 +113,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           onChange={(e) => setWebsite(e.target.value)}
           maxLength={500}
           disabled={loading}
+          aria-label="Website"
         />
         <textarea
           className={styles.textarea}
@@ -121,6 +123,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           maxLength={2000}
           required
           disabled={loading}
+          aria-label="Your message"
         />
         {error && <p className={styles.error}>{error}</p>}
         {SITE_KEY && (

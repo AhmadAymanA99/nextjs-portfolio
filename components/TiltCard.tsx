@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, type ReactNode, type MouseEvent } from 'react'
+import { useRef, useState, useEffect, type ReactNode, type MouseEvent } from 'react'
 import { motion } from 'framer-motion'
 
 interface TiltCardProps {
@@ -21,6 +21,15 @@ export default function TiltCard({
   const ref = useRef<HTMLDivElement>(null)
   const [tilt, setTilt] = useState({ x: 0, y: 0 })
   const [glarePos, setGlarePos] = useState({ x: 50, y: 50 })
+  const [reducedMotion, setReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReducedMotion(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   function handleMouseMove(e: MouseEvent<HTMLDivElement>) {
     if (!ref.current) return
@@ -36,18 +45,24 @@ export default function TiltCard({
     if (glare) setGlarePos({ x: 50, y: 50 })
   }
 
+  const tiltProps = reducedMotion
+    ? {}
+    : {
+        onMouseMove: handleMouseMove,
+        onMouseLeave: handleMouseLeave,
+        style: { perspective, position: 'relative' } as const,
+        animate: { rotateX: tilt.x, rotateY: tilt.y },
+      }
+
   return (
     <motion.div
       ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       className={className}
-      style={{ perspective, position: 'relative' }}
-      animate={{ rotateX: tilt.x, rotateY: tilt.y }}
+      {...tiltProps}
       transition={{ type: 'spring', stiffness: 200, damping: 25, mass: 0.5 }}
     >
       {children}
-      {glare && (
+      {glare && !reducedMotion && (
         <div
           style={{
             position: 'absolute',
