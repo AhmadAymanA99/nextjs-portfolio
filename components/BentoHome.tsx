@@ -16,7 +16,6 @@ import styles from '../styles/BentoGrid.module.css'
 import utilStyles from '../styles/utils.module.css'
 import { FaEnvelope, FaGithub, FaLinkedin, FaWhatsapp, FaTelegramPlane } from 'react-icons/fa'
 
-
 const ContactForm = dynamic(() => import('./ContactForm'), { ssr: false })
 
 const name = 'Ahmad Ayman'

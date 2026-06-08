@@ -61,7 +61,8 @@ export default async function handler(req, res) {
       LIMIT 90
     `
     const dailyViews = dailyViewsResult.map((r) => ({
-      date: r.date instanceof Date ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10),
+      date:
+        r.date instanceof Date ? r.date.toISOString().slice(0, 10) : String(r.date).slice(0, 10),
       views: Number(r.count),
     }))
 
@@ -83,7 +84,10 @@ export default async function handler(req, res) {
       ORDER BY count DESC
       LIMIT 10
     `
-    const countryBreakdown = countryBreakdownResult.map((r) => ({ country: r.country, views: Number(r.count) }))
+    const countryBreakdown = countryBreakdownResult.map((r) => ({
+      country: r.country,
+      views: Number(r.count),
+    }))
 
     const recentViewsResult =
       await sql`SELECT path, country, device_type, referrer, timestamp, ip_address, user_agent FROM page_views ${dateFilter} ORDER BY timestamp DESC LIMIT 50`

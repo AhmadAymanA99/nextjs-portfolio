@@ -10,7 +10,7 @@ export const faqData: FAQItem[] = [
   },
   {
     q: 'Are you available for freelance work?',
-    a: 'Yes, I\'m open to freelance projects and collaborations. Feel free to reach out through the contact form or directly via email to discuss your project.',
+    a: "Yes, I'm open to freelance projects and collaborations. Feel free to reach out through the contact form or directly via email to discuss your project.",
   },
   {
     q: 'What is your development process?',
@@ -26,6 +26,6 @@ export const faqData: FAQItem[] = [
   },
   {
     q: 'What is your preferred working style?',
-    a: 'I work best in a collaborative environment with clear communication. I\'m comfortable with remote work and use tools like GitHub, Slack, and ClickUp for project management.',
+    a: "I work best in a collaborative environment with clear communication. I'm comfortable with remote work and use tools like GitHub, Slack, and ClickUp for project management.",
   },
 ]

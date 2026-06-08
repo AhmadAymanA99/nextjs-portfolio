@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { FaSpotify } from 'react-icons/fa'
 
 interface TrackData {
@@ -77,10 +78,12 @@ export default function NowPlaying() {
       >
         <FaSpotify size={14} />
         {data.albumImage && (
-          <img
+          <Image
             src={data.albumImage}
             alt={data.album || ''}
-            style={{ width: 28, height: 28, borderRadius: 4, objectFit: 'cover' }}
+            width={28}
+            height={28}
+            style={{ borderRadius: 4, objectFit: 'cover' }}
           />
         )}
         <div style={{ overflow: 'hidden' }}>

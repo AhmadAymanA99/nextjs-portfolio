@@ -91,7 +91,9 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
       <h1 className={styles.title}>Guestbook</h1>
       <p className={styles.subtitle}>Leave a message. Say hello. Share your thoughts.</p>
 
-      {success && <div className={styles.success}>Thanks! Your message will appear after approval.</div>}
+      {success && (
+        <div className={styles.success}>Thanks! Your message will appear after approval.</div>
+      )}
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <input
@@ -130,7 +132,13 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           />
         )}
         <button className={styles.submitBtn} type="submit" disabled={loading || !token}>
-          {loading ? <><Spinner size={16} /> Submitting...</> : 'Sign the Guestbook'}
+          {loading ? (
+            <>
+              <Spinner size={16} /> Submitting...
+            </>
+          ) : (
+            'Sign the Guestbook'
+          )}
         </button>
       </form>
 

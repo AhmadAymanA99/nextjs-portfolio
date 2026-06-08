@@ -46,10 +46,16 @@ const Footer = () => {
           Email: <a href="mailto:ahmadaymana99@gmail.com">ahmadaymana99@gmail.com</a>
         </p>
         <div className={styles.footerLinks}>
-          <Link href="/guestbook" className={styles.guestBtn}>Guestbook</Link>
-          <Link href="/faq" className={styles.guestBtn}>FAQ</Link>
+          <Link href="/guestbook" className={styles.guestBtn}>
+            Guestbook
+          </Link>
+          <Link href="/faq" className={styles.guestBtn}>
+            FAQ
+          </Link>
           {showAdmin && (
-            <Link href="/admin/login" className={styles.adminLink}>Admin</Link>
+            <Link href="/admin/login" className={styles.adminLink}>
+              Admin
+            </Link>
           )}
         </div>
       </div>
@@ -119,9 +125,7 @@ const Footer = () => {
         {theme === 'dark' ? <FaSun /> : <FaMoon />}
         {theme === 'dark' ? 'Light' : 'Dark'} Mode
       </button>
-      <p className={styles.copyright}>
-        All rights reserved. &copy; {new Date().getFullYear()}.
-      </p>
+      <p className={styles.copyright}>All rights reserved. &copy; {new Date().getFullYear()}.</p>
     </footer>
   )
 }
