@@ -11,26 +11,30 @@ const geist = Geist({
   display: 'swap',
 })
 
+const siteUrl = 'https://ahmad-ayman.vercel.app'
+
 export const metadata = {
-  title: 'Ahmad Ayman Portfolio',
+  title: 'Ahmad Ayman — React & Next.js Engineer',
   description:
-    'Software Engineer specializing in React, Next.js, and full-stack development with experience in healthcare, education, and enterprise applications.',
+    'Senior React & Next.js engineer who ships performant, accessible web apps used by thousands. Specializing in modern TypeScript, scalable architecture, and delightful user experiences.',
   icons: { icon: '/favicon.svg?v=2' },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'Ahmad Ayman Portfolio',
+    title: 'Ahmad Ayman — React & Next.js Engineer',
     description:
-      'Software Engineer specializing in React, Next.js, and full-stack development with experience in healthcare, education, and enterprise applications.',
-    url: 'https://ahmad-ayman.vercel.app',
-    siteName: 'Ahmad Ayman Portfolio',
+      'Senior React & Next.js engineer who ships performant, accessible web apps used by thousands. Specializing in modern TypeScript, scalable architecture, and delightful user experiences.',
+    url: siteUrl,
+    siteName: 'Ahmad Ayman',
     locale: 'en_US',
     type: 'website',
+    images: [{ url: `${siteUrl}/images/og-card.png`, width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ahmad Ayman Portfolio',
+    title: 'Ahmad Ayman — React & Next.js Engineer',
     description:
-      'Software Engineer specializing in React, Next.js, and full-stack development with experience in healthcare, education, and enterprise applications.',
+      'Senior React & Next.js engineer who ships performant, accessible web apps used by thousands. Specializing in modern TypeScript, scalable architecture, and delightful user experiences.',
+    images: [`${siteUrl}/images/og-card.png`],
   },
   other: {
     'mobile-web-app-capable': 'yes',
@@ -46,10 +50,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={geist.variable} suppressHydrationWarning>
       <head>
-        <link rel="alternate icon" href="/favicon.ico?v=2" sizes="any" />
-        <Script id="theme-init" strategy="beforeInteractive" dangerouslySetInnerHTML={{
-          __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.backgroundColor=t==='dark'?'#0d1117':'#ffffff';}catch(e){}})();`,
-        }} />
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);document.documentElement.style.backgroundColor=t==='dark'?'#0d1117':'#ffffff';}catch(e){}})();`,
+          }}
+        />
       </head>
       <body>
         <AppShell>{children}</AppShell>

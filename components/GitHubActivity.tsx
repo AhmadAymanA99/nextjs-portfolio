@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { FaGithub } from 'react-icons/fa'
 import { VscRepoForked, VscStarEmpty, VscGitCommit, VscIssueReopened } from 'react-icons/vsc'
+import utilStyles from '../styles/utils.module.css'
 
 const iconMap = {
   PushEvent: VscGitCommit,
@@ -50,7 +51,11 @@ export default function GitHubActivity() {
         <FaGithub size={12} /> Recent Activity
       </div>
       {!loaded ? (
-        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Loading...</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <span className={utilStyles.skeleton} style={{ width: '100%', height: 14 }} />
+          <span className={utilStyles.skeleton} style={{ width: '85%', height: 14 }} />
+          <span className={utilStyles.skeleton} style={{ width: '70%', height: 14 }} />
+        </div>
       ) : activities.length === 0 ? (
         <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
           No recent public activity

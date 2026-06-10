@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { FaSpotify } from 'react-icons/fa'
+import utilStyles from '../styles/utils.module.css'
 
 interface TrackData {
   isPlaying: boolean
@@ -30,7 +31,9 @@ export default function NowPlaying() {
         const res = await fetch('/api/spotify')
         const json = await res.json()
         if (mounted) setData(json)
-      } catch {}
+      } catch {
+        if (mounted) setData({ isPlaying: false })
+      }
     }
 
     fetchTrack()
@@ -54,7 +57,7 @@ export default function NowPlaying() {
           }}
         >
           <FaSpotify size={14} />
-          <span>Loading...</span>
+          <span className={utilStyles.skeleton} style={{ width: 120, height: 14 }} />
         </div>
       </div>
     )
@@ -70,29 +73,42 @@ export default function NowPlaying() {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.6rem',
-          fontSize: '0.8rem',
-          color: '#1DB954',
-          textDecoration: 'none',
+          gap: '0.5rem',
+          fontSize: '0.75rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          color: 'var(--text-muted)',
+          fontWeight: 600,
+          marginBottom: '0.4rem',
         }}
       >
-        <FaSpotify size={14} />
+        <FaSpotify size={12} /> Last Played
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.6rem',
+          fontSize: '0.8rem',
+          color: 'var(--text-primary)',
+        }}
+      >
         {data.albumImage && (
           <Image
             src={data.albumImage}
             alt={data.album || ''}
             width={28}
             height={28}
-            style={{ borderRadius: 4, objectFit: 'cover' }}
+            style={{ borderRadius: 4, objectFit: 'cover', flexShrink: 0 }}
           />
         )}
-        <div style={{ overflow: 'hidden' }}>
+        <div style={{ overflow: 'hidden', minWidth: 0 }}>
           <a
             href={data.songUrl || '#'}
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              color: 'inherit',
+              color: 'var(--text-link)',
               textDecoration: 'none',
               fontWeight: 500,
               whiteSpace: 'nowrap',

@@ -73,3 +73,14 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media (max-width: 375px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skill {
+    font-size: 0.78rem;
+    padding: 0.2rem 0.5rem;
+  }
+}

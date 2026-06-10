@@ -237,6 +237,11 @@
   border-color: var(--primary-color);
 }
 
+.filterTagActive:hover {
+  color: white;
+  opacity: 0.9;
+}
+
 /* Project list */
 .projectList {
   display: flex;
@@ -473,5 +478,86 @@
   .projectTag {
     font-size: 0.62rem;
     padding: 0.1rem 0.3rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .layout {
+    padding: 0 0.5rem;
+    margin: 1rem auto 2rem;
+  }
+
+  .heroRow {
+    padding: 0.75rem;
+  }
+
+  .heroRow img {
+    max-width: 80px;
+  }
+
+  .heroName {
+    font-size: 1.35rem;
+  }
+
+  .heroTitle {
+    font-size: 0.9rem;
+  }
+
+  .heroBio {
+    font-size: 0.82rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+  }
+
+  .bottomSection {
+    padding: 0.75rem;
+  }
+
+  .bottomSectionTitle {
+    font-size: 1.1rem;
+  }
+
+  .filterTag {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.45rem;
+  }
+
+  .skillsGrid {
+    gap: 0.3rem;
+  }
+
+  .skillItem {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.35rem;
+  }
+
+  .contactLink {
+    font-size: 0.72rem;
+    padding: 0.3rem 0.35rem;
+  }
+
+  .projectName {
+    font-size: 0.85rem;
+  }
+
+  .projectItem {
+    padding: 0.5rem 0.6rem;
+    gap: 0.3rem;
+  }
+
+  .projectTags {
+    gap: 0.15rem;
+  }
+
+  .projectTag {
+    font-size: 0.58rem;
+    padding: 0.08rem 0.25rem;
+  }
+
+  .cvButton {
+    font-size: 0.82rem;
+    padding: 0.5rem;
   }
 }

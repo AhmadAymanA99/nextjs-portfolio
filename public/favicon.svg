@@ -1,9 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="10" fill="#0d1117"/>
-  <rect x="2" y="2" width="60" height="60" rx="8" fill="none" stroke="#58a6ff" stroke-width="1.5" opacity="0.3"/>
-  <text x="32" y="35" font-family="'SF Mono','Fira Code','Courier New',monospace" font-size="22" font-weight="700" fill="#58a6ff" text-anchor="middle" letter-spacing="1">&gt; AA</text>
-  <text x="46" y="35" font-family="'SF Mono','Fira Code','Courier New',monospace" font-size="22" font-weight="700" fill="#58a6ff" text-anchor="middle">
-    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
-    _
-  </text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#0d1117"/>
+  <text
+    x="9"
+    y="23"
+    text-anchor="middle"
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    font-size="18"
+    font-weight="700"
+    fill="#58a6ff"
+  >A</text>
+  <text
+    x="23"
+    y="23"
+    text-anchor="middle"
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    font-size="18"
+    font-weight="700"
+    fill="#58a6ff"
+    opacity="0.45"
+  >A</text>
 </svg>

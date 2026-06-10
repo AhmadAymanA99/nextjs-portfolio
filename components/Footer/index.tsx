@@ -38,13 +38,6 @@ const Footer = () => {
       <div className={styles.contact}>
         <h3 onClick={handleNameClick}>Ahmad Ayman El-Saeid</h3>
         <p>Cairo, Egypt</p>
-        <p>
-          Phone: <a href="tel:01023874473">01023874473</a> |{' '}
-          <a href="tel:01121805624">01121805624</a>
-        </p>
-        <p>
-          Email: <a href="mailto:ahmadaymana99@gmail.com">ahmadaymana99@gmail.com</a>
-        </p>
         <div className={styles.footerLinks}>
           <Link href="/guestbook" className={styles.guestBtn}>
             Guestbook

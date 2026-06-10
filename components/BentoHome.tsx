@@ -14,7 +14,7 @@ import GitHubActivity from './GitHubActivity'
 import TiltCard from './TiltCard'
 import styles from '../styles/BentoGrid.module.css'
 import utilStyles from '../styles/utils.module.css'
-import { FaEnvelope, FaGithub, FaLinkedin, FaWhatsapp, FaTelegramPlane } from 'react-icons/fa'
+import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa'
 
 const ContactForm = dynamic(() => import('./ContactForm'), { ssr: false })
 
@@ -165,22 +165,7 @@ export default function BentoHome({
               >
                 <FaLinkedin /> LinkedIn
               </a>
-              <a
-                href="https://wa.me/201023874473"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.contactLink}
-              >
-                <FaWhatsapp /> WhatsApp
-              </a>
-              <a
-                href="https://t.me/Ahmad_Ayman99"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.contactLink}
-              >
-                <FaTelegramPlane /> Telegram
-              </a>
+
             </div>
             <NowPlaying />
             <div
@@ -221,7 +206,7 @@ export default function BentoHome({
                 </button>
               ))}
             </div>
-            <StaggerContainer className={styles.projectList}>
+            <StaggerContainer key={activeTag ?? 'all'} className={styles.projectList}>
               {filteredPosts.length === 0 ? (
                 <p className={styles.emptyState}>No projects match this filter.</p>
               ) : (
