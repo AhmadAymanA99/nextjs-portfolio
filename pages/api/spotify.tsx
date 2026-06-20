@@ -28,12 +28,9 @@ export default async function handler(req, res) {
 
     const { access_token } = await tokenRes.json()
 
-    const recentRes = await fetch(
-      'https://api.spotify.com/v1/me/player/recently-played?limit=1',
-      {
-        headers: { Authorization: `Bearer ${access_token}` },
-      },
-    )
+    const recentRes = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=1', {
+      headers: { Authorization: `Bearer ${access_token}` },
+    })
 
     if (!recentRes.ok) {
       return res.status(200).json({ isPlaying: false })

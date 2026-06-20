@@ -165,7 +165,6 @@ export default function BentoHome({
               >
                 <FaLinkedin /> LinkedIn
               </a>
-
             </div>
             <NowPlaying />
             <div
