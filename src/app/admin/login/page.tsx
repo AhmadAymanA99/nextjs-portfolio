@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Spinner from '@/components/ui/Spinner'
+import { TOKEN_KEY } from '@/components/admin/useAdminApi'
+import { setTrackingDisabled } from '@/lib/tracking'
 import styles from './page.module.css'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
@@ -19,21 +21,36 @@ export default function AdminLogin() {
     setError('')
     setLoading(true)
 
-    const res = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    })
+    let res: Response
+    try {
+      res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+    } catch {
+      setLoading(false)
+      setError('Network error. Please try again.')
+      return
+    }
 
     setLoading(false)
 
     if (res.ok) {
       const { token } = await res.json()
-      localStorage.setItem('admin_token', token)
+      localStorage.setItem(TOKEN_KEY, token)
+      // Don't count the owner's own visits from this browser
+      setTrackingDisabled(true)
       setPassword('')
       router.push('/admin/analytics')
     } else {
-      setError('Invalid password')
+      setError(
+        res.status === 429
+          ? 'Too many attempts. Wait a minute and try again.'
+          : res.status === 401
+            ? 'Invalid password'
+            : 'Sign-in failed. Check the server configuration.',
+      )
       setShaking(true)
       setTimeout(() => setShaking(false), 400)
     }

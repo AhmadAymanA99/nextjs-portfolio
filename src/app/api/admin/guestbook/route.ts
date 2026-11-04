@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/server/auth'
+import { readIds, requireAdmin } from '@/lib/server/auth'
 import { ensureDB } from '@/lib/server/db'
 
 export async function GET(req: Request) {
@@ -8,44 +8,57 @@ export async function GET(req: Request) {
   try {
     const sql = await ensureDB()
     const entries = await sql`
-      SELECT id, name, message, website, approved, created_at
+      SELECT id, name, message, website, approved, flagged, created_at
       FROM guestbook_entries
-      ORDER BY created_at DESC
-      LIMIT 200
+      ORDER BY approved ASC, created_at DESC
+      LIMIT 500
     `
     return Response.json({ entries })
   } catch (err) {
     console.error('Admin guestbook error:', err)
-    return Response.json({ error: 'Failed to process request' }, { status: 500 })
+    return Response.json({ error: 'Failed to fetch entries' }, { status: 500 })
   }
 }
 
-async function withEntryId(req: Request, run: (id: number) => Promise<unknown>) {
+/** Body: `{ ids, approved: boolean }` */
+export async function PATCH(req: Request) {
   const denied = requireAdmin(req)
   if (denied) return denied
 
-  const { id } = await req.json().catch(() => ({}))
-  if (!id) return Response.json({ error: 'id is required' }, { status: 400 })
+  const { ids, body } = await readIds(req)
+  if (!ids.length || typeof body.approved !== 'boolean') {
+    return Response.json({ error: 'ids and approved are required' }, { status: 400 })
+  }
 
   try {
-    await run(id)
+    const sql = await ensureDB()
+    // Approving clears the spam flag: the admin has reviewed it.
+    await sql`
+      UPDATE guestbook_entries
+      SET approved = ${body.approved}, flagged = CASE WHEN ${body.approved} THEN false ELSE flagged END
+      WHERE id = ANY(${ids})
+    `
     return Response.json({ success: true })
   } catch (err) {
-    console.error('Admin guestbook error:', err)
-    return Response.json({ error: 'Failed to process request' }, { status: 500 })
+    console.error('Admin guestbook update error:', err)
+    return Response.json({ error: 'Failed to update entries' }, { status: 500 })
   }
 }
 
-export function PUT(req: Request) {
-  return withEntryId(req, async (id) => {
-    const sql = await ensureDB()
-    await sql`UPDATE guestbook_entries SET approved = NOT approved WHERE id = ${id}`
-  })
-}
+/** Body: `{ ids }` */
+export async function DELETE(req: Request) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
 
-export function DELETE(req: Request) {
-  return withEntryId(req, async (id) => {
+  const { ids } = await readIds(req)
+  if (!ids.length) return Response.json({ error: 'ids are required' }, { status: 400 })
+
+  try {
     const sql = await ensureDB()
-    await sql`DELETE FROM guestbook_entries WHERE id = ${id}`
-  })
+    await sql`DELETE FROM guestbook_entries WHERE id = ANY(${ids})`
+    return Response.json({ success: true })
+  } catch (err) {
+    console.error('Admin guestbook delete error:', err)
+    return Response.json({ error: 'Failed to delete entries' }, { status: 500 })
+  }
 }

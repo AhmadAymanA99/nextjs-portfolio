@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { MotionConfig } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext'
+import { isTrackingDisabled } from '@/lib/tracking'
 import SmoothScroll from '@/components/layout/SmoothScroll'
 
 const ParticlesBackground = dynamic(() => import('@/components/layout/ParticlesBackground'), {
@@ -16,15 +17,20 @@ function ShellInner({ children }: { children: ReactNode }) {
   const { theme } = useTheme()
   const pathname = usePathname()
 
+  const isFirstView = useRef(true)
+
   useEffect(() => {
-    fetch('/api/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        path: pathname,
-        referrer: document.referrer || 'direct',
-      }),
-    }).catch(() => {})
+    // document.referrer stays the same across client-side navigations, so only
+    // the landing page gets the external referrer; later views are internal.
+    const referrer = isFirstView.current ? document.referrer || 'direct' : 'internal'
+    isFirstView.current = false
+    if (process.env.NODE_ENV === 'production' && !isTrackingDisabled()) {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: pathname, referrer }),
+      }).catch(() => {})
+    }
     ;(window as any).__lenis?.scrollTo(0, { immediate: true })
   }, [pathname])
 

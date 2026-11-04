@@ -52,3 +52,13 @@ export function requireAdmin(req: Request): Response | null {
   }
   return null
 }
+
+/** Reads `{ ids: number[] }` (or a single `id`) from an admin request body. */
+export async function readIds(
+  req: Request,
+): Promise<{ ids: number[]; body: Record<string, unknown> }> {
+  const body = await req.json().catch(() => ({}))
+  const raw = Array.isArray(body.ids) ? body.ids : body.id != null ? [body.id] : []
+  const ids = raw.map(Number).filter((n: number) => Number.isInteger(n) && n > 0)
+  return { ids, body }
+}

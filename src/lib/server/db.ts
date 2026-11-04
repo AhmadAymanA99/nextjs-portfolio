@@ -49,6 +49,10 @@ export async function ensureDB() {
       approved BOOLEAN DEFAULT false,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )`
+    // Columns added after the tables first shipped
+    await db`ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false`
+    await db`ALTER TABLE guestbook_entries ADD COLUMN IF NOT EXISTS flagged BOOLEAN DEFAULT false`
+    await db`CREATE INDEX IF NOT EXISTS page_views_timestamp_idx ON page_views (timestamp)`
     return db
   })()
   return await initPromise

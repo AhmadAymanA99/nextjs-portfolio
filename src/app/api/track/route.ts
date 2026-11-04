@@ -2,14 +2,20 @@ import geoip from 'geoip-lite'
 import { UAParser } from 'ua-parser-js'
 import sql, { ensureDB } from '@/lib/server/db'
 import { getClientIp } from '@/lib/server/rateLimit'
+import { isAutomated, isTrackablePath } from '@/lib/server/analytics'
 
 export async function POST(req: Request) {
   try {
+    const { path, referrer } = await req.json()
+    const userAgent = req.headers.get('user-agent') || ''
+
+    if (!isTrackablePath(path) || isAutomated(userAgent)) {
+      return new Response(null, { status: 204 })
+    }
+
     await ensureDB()
 
-    const { path, referrer } = await req.json()
     const ip = getClientIp(req)
-    const userAgent = req.headers.get('user-agent') || ''
     const country = req.headers.get('x-vercel-ip-country') || geoip.lookup(ip)?.country || 'Unknown'
     const ua = new UAParser(userAgent).getResult()
 

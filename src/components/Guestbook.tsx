@@ -27,6 +27,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [token, setToken] = useState('')
+  const [company, setCompany] = useState('')
 
   useEffect(() => {
     if (success) {
@@ -39,7 +40,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
     e.preventDefault()
     setError('')
 
-    if (!token) {
+    if (SITE_KEY && !token) {
       setError('Please complete the security check')
       return
     }
@@ -62,6 +63,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           name: trimmedName,
           message: trimmedMessage,
           website: website.trim(),
+          company,
           turnstileToken: token,
         }),
       })
@@ -115,6 +117,17 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           disabled={loading}
           aria-label="Website"
         />
+        {/* Honeypot: hidden from people, filled in by bots */}
+        <input
+          type="text"
+          name="company"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+        />
         <textarea
           className={styles.textarea}
           placeholder="Your message *"
@@ -134,7 +147,11 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
             options={{ size: 'normal', theme: theme === 'dark' ? 'dark' : 'light' }}
           />
         )}
-        <button className={styles.submitBtn} type="submit" disabled={loading || !token}>
+        <button
+          className={styles.submitBtn}
+          type="submit"
+          disabled={loading || (!!SITE_KEY && !token)}
+        >
           {loading ? (
             <>
               <Spinner size={16} /> Submitting...

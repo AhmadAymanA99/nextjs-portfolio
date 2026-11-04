@@ -18,7 +18,7 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!token) {
+    if (SITE_KEY && !token) {
       setStatus('error: Please complete the security check')
       return
     }
@@ -118,7 +118,11 @@ export default function ContactForm() {
               options={{ size: 'normal', theme: theme === 'dark' ? 'dark' : 'light' }}
             />
           )}
-          <button type="submit" disabled={status === 'sending' || !token} className={styles.button}>
+          <button
+            type="submit"
+            disabled={status === 'sending' || (!!SITE_KEY && !token)}
+            className={styles.button}
+          >
             {status === 'sending' ? (
               <>
                 <Spinner size={16} /> Sending...
