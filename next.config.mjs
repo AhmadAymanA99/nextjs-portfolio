@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // geoip-lite reads its data files relative to its own install path
+  serverExternalPackages: ['geoip-lite'],
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

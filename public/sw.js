@@ -1,4 +1,4 @@
-const CACHE = 'portfolio-v3'
+const CACHE = 'portfolio-v4'
 
 const STATIC_EXT = /\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot|json)$/
 
