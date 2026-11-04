@@ -1,18 +1,22 @@
 export const skillCategories = [
   {
     title: 'Frontend',
-    skills: ['React', 'Next.js', 'JavaScript', 'TypeScript', 'HTML/CSS', 'Tailwind CSS'],
+    skills: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Redux Toolkit', 'Tailwind CSS'],
   },
   {
-    title: 'Backend',
-    skills: ['.NET Core', 'Node.js', 'REST APIs', 'PostgreSQL', 'SQL Server'],
+    title: 'Mobile',
+    skills: ['React Native', 'Expo', 'Zustand', 'TanStack Query', 'Reanimated', 'HyperPay'],
   },
   {
-    title: 'Tools & Platforms',
-    skills: ['Git', 'Docker', 'Azure', 'Vercel', 'CI/CD', 'Agile/Scrum'],
+    title: 'Backend & APIs',
+    skills: ['Node.js', '.NET Core', 'FastAPI', 'FastMCP', 'GraphQL', 'PostgreSQL'],
+  },
+  {
+    title: 'Testing & Tooling',
+    skills: ['Jest', 'Vitest', 'Playwright', 'Storybook', 'GitHub Actions', 'Vercel'],
   },
   {
     title: 'Domains',
-    skills: ['Healthcare', 'E-Learning', 'Business Management', 'Facility Management', 'Logistics'],
+    skills: ['Travel', 'Healthcare', 'E-Learning', 'E-Commerce', 'Government', 'Arabic/RTL i18n'],
   },
 ]

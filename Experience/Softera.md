@@ -1,23 +1,26 @@
 ---
 title: 'Softera'
 date: '2024-09-01'
-till: 'now'
+till: '2026-07-31'
 ---
 
 ## Location:
 Remote
 
 ### Responsibilities:
-#### Contributed to high-impact healthcare and educational platforms:
-• **Awafi Clinic**: A Saudi platform for remote psychological care - delivered modules including user authentication, scheduling/booking workflows, Arabic-digit localization (RTL support), and secure data handling for sensitive healthcare content.
+#### Built healthcare and e-learning web platforms:
+• Developed healthcare and e-learning web platforms with React and Next.js, delivering key modules for authentication, appointment scheduling, and course management.
 
-• **Sakenah Academy**: A training & educational platform in mental health/psychology - contributed to development and support of the platform.
+• Built bilingual Arabic/English interfaces with full RTL support and reusable component architecture.
+
+• **Awafi Clinic**: A Saudi remote mental-health and family-medicine platform - built appointment booking, patient workflows, and validated healthcare forms with full Arabic/English RTL support.
+
+• **Sakenah Academy**: A mental-health training platform - built a reusable course architecture, integrated REST APIs, optimized SEO and performance, and exposed platform APIs as tools with FastMCP.
 
 #### Production deployment and maintenance:
-• Played a role in deploying and maintaining production releases, monitoring analytics/bugs, and ensuring continuous delivery in a live environment.
+• Deployed and maintained production releases, monitored analytics, and resolved bugs, applying secure handling of sensitive health data.
 
 ### Our Products:
 • [Awafi Clinic](https://awaficlinic.com/)
 
 • [Sakenah Academy](https://sakenah.com/)
-

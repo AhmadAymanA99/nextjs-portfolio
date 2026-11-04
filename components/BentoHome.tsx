@@ -27,6 +27,13 @@ const skillIcons = {
   TypeScript: 'TS',
   'HTML/CSS': '#',
   'Tailwind CSS': '🌊',
+  'Redux Toolkit': '🧩',
+  'React Native': '📱',
+  Expo: '📲',
+  Zustand: '🐻',
+  'TanStack Query': '🔁',
+  Reanimated: '✨',
+  HyperPay: '💳',
   '.NET Core': 'C#',
   'Node.js': '🌿',
   'REST APIs': '🔗',
@@ -81,15 +88,16 @@ export default function BentoHome({
             <div className={styles.heroContent}>
               <h1 className={styles.heroName}>{name}</h1>
               <p className={styles.heroTitle}>
-                Software Engineer{' '}
+                Frontend & Mobile Engineer{' '}
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                  (React.js / Next.js)
+                  (React / React Native / Next.js)
                 </span>
               </p>
               <p className={styles.heroBio}>
-                Building scalable, performant web applications with modern JavaScript. Focused on
-                creating exceptional user experiences through clean architecture and thoughtful
-                design.
+                6 years building React, Next.js, and React Native apps for travel, healthcare,
+                e-commerce, and government platforms across the MENA region. Shipped bilingual
+                Arabic/English RTL interfaces, a government service used by 3M+ people, and
+                enterprise apps serving 600K+ users.
               </p>
               <a href={cvUrl} className={styles.cvButton} download>
                 <span>↓</span> Download CV

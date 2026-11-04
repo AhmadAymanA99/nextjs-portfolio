@@ -6,7 +6,7 @@ export interface FAQItem {
 export const faqData: FAQItem[] = [
   {
     q: 'What technologies do you work with?',
-    a: 'I specialize in React, Next.js, TypeScript, and Node.js for full-stack development. I also work with .NET Core, PostgreSQL, Tailwind CSS, and various cloud platforms.',
+    a: 'I specialize in React, Next.js, React Native (Expo), and TypeScript for web and mobile apps, including bilingual Arabic/English RTL interfaces. I am also comfortable across the stack with Node.js, .NET Core, FastAPI, and PostgreSQL.',
   },
   {
     q: 'Are you available for freelance work?',

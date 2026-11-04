@@ -14,15 +14,15 @@ const geist = Geist({
 const siteUrl = 'https://ahmad-ayman.vercel.app'
 
 export const metadata = {
-  title: 'Ahmad Ayman — React & Next.js Engineer',
+  title: 'Ahmad Ayman — Frontend & Mobile Engineer',
   description:
-    'Senior React & Next.js engineer who ships performant, accessible web apps used by thousands. Specializing in modern TypeScript, scalable architecture, and delightful user experiences.',
+    'Frontend and mobile engineer with 6 years of experience building React, Next.js, React Native, and TypeScript apps for travel, healthcare, e-commerce, and government platforms across the MENA region.',
   icons: { icon: '/favicon.svg?v=2' },
   manifest: '/manifest.json',
   openGraph: {
-    title: 'Ahmad Ayman — React & Next.js Engineer',
+    title: 'Ahmad Ayman — Frontend & Mobile Engineer',
     description:
-      'Senior React & Next.js engineer who ships performant, accessible web apps used by thousands. Specializing in modern TypeScript, scalable architecture, and delightful user experiences.',
+      'Frontend and mobile engineer with 6 years of experience building React, Next.js, React Native, and TypeScript apps for travel, healthcare, e-commerce, and government platforms across the MENA region.',
     url: siteUrl,
     siteName: 'Ahmad Ayman',
     locale: 'en_US',
@@ -31,9 +31,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ahmad Ayman — React & Next.js Engineer',
+    title: 'Ahmad Ayman — Frontend & Mobile Engineer',
     description:
-      'Senior React & Next.js engineer who ships performant, accessible web apps used by thousands. Specializing in modern TypeScript, scalable architecture, and delightful user experiences.',
+      'Frontend and mobile engineer with 6 years of experience building React, Next.js, React Native, and TypeScript apps for travel, healthcare, e-commerce, and government platforms across the MENA region.',
     images: [`${siteUrl}/images/og-card.png`],
   },
   other: {

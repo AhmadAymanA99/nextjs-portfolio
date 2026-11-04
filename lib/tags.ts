@@ -1,7 +1,8 @@
 export const postTags = {
+  rehlte: ['React Native', 'Expo', 'Mobile', 'Travel', 'RTL'],
   'awafi-clinic': ['Next.js', 'React', 'Healthcare', 'SaaS', 'RTL'],
   'awn-app': ['Next.js', 'React', 'Mobile', 'SaaS'],
-  AlFagala: ['Next.js', 'Dashboard', 'Data Visualization', 'SaaS'],
+  AlFagala: ['Next.js', 'React', 'E-Commerce', 'SEO'],
   'covid-dashboard': ['Next.js', 'React', 'Data Visualization', 'Dashboard', 'SaaS'],
   kptc: ['.NET', 'Enterprise', 'Dashboard', 'SaaS'],
   'portfolio-website': ['Next.js', 'Portfolio', 'Full-Stack'],
@@ -13,10 +14,11 @@ export const postTags = {
 }
 
 export const experienceTags = {
-  Softera: ['React', 'Next.js', 'Healthcare', 'E-Learning', 'SaaS'],
-  Vidills: ['React', 'Enterprise'],
+  BisanTravel: ['React Native', 'Expo', 'Mobile', 'Travel', 'RTL'],
+  Softera: ['React', 'Next.js', 'Healthcare', 'E-Learning', 'RTL'],
+  Vidills: ['React', 'Redux', 'GraphQL', 'Enterprise'],
   Procoor: ['.NET', 'React', 'Facility Management', 'Enterprise'],
-  MilitaryRecords: ['.NET', 'Government', 'Legacy'],
+  MilitaryRecords: ['.NET', 'Government'],
 }
 
 export function getAllTags(): string[] {

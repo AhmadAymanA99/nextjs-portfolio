@@ -16,13 +16,13 @@ export default function Layout({ children, home }: { children: React.ReactNode; 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           name="description"
-          content="Software Engineer specializing in React, Next.js, and full-stack development"
+          content="Frontend & Mobile Engineer specializing in React, React Native, Next.js, and TypeScript"
         />
         <meta property="og:image" content="https://ahmad-ayman.vercel.app/images/profile.png" />
         <meta property="og:title" content={siteTitle} />
         <meta
           property="og:description"
-          content="Software Engineer specializing in React, Next.js, and full-stack development"
+          content="Frontend & Mobile Engineer specializing in React, React Native, Next.js, and TypeScript"
         />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
