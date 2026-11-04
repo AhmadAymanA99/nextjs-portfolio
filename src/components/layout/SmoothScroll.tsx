@@ -34,6 +34,8 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
+      // Smooth-scroll in-page links such as the hero's #contact button
+      anchors: true,
     })
     ;(window as any).__lenis = lenis
 

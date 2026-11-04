@@ -34,8 +34,21 @@ export default function GitHubActivity() {
       .catch(() => setLoaded(true))
   }, [])
 
+  // Nothing to show: hide the whole block rather than an empty state
+  if (loaded && activities.length === 0) return null
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', overflow: 'hidden' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem',
+        overflow: 'hidden',
+        marginTop: '0.75rem',
+        paddingTop: '0.75rem',
+        borderTop: '1px solid var(--border-color)',
+      }}
+    >
       <div
         style={{
           display: 'flex',
@@ -56,10 +69,6 @@ export default function GitHubActivity() {
           <span className={utilStyles.skeleton} style={{ width: '85%', height: 14 }} />
           <span className={utilStyles.skeleton} style={{ width: '70%', height: 14 }} />
         </div>
-      ) : activities.length === 0 ? (
-        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-          No recent public activity
-        </span>
       ) : (
         activities.map((a, i) => {
           const Icon = iconMap[a.type] || VscGitCommit

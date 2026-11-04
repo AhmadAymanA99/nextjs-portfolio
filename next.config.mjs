@@ -5,10 +5,15 @@ const nextConfig = {
   serverExternalPackages: ['geoip-lite'],
   images: {
     formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
-      { protocol: 'https', hostname: 'i.scdn.co' },
-    ],
+    remotePatterns: [{ protocol: 'https', hostname: 'i.scdn.co' }],
   },
+  // Removed projects: send old links and search results to the home page
+  redirects: async () =>
+    ['awn-app', 'covid-dashboard', 'would-you-rather', 'portfolio-website'].map((id) => ({
+      source: `/posts/${id}`,
+      destination: '/',
+      permanent: true,
+    })),
   headers: async () => [
     {
       source: '/(.*)',

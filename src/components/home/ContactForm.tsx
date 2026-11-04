@@ -53,7 +53,7 @@ export default function ContactForm() {
   }
 
   return (
-    <section className={styles.section}>
+    <section id="contact" className={styles.section}>
       <h2 className={styles.title}>Get in Touch</h2>
       {status === 'success' ? (
         <div className={styles.success}>

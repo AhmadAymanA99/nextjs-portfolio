@@ -12,6 +12,7 @@ import { StaggerContainer, StaggerItem } from '@/components/ui/StaggerContainer'
 import NowPlaying from './NowPlaying'
 import GitHubActivity from './GitHubActivity'
 import TiltCard from '@/components/ui/TiltCard'
+import SkillIcon from './SkillIcon'
 import styles from './BentoHome.module.css'
 import utilStyles from '@/styles/utils.module.css'
 import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa'
@@ -19,33 +20,6 @@ import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa'
 const ContactForm = dynamic(() => import('./ContactForm'), { ssr: false })
 
 const name = 'Ahmad Ayman'
-
-const skillIcons = {
-  React: '⚛️',
-  'Next.js': '▲',
-  JavaScript: 'JS',
-  TypeScript: 'TS',
-  'HTML/CSS': '#',
-  'Tailwind CSS': '🌊',
-  'Redux Toolkit': '🧩',
-  'React Native': '📱',
-  Expo: '📲',
-  Zustand: '🐻',
-  'TanStack Query': '🔁',
-  Reanimated: '✨',
-  HyperPay: '💳',
-  '.NET Core': 'C#',
-  'Node.js': '🌿',
-  'REST APIs': '🔗',
-  PostgreSQL: '🐘',
-  'SQL Server': '🗄️',
-  Git: '🔀',
-  Docker: '🐳',
-  Azure: '☁️',
-  Vercel: '▲',
-  'CI/CD': '🔄',
-  'Agile/Scrum': '📋',
-}
 
 export default function BentoHome({
   allPostsData,
@@ -99,9 +73,18 @@ export default function BentoHome({
                 Arabic/English RTL interfaces, a government service used by 3M+ people, and
                 enterprise apps serving 600K+ users.
               </p>
-              <a href={cvUrl} className={styles.cvButton} download>
-                <span>↓</span> Download CV
-              </a>
+              <p className={styles.availability}>
+                <span className={styles.availabilityDot} aria-hidden />
+                Open to remote roles & freelance · Cairo, Egypt (GMT+2)
+              </p>
+              <div className={styles.heroActions}>
+                <a href="#contact" className={`${styles.cvButton} ${styles.ctaPrimary}`}>
+                  Contact me
+                </a>
+                <a href={cvUrl} className={styles.cvButton} download>
+                  <span>↓</span> Download CV
+                </a>
+              </div>
             </div>
           </TiltCard>
         </Reveal>
@@ -141,7 +124,7 @@ export default function BentoHome({
             <div className={styles.skillsGrid}>
               {allSkills.slice(0, 12).map((skill) => (
                 <span key={skill} className={styles.skillItem}>
-                  <span className={styles.skillIcon}>{skillIcons[skill] || '▹'}</span>
+                  <SkillIcon skill={skill} />
                   {skill}
                 </span>
               ))}
@@ -163,7 +146,7 @@ export default function BentoHome({
                 rel="noopener noreferrer"
                 className={styles.contactLink}
               >
-                <FaGithub /> GitHub
+                <FaGithub /> GitHub <span className={styles.contactHandle}>@AhmadAymanA99</span>
               </a>
               <a
                 href="https://linkedin.com/in/ahmadaymana99"
@@ -171,19 +154,11 @@ export default function BentoHome({
                 rel="noopener noreferrer"
                 className={styles.contactLink}
               >
-                <FaLinkedin /> LinkedIn
+                <FaLinkedin /> LinkedIn <span className={styles.contactHandle}>@ahmadaymana99</span>
               </a>
             </div>
             <NowPlaying />
-            <div
-              style={{
-                marginTop: '0.75rem',
-                paddingTop: '0.75rem',
-                borderTop: '1px solid var(--border-color)',
-              }}
-            >
-              <GitHubActivity />
-            </div>
+            <GitHubActivity />
           </TiltCard>
         </Reveal>
 
