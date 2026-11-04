@@ -17,7 +17,12 @@ function sql(strings: TemplateStringsArray, ...values: unknown[]) {
   return q
 }
 
-vi.mock('@/lib/server/db', () => ({ default: sql, ensureDB: async () => sql }))
+vi.mock('@/lib/server/db', () => ({
+  default: sql,
+  ensureDB: async () => sql,
+  batch: (queries: unknown[]) => Promise.all(queries),
+  isConnectionError: () => false,
+}))
 process.env.ADMIN_SECRET = 'secret'
 
 const UA_HUMAN =

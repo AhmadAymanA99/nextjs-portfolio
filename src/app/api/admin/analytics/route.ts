@@ -1,5 +1,5 @@
 import { requireAdmin } from '@/lib/server/auth'
-import sql, { ensureDB } from '@/lib/server/db'
+import sql, { batch, ensureDB, isConnectionError } from '@/lib/server/db'
 import { describeAgent, humanViews, inRange, maskIP, parseDays } from '@/lib/server/pageViews'
 import { siteUrl } from '@/lib/site'
 
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     const chartDays = days ?? 90
 
     const [[totals], [prevTotals], [bots], devices, daily, topPages, referrers, countries, recent] =
-      await Promise.all([
+      await batch<Record<string, any>[][]>([
         sql`SELECT COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
           FROM page_views WHERE ${current}`,
         sql`SELECT COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
@@ -91,6 +91,12 @@ export async function GET(req: Request) {
     })
   } catch (error) {
     console.error('Analytics error:', error)
-    return Response.json({ error: 'Internal server error' }, { status: 500 })
+    if (isConnectionError(error)) {
+      return Response.json(
+        { error: "Couldn't reach the database. Check your connection and try again." },
+        { status: 503 },
+      )
+    }
+    return Response.json({ error: 'Failed to load analytics' }, { status: 500 })
   }
 }

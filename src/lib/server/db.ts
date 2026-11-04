@@ -1,4 +1,4 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless'
+import { neon, type NeonQueryFunction, type NeonQueryPromise } from '@neondatabase/serverless'
 
 let sql: NeonQueryFunction<false, false> | null = null
 
@@ -60,4 +60,26 @@ export async function ensureDB() {
 
 export default function query(strings: TemplateStringsArray, ...values: unknown[]) {
   return getSql()(strings, ...values)
+}
+
+/** True when the database could not be reached (as opposed to a SQL error). */
+export function isConnectionError(err: unknown) {
+  const msg = String((err as Error)?.message ?? err)
+  return /fetch failed|Error connecting|ETIMEDOUT|ECONNRESET|ENOTFOUND/i.test(msg)
+}
+
+/**
+ * Runs read queries in a single HTTP round trip (Neon's HTTP driver otherwise
+ * sends one request per query), retrying once if the network drops.
+ */
+export async function batch<T extends unknown[]>(
+  queries: NeonQueryPromise<false, false>[],
+): Promise<T> {
+  const run = () => getSql().transaction(queries, { readOnly: true }) as Promise<T>
+  try {
+    return await run()
+  } catch (err) {
+    if (!isConnectionError(err)) throw err
+    return await run()
+  }
 }
