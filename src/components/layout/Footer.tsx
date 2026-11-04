@@ -36,7 +36,7 @@ const Footer = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.contact}>
-        <h3 onClick={handleNameClick}>Ahmad Ayman El-Saeid</h3>
+        <h3 onClick={handleNameClick}>Ahmad Ayman Elsaeid</h3>
         <p>Cairo, Egypt</p>
         <div className={styles.footerLinks}>
           <Link href="/guestbook" className={styles.guestBtn}>
@@ -107,11 +107,9 @@ const Footer = () => {
       </div>
       <div className={styles.objective}>
         <p>
-          Dedicated and experienced Software Engineer specializing in front-end development with a
-          strong background in business management and delivery management applications. Proficient
-          in React.js, JavaScript, and .NET Core, with a focus on scalability, usability, and
-          performance. Seeking opportunities to leverage expertise in a dynamic and collaborative
-          environment.
+          Frontend and mobile engineer building React, Next.js, and React Native apps with bilingual
+          Arabic/English RTL support. Focused on performance, SEO, and maintainable component
+          architecture.
         </p>
       </div>
       <button className={styles.themeToggle} onClick={toggleTheme}>

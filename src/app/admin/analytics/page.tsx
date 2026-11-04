@@ -68,11 +68,15 @@ export default function AdminDashboard() {
     <main id="main-content" className={styles.container}>
       <header className={styles.header}>
         <h1>Dashboard</h1>
-        <Link href="/" className={styles.button}>
-          <FaExternalLinkAlt aria-hidden /> View site
+        <Link href="/" className={styles.button} aria-label="View site">
+          <FaExternalLinkAlt aria-hidden /> <span className={styles.buttonText}>View site</span>
         </Link>
-        <button className={`${styles.button} ${styles.buttonDanger}`} onClick={logout}>
-          <FaSignOutAlt aria-hidden /> Log out
+        <button
+          className={`${styles.button} ${styles.buttonDanger}`}
+          onClick={logout}
+          aria-label="Log out"
+        >
+          <FaSignOutAlt aria-hidden /> <span className={styles.buttonText}>Log out</span>
         </button>
       </header>
 

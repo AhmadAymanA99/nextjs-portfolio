@@ -3,21 +3,11 @@
 import { type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 
-const containerVariants = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.07 },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
-  },
-}
+// Each item observes its own visibility and is delayed by its position, rather
+// than relying on variant propagation from the container (which left items
+// stuck at opacity 0 when nested inside another whileInView element).
+const STAGGER = 0.06
+const MAX_DELAY = 0.5
 
 export function StaggerContainer({
   children,
@@ -26,22 +16,30 @@ export function StaggerContainer({
   children: ReactNode
   className?: string
 }) {
-  return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ margin: '-40px' }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  )
+  return <div className={className}>{children}</div>
 }
 
-export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
+export function StaggerItem({
+  children,
+  className,
+  index = 0,
+}: {
+  children: ReactNode
+  className?: string
+  index?: number
+}) {
   return (
-    <motion.div variants={itemVariants} className={className}>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{
+        duration: 0.4,
+        delay: Math.min(index * STAGGER, MAX_DELAY),
+        ease: [0.25, 0.46, 0.45, 0.94] as const,
+      }}
+      className={className}
+    >
       {children}
     </motion.div>
   )

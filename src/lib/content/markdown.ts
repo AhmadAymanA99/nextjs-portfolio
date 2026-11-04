@@ -19,3 +19,8 @@ export function extractHeadings(md: string) {
   }
   return headings
 }
+
+/** Content files write lists as "• item" lines; turn them into real markdown list items. */
+export function normalizeBullets(md: string) {
+  return md.replace(/^[ \t]*•[ \t]*/gm, '- ')
+}

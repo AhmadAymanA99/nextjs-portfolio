@@ -6,7 +6,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeStringify from 'rehype-stringify'
 import rehypeSlug from 'rehype-slug'
-import { extractHeadings } from './markdown'
+import { extractHeadings, normalizeBullets } from './markdown'
 import { experienceTags } from './tags'
 
 const experienceDirectory = path.join(process.cwd(), 'content', 'experience')
@@ -74,7 +74,7 @@ export async function getExperienceData(id: string) {
     .use(rehypeHighlight)
     .use(rehypeSlug)
     .use(rehypeStringify)
-    .process(matterResult.content)
+    .process(normalizeBullets(matterResult.content))
   const contentHtml = processedContent.toString()
 
   // Combine the data with the id and contentHtml

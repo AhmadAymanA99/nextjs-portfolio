@@ -115,7 +115,7 @@ export default function ContactForm() {
               siteKey={SITE_KEY}
               onSuccess={setToken}
               onError={() => setToken('')}
-              options={{ size: 'normal', theme: theme === 'dark' ? 'dark' : 'light' }}
+              options={{ size: 'flexible', theme: theme === 'dark' ? 'dark' : 'light' }}
             />
           )}
           <button

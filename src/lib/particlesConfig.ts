@@ -4,12 +4,13 @@ export default function particlesConfig(theme: string | null): ISourceOptions {
   const isDark = theme === 'dark'
 
   return {
-    background: {
-      color: { value: isDark ? '#0d1117' : '#00a' },
-      opacity: 0.2,
-    },
+    // The app shell sits above this (z-index 1), so cards cover the particles
+    fullScreen: { enable: true, zIndex: 0 },
+    background: { color: { value: 'transparent' } },
     fpsLimit: 60,
     interactivity: {
+      // The canvas is behind the page, so listen for the pointer on the window
+      detectsOn: 'window',
       events: {
         onClick: { enable: false, mode: 'push' },
         onHover: { enable: true, mode: 'repulse' },

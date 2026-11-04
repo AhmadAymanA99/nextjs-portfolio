@@ -41,11 +41,11 @@ function ShellInner({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <div style={{ position: 'relative', overflowX: 'hidden' }}>
+    <div style={{ position: 'relative', zIndex: 1, overflowX: 'hidden' }}>
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      <ParticlesBackground theme={theme} />
+      {!pathname.startsWith('/admin') && <ParticlesBackground theme={theme} />}
       <MotionConfig reducedMotion="user">
         <SmoothScroll>{children}</SmoothScroll>
       </MotionConfig>

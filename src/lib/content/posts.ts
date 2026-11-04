@@ -6,7 +6,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeStringify from 'rehype-stringify'
 import rehypeSlug from 'rehype-slug'
-import { extractHeadings } from './markdown'
+import { extractHeadings, normalizeBullets } from './markdown'
 import { postTags } from './tags'
 
 let componentCounter = 0
@@ -123,7 +123,7 @@ export async function getPostData(id: string) {
 
   const headings = extractHeadings(matterResult.content)
 
-  const processedContent = processCustomComponents(matterResult.content)
+  const processedContent = processCustomComponents(normalizeBullets(matterResult.content))
 
   const contentHtml = await remark()
     .use(remarkRehype)

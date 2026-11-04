@@ -217,8 +217,8 @@ export default function BentoHome({
               {filteredPosts.length === 0 ? (
                 <p className={styles.emptyState}>No projects match this filter.</p>
               ) : (
-                filteredPosts.map((post) => (
-                  <StaggerItem key={post.id}>
+                filteredPosts.map((post, i) => (
+                  <StaggerItem key={post.id} index={i}>
                     <Link href={`/posts/${post.id}`} className={styles.projectItem}>
                       <div className={styles.projectItemLeft}>
                         <span className={styles.projectName}>{post.title}</span>

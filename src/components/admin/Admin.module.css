@@ -122,9 +122,10 @@
 
 .segmented {
   display: inline-flex;
+  max-width: 100%;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .segmented button {
@@ -136,6 +137,7 @@
   font-size: 0.85rem;
   color: var(--text-secondary);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .segmented button:last-child {
@@ -574,6 +576,14 @@
 }
 
 @media (max-width: 480px) {
+  .buttonText {
+    display: none;
+  }
+
+  .tab {
+    padding: 0.6rem 0.7rem;
+  }
+
   .statValue {
     font-size: 1.3rem;
   }
