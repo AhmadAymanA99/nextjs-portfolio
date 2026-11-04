@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -21,6 +21,19 @@ const ContactForm = dynamic(() => import('./ContactForm'), { ssr: false })
 
 const name = 'Ahmad Ayman'
 
+/** Cairo's current UTC offset: GMT+2, or GMT+3 during Egyptian summer time. */
+function getCairoOffset() {
+  try {
+    return (
+      new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Cairo', timeZoneName: 'shortOffset' })
+        .formatToParts(new Date())
+        .find((p) => p.type === 'timeZoneName')?.value ?? 'GMT+2'
+    )
+  } catch {
+    return 'GMT+2'
+  }
+}
+
 export default function BentoHome({
   allPostsData,
   allExperiencesData,
@@ -29,6 +42,9 @@ export default function BentoHome({
   skillCategories,
 }) {
   const [activeTag, setActiveTag] = useState(null)
+  // The page is statically rendered, so refresh the offset in the browser
+  const [cairoOffset, setCairoOffset] = useState(getCairoOffset)
+  useEffect(() => setCairoOffset(getCairoOffset()), [])
 
   const filteredPosts = activeTag
     ? allPostsData.filter((p) => p.tags?.includes(activeTag))
@@ -75,7 +91,7 @@ export default function BentoHome({
               </p>
               <p className={styles.availability}>
                 <span className={styles.availabilityDot} aria-hidden />
-                Open to remote roles & freelance · Cairo, Egypt (GMT+2)
+                Open to remote roles & freelance · Cairo, Egypt ({cairoOffset})
               </p>
               <div className={styles.heroActions}>
                 <a href="#contact" className={`${styles.cvButton} ${styles.ctaPrimary}`}>
