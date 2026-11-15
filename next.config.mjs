@@ -8,12 +8,19 @@ const nextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: 'i.scdn.co' }],
   },
   // Removed projects: send old links and search results to the home page
-  redirects: async () =>
-    ['awn-app', 'covid-dashboard', 'would-you-rather', 'portfolio-website'].map((id) => ({
+  redirects: async () => [
+    ...['awn-app', 'covid-dashboard', 'would-you-rather', 'portfolio-website'].map((id) => ({
       source: `/posts/${id}`,
       destination: '/',
       permanent: true,
     })),
+    // Procoor PM and FM were merged into one case study
+    ...['procoor-pm', 'procoor-fm'].map((id) => ({
+      source: `/posts/${id}`,
+      destination: '/posts/procoor',
+      permanent: true,
+    })),
+  ],
   headers: async () => [
     {
       source: '/(.*)',

@@ -372,6 +372,37 @@
   color: var(--text-secondary);
 }
 
+.projectSummary {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+
+.projectThumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 96px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.projectThumbImg {
+  object-fit: cover;
+  object-position: top;
+}
+
+.projectThumbInitial {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
 .projectTags {
   display: flex;
   gap: 0.3rem;
@@ -645,5 +676,23 @@
   .cvButton {
     font-size: 0.82rem;
     padding: 0.5rem;
+  }
+}
+
+/* Project rows keep the thumbnail beside the text on small screens; tags wrap below */
+@media (max-width: 768px) {
+  .projectCase {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .projectCase .projectTags {
+    flex-basis: 100%;
+  }
+
+  .projectThumb {
+    width: 72px;
+    height: 45px;
   }
 }

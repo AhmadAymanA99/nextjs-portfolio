@@ -16,9 +16,7 @@ Cairo, Egypt
 • Helped move the team to Agile workflows, cutting delivery cycle time by 50% and raising completion rates by 80%.
 
 ### Our Products:
-• [Procoor PM](https://www.procoor.com/pm)
-
-• [Procoor FM](https://www.procoor.com/fm)
+• [Procoor PM & FM](/posts/procoor)
 
 ### Website:
 [Procoor Site](https://www.procoor.com/)

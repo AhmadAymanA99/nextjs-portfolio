@@ -17,15 +17,19 @@ Phases are ordered by impact. Tick items off as they ship.
 Decisions:
 - Sakenah Academy metrics (10K+ users, 50+ courses, 99.9% uptime) are kept as accurate.
 
-## Phase 2 — Make projects sell (≈1 week, biggest impact)
+## Phase 2 — Make projects sell ✅ (2026-11-15)
 
-Rework the top 4–5 projects into short case studies. Needs your input: screenshots and real numbers.
+Every project is now a case study with the same structure.
 
-- [ ] Pick the projects (suggested: Rehlte, Awafi Clinic, Sakenah Academy, Al Fagala, Procoor)
-- [ ] For each: **Problem** → **Your role** (what you owned, the hard parts) → **Result** (numbers where possible)
-- [ ] 2–3 screenshots or a short screen recording per project (the page already has a lightbox; see `src/lib/content/screenshots.ts`)
-- [ ] Thumbnails in the home page project list
-- [ ] Rewrite generic intros (e.g. TryGrip, KPTC)
+- [x] Same structure for all projects: summary, role, company, platform, stack, metrics, live link, then **The problem** → **What I did** → **The result**
+- [x] Merge Procoor PM and FM into one case study (`/posts/procoor`; old URLs redirect)
+- [x] Fresh desktop + mobile screenshots of the live sites, as WebP (replaces 62 MB of full-page PNGs)
+- [x] Thumbnails and one-line summaries in the home page project list
+- [x] Rewrite generic intros (TryGrip is a QR digital menu; KPTC is Kuwait Public Transport Company)
+- [x] Fix: metric cards, callouts and tech badges were silently stripped by the Markdown pipeline; they are now frontmatter rendered by React
+- [x] Review drafts and fill gaps (Al Fagala is freelance; KPTC covers both apps)
+
+Open: none. Swap Rehlte's website screenshots for app screens at launch, and add result numbers whenever they become available.
 
 ## Phase 3 — Show the differentiator (1–2 weeks)
 

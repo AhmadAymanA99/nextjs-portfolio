@@ -1,18 +1,32 @@
 ---
 title: 'Rehlte'
 date: '2026-10-01'
+summary: 'Bilingual hotel-booking app for iOS and Android with 3-D Secure card payments.'
+company: 'Bisan Travel'
+role: 'Mobile developer'
+platform: 'iOS & Android'
+status: 'In QA, launching soon'
+stack: ['React Native', 'Expo', 'Expo Router', 'TypeScript', 'Zustand', 'TanStack Query', 'Reanimated']
+link: 'https://rehlte.com/'
+screenshots:
+  - '/images/projects/rehlte-desktop.webp'
+  - '/images/projects/rehlte-mobile.webp'
 ---
 
-## Introduction:
-Rehlte is a bilingual (English/Arabic RTL) hotel-booking mobile app for iOS and Android, with secure in-app payments, trip management, and user accounts. It is currently in QA ahead of launch.
+## The problem
 
-### My Contribution:
-As part of the Bisan Travel team, I own the payment, booking-management, and account modules:
-• Card payments with 3-D Secure through HyperPay
-• OTP-based verification and Google Sign-In
-• Booking and trip management
-• Full English/Arabic RTL support
-• Android performance and stability improvements
+Bisan Travel needed a hotel-booking app that feels native to travellers in both English and Arabic. That means a full right-to-left layout, not a translated copy, and card payments that pass 3-D Secure bank checks without dropping users out of the app halfway through a booking.
 
-### Technologies:
-React Native, Expo (Expo Router), TypeScript, Zustand, TanStack Query, Reanimated
+## What I did
+
+I own the payment, booking-management and account modules:
+
+• **Payments:** card payments with 3-D Secure through HyperPay, including the bank-verification step and its success, failure and cancel paths
+• **Accounts:** OTP-based phone verification and Google Sign-In
+• **Bookings:** booking and trip management, from confirmation to upcoming and past trips
+• **Bilingual UI:** full English/Arabic support with RTL layouts
+• **Stability:** Android performance and stability fixes, working closely with the backend team on QA issues
+
+## The result
+
+The app is in QA ahead of its public launch on the App Store and Google Play.

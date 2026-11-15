@@ -1,12 +1,11 @@
 export const postTags = {
   rehlte: ['React Native', 'Expo', 'Mobile', 'Travel', 'RTL'],
   'awafi-clinic': ['Next.js', 'React', 'Healthcare', 'SaaS', 'RTL'],
-  AlFagala: ['Next.js', 'React', 'E-Commerce', 'SEO'],
-  kptc: ['.NET', 'Enterprise', 'Dashboard', 'SaaS'],
-  'procoor-fm': ['Next.js', 'React', 'Enterprise', 'Facility Management', 'SaaS'],
-  'procoor-pm': ['Next.js', 'React', 'Project Management', 'SaaS'],
+  AlFagala: ['Next.js', 'React', 'E-Commerce', 'SEO', 'RTL'],
+  kptc: ['Next.js', 'React', 'Redux', 'Enterprise', 'Dashboard', 'RTL'],
+  procoor: ['React', '.NET', 'Enterprise', 'Dashboard', 'SaaS'],
   'sakenah-academy': ['Next.js', 'React', 'E-Learning', 'Healthcare', 'SaaS'],
-  trygrip: ['Next.js', 'React', 'E-Commerce', 'SaaS'],
+  trygrip: ['React', 'Redux', 'Restaurants', 'SaaS', 'RTL'],
 }
 
 export const experienceTags = {

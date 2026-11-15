@@ -1,5 +1,4 @@
 import { getAllPostIds, getPostData, getSortedPostsData } from '@/lib/content/posts'
-import { postScreenshots } from '@/lib/content/screenshots'
 import PostClient from './post-client'
 
 export const revalidate = 3600
@@ -18,6 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       title: `${postData.title} - Ahmad Ayman`,
       type: 'article',
       description: postData.description || postData.title,
+      ...(postData.screenshots[0] && { images: [postData.screenshots[0]] }),
     },
     alternates: {
       canonical: `https://ahmad-ayman.vercel.app/posts/${id}`,
@@ -30,11 +30,5 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   const postData = await getPostData(id)
   const allPosts = await getSortedPostsData()
 
-  return (
-    <PostClient
-      postData={postData}
-      allPosts={allPosts}
-      screenshots={postScreenshots[postData.id] || []}
-    />
-  )
+  return <PostClient postData={postData} allPosts={allPosts} />
 }

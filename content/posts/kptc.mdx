@@ -1,20 +1,37 @@
 ---
 title: 'KPTC'
 date: '2023-01-15'
+summary: "Bilingual public website and admin dashboard for Kuwait Public Transport Company, the country's national bus operator."
+company: 'Vidills'
+role: 'Front-end developer'
+platform: 'Web'
+metrics:
+  - { value: '250+', label: 'Commits to the dashboard' }
+  - { value: '2', label: 'Apps: public site + admin' }
+stack: ['Next.js', 'React', 'Redux Toolkit', 'TanStack Query', 'next-intl', 'i18next', 'Formik', 'Google Maps']
 ---
 
-## Introduction:
-KPTC is a web application serving enterprise-level clients. The platform focuses on providing comprehensive solutions with robust data synchronization and module-based architecture.
+## The problem
 
-### My Contribution:
-As part of the Vidills team, I contributed to the KPTC web app with focus on:
-• Module development for scalable architecture
-• Data synchronization across the platform
-• Supporting enterprise-level clients with custom solutions
-• Built reusable React components
-• Managed state using Redux Toolkit
-• Integrated with REST/GraphQL back-ends
+Kuwait Public Transport Company (KPTC) runs Kuwait's public bus network. It needed two things: a bilingual public website where riders find routes and services, apply for jobs, follow tenders and pay online, and a back office where staff manage all of that content and the requests coming in, without asking developers to change pages.
 
-### Live On:
-[KPTC](https://www.kptc.com.kw/en/)
+## What I did
 
+**Admin dashboard** (React, Redux Toolkit, TanStack Query). I was the main developer, with 250+ commits:
+
+• Content management for every page of the public site: home, about, services, routes, tenders, jobs, media center, clients, legal pages
+• Operations modules: bus leasing and leasing orders, service subscriptions, card validation, receiving locations, offices and areas
+• Payments: payment methods and payment links
+• Users and permission groups, reports with charts, a calendar, and contact messages
+• A modular structure, so new modules plug in without touching existing ones
+
+**Public website** (Next.js, English/Arabic with full RTL). I built the rider-facing account features:
+
+• Sign-up, sign-in, sign-out and profile, wired to the API
+• Service subscriptions, with responsive, RTL-aware subscription cards
+• A digital ID card with a QR code generated per rider
+• Service cards, sliders, and the privacy, terms and contact pages
+
+## The result
+
+KPTC's staff manage the public site and its service requests from one dashboard, in English and Arabic.

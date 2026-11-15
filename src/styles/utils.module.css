@@ -63,7 +63,7 @@
 }
 
 .listItemLink:hover,
-.listItemLink:focus {
+.listItemLink:focus-visible {
   background-color: var(--bg-secondary);
   border-color: var(--border-light);
   text-decoration: none;

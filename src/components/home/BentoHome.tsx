@@ -210,10 +210,32 @@ export default function BentoHome({
               ) : (
                 filteredPosts.map((post, i) => (
                   <StaggerItem key={post.id} index={i}>
-                    <Link href={`/posts/${post.id}`} className={styles.projectItem}>
+                    <Link
+                      href={`/posts/${post.id}`}
+                      className={`${styles.projectItem} ${styles.projectCase}`}
+                    >
+                      <div className={styles.projectThumb}>
+                        {post.screenshots?.[0] ? (
+                          <Image
+                            src={post.screenshots[0]}
+                            alt=""
+                            fill
+                            sizes="96px"
+                            className={styles.projectThumbImg}
+                          />
+                        ) : (
+                          <span className={styles.projectThumbInitial} aria-hidden="true">
+                            {post.title.charAt(0)}
+                          </span>
+                        )}
+                      </div>
                       <div className={styles.projectItemLeft}>
                         <span className={styles.projectName}>{post.title}</span>
+                        {post.summary && (
+                          <span className={styles.projectSummary}>{post.summary}</span>
+                        )}
                         <span className={styles.projectMeta}>
+                          {post.company && <>{post.company} · </>}
                           <FormattedDate dateString={post.date} />
                         </span>
                       </div>

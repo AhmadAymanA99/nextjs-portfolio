@@ -97,14 +97,27 @@ a {
   transition: color 0.3s ease-in-out;
 }
 
-a:hover,
-a:focus {
-  text-decoration: underline;
+/* No underline by default: most links here are cards and buttons.
+   Text links in written content are underlined via .content a */
+a:hover {
   color: var(--text-link-hover);
 }
 
-a:focus {
-  outline: 3px solid var(--primary-color);
+/* Focus ring for keyboard users only; mouse clicks and taps leave no outline */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+[role='button']:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
 }
 
 img {

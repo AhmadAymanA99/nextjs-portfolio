@@ -6,6 +6,7 @@ import ShareButtons from '@/components/detail/ShareButtons'
 import TableOfContents from '@/components/detail/TableOfContents'
 import ViewCounter from '@/components/detail/ViewCounter'
 import RelatedProjects from '@/components/detail/RelatedProjects'
+import ProjectHeader from '@/components/detail/ProjectHeader'
 import Footer from '@/components/layout/Footer'
 import { DetailLayout } from '@/components/layout/PageLayout'
 import useScrollReveal from '@/lib/useScrollReveal'
@@ -13,15 +14,7 @@ import utilStyles from '@/styles/utils.module.css'
 
 const Lightbox = dynamic(() => import('@/components/detail/Lightbox'), { ssr: false })
 
-export default function PostClient({
-  postData,
-  allPosts,
-  screenshots,
-}: {
-  postData: any
-  allPosts: any[]
-  screenshots: string[]
-}) {
+export default function PostClient({ postData, allPosts }: { postData: any; allPosts: any[] }) {
   const articleRef = useScrollReveal()
 
   return (
@@ -35,11 +28,12 @@ export default function PostClient({
             <span> · </span>
             <ViewCounter path={`/posts/${postData.id}`} />
           </div>
+          <ProjectHeader {...postData} />
+          <Lightbox images={postData.screenshots} postId={postData.id} />
           <div className="content-with-toc">
             <div className="content" dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
             <TableOfContents headings={postData.headings || []} />
           </div>
-          <Lightbox images={screenshots} postId={postData.id} />
           <ShareButtons title={postData.title} />
           <RelatedProjects currentId={postData.id} tags={postData.tags} allPosts={allPosts} />
         </article>

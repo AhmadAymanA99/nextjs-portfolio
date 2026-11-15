@@ -83,7 +83,7 @@ src/
     layout/          # footer, page layout, background, smooth scroll
     ui/              # shared primitives
   lib/
-    content/         # Markdown loading, tags, skills, FAQ, screenshots
+    content/         # Markdown loading, tags, skills, FAQ
     server/          # database, auth, rate limiting, analytics helpers
     site.ts          # site URL, name, description, CV path
   styles/            # global styles
@@ -92,25 +92,32 @@ tests/               # Vitest tests
 
 ## Editing content
 
-**Add a project:** create `content/posts/<id>.mdx`:
+**Add a project:** create `content/posts/<id>.mdx`. Every project is a short case study with the same fields and three sections:
 
 ```markdown
 ---
 title: 'Project Name'
 date: '2026-01-31'
+summary: 'One line: what it is and who it is for.'   # home page list and meta description
+company: 'Employer or client'
+role: 'Front-end developer'
+platform: 'Web'                     # or 'iOS & Android'
+status: 'In QA'                     # optional
+stack: ['Next.js', 'TypeScript']
+metrics:                            # optional
+  - { value: '10K+', label: 'Active users' }
+link: 'https://example.com'         # optional live site
+screenshots:                        # optional; first one is the home page thumbnail
+  - '/images/projects/<id>-desktop.webp'
 ---
 
-## Introduction:
-What it is.
-
-### My Contribution:
-• What you built
-• Another highlight
+## The problem
+## What I did
+• Bullet
+## The result
 ```
 
-Then add its tags in `src/lib/content/tags.ts` (`postTags`), and optionally screenshots in `src/lib/content/screenshots.ts` with the images in `public/images/screenshots/`.
-
-Project pages also support `<Callout type="info|tip|warning|success">`, `<TechBadge name="…" />` and `<MetricsCard value="…" label="…" />`.
+Then add its tags in `src/lib/content/tags.ts` (`postTags`). Put screenshots in `public/images/projects/` as WebP (about 1440×900 for desktop, 780 wide for mobile). The body is plain Markdown; raw HTML is stripped.
 
 **Add a job:** create `content/experience/<id>.md` with `title`, `date` and `till` (`'now'` for a current role), and add tags in `experienceTags`.
 

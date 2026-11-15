@@ -21,6 +21,6 @@ Remote
 • Deployed and maintained production releases, monitored analytics, and resolved bugs, applying secure handling of sensitive health data.
 
 ### Our Products:
-• [Awafi Clinic](https://awaficlinic.com/)
+• [Awafi Clinic](/posts/awafi-clinic)
 
-• [Sakenah Academy](https://sakenah.com/)
+• [Sakenah Academy](/posts/sakenah-academy)

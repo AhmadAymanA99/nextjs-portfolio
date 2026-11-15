@@ -176,7 +176,7 @@ export default function Lightbox({ images, postId }) {
             onClick={() => handleThumbClick(i)}
             aria-label={`View screenshot ${i + 1}`}
           >
-            <Image src={src} alt={`Screenshot ${i + 1} of ${postId}`} width={120} height={80} />
+            <Image src={src} alt={`Screenshot ${i + 1} of ${postId}`} width={200} height={125} />
           </button>
         ))}
       </div>

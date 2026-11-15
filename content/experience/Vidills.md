@@ -22,6 +22,6 @@ Working on high-impact projects across Kuwait and the region.
 • Built reusable React components, managed state using Redux Toolkit, integrated with REST/GraphQL back-ends.
 
 ### Our Products:
-• [TryGrip](https://trygrip.net/en/)
+• [TryGrip](/posts/trygrip)
 
-• [KPTC](https://www.kptc.com.kw/en/)
+• [KPTC](/posts/kptc)
