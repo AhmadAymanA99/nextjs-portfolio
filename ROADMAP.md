@@ -39,7 +39,7 @@ Open: none. Swap Rehlte's website screenshots for app screens at launch, and add
 
 - [ ] 2–3 short testimonials from managers or clients (Softera, Bisan Travel, Vidills)
 - [ ] 2–3 technical posts (e.g. "HyperPay 3-D Secure in Expo", "RTL pitfalls in React Native"); the RSS feed is ready
-- [ ] A social preview image for each project, so shared links show a picture
+- [x] A social preview image for each project, so shared links show a picture (first screenshot; KPTC has none)
 
 ## Phase 5 — Under the hood
 

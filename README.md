@@ -6,8 +6,9 @@ Personal portfolio of **Ahmad Ayman Elsaeid**, Frontend & Mobile Engineer (React
 
 ## Features
 
-- **Bento-style home page:** hero with availability and CV download, skills with brand logos, projects with tag filters, experience timeline and contact form
-- **Project and experience pages** written in Markdown, with table of contents, view counter, share buttons and screenshot lightbox
+- **Bento-style home page:** hero with availability and CV download, skills with brand logos, projects with thumbnails, summaries and tag filters, experience timeline and contact form
+- **Project case studies** with role, stack, metrics and live link up top, then problem / what I did / result, plus a screenshot lightbox; the first screenshot doubles as the link-preview image
+- **Experience pages** written in Markdown, with table of contents, view counter and share buttons
 - **Guestbook** with moderation and spam filtering
 - **Admin dashboard** (`/admin`):
   - **Analytics:** real visitors only (bots, crawlers and admin visits excluded), change vs the previous period, traffic sources, countries, devices and CSV export
