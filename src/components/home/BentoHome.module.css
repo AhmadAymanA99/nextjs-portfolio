@@ -12,7 +12,9 @@
 
 .gridItem {
   min-width: 0;
-  overflow: hidden;
+  /* clip, not hidden: "hidden" makes a scroll container, which would stop the
+     scroll-driven reveals inside from tracking the page scroll */
+  overflow: clip;
 }
 
 .card {

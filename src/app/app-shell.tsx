@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
-import { MotionConfig } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext'
@@ -44,15 +43,13 @@ function ShellInner({ children }: { children: ReactNode }) {
   const isAdmin = pathname.startsWith('/admin')
 
   return (
-    <div style={{ position: 'relative', zIndex: 1, overflowX: 'hidden' }}>
+    <div style={{ position: 'relative', zIndex: 1, overflowX: 'clip' }}>
       <a href="#main-content" className="skip-link">
         {dict.common.skipToContent}
       </a>
       {!isAdmin && <LanguageSwitch />}
       {!isAdmin && <ParticlesBackground theme={theme} />}
-      <MotionConfig reducedMotion="user">
-        <SmoothScroll>{children}</SmoothScroll>
-      </MotionConfig>
+      <SmoothScroll>{children}</SmoothScroll>
     </div>
   )
 }

@@ -22,6 +22,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
 
   return (
     <BentoHome
+      lang={lang}
       allPostsData={getSortedPostsData(lang)}
       allExperiencesData={getSortedExperiencesData(lang)}
       allTags={getAllTags()}

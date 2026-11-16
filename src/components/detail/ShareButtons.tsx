@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'

@@ -1,5 +1,5 @@
 import { parseISO, format } from 'date-fns'
-import { useI18n } from '@/i18n/I18nProvider'
+import { getDictionary, type Locale } from '@/i18n'
 
 // Arabic month names with Western digits ("1 أكتوبر 2026"), matching the
 // figures used everywhere else on the site
@@ -9,9 +9,9 @@ const arabicDate = new Intl.DateTimeFormat('ar-EG-u-nu-latn', {
   year: 'numeric',
 })
 
-export default function FormattedDate({ dateString }: { dateString: string }) {
-  const { lang, dict } = useI18n()
-  if (dateString === 'now') return <>{dict.common.now}</>
+/** A date ("Oct 1, 2026" / "1 أكتوبر 2026"), or "now". Usable on the server. */
+export default function FormattedDate({ dateString, lang }: { dateString: string; lang: Locale }) {
+  if (dateString === 'now') return <>{getDictionary(lang).common.now}</>
 
   const date = parseISO(dateString)
   const text = lang === 'ar' ? arabicDate.format(date) : format(date, 'MMM d, yyyy')

@@ -284,19 +284,87 @@ li {
   margin: 2rem 0;
 }
 
-@keyframes fadeIn {
+/* ---------- Entrance animations (CSS only, no JavaScript) ----------
+   Load: content above the fold rises in as the page paints. It starts
+   partly visible, never at opacity 0, so it counts as painted at once and
+   does not delay Largest Contentful Paint.
+   Scroll: content below the fold fades in as it enters the viewport, driven
+   by the scroll position (browsers without scroll timelines just show it). */
+@keyframes rise {
   from {
-    opacity: 0;
-    transform: translateY(4px);
+    opacity: 0.35;
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
-.article {
-  animation: fadeIn 0.3s ease-out;
+@keyframes rise-in-view {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.article,
+.reveal-load {
+  animation: rise 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--reveal-delay, 0s) both;
+}
+
+@supports (animation-timeline: view()) {
+  .reveal-scroll {
+    animation: rise-in-view linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article,
+  .reveal-load,
+  .reveal-scroll {
+    animation: none;
+  }
+}
+
+/* ---------- Tilt cards (see components/ui/TiltCard.tsx) ---------- */
+.tilt {
+  position: relative;
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+}
+
+.tilt-glare::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.08),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tilt-glare:hover::after {
+  opacity: 1;
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .tilt {
+    transform: none;
+  }
+  .tilt-glare::after {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -323,19 +391,6 @@ li {
   .content h4 {
     font-size: 1rem;
   }
-}
-
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
-}
-
-.revealed {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .btn-cv {

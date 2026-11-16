@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
 import Spinner from '@/components/ui/Spinner'

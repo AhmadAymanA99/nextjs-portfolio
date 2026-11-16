@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import styles from './TableOfContents.module.css'
 import { useI18n } from '@/i18n/I18nProvider'

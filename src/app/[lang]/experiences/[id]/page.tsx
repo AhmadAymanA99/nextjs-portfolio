@@ -1,3 +1,5 @@
+// Syntax colours for code blocks in Markdown content
+import 'highlight.js/styles/github-dark.css'
 import { notFound } from 'next/navigation'
 import { getAllExperienceIds, getExperienceData } from '@/lib/content/experience'
 import { alternates, getDictionary, isLocale, ogLocale } from '@/i18n'

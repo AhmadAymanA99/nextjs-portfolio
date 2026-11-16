@@ -36,3 +36,9 @@
     padding: 0.35rem 0.7rem;
   }
 }
+
+/* "العربية" on English pages: the system's Arabic font, so English visitors
+   don't download the Arabic web font for one word */
+.switch:lang(ar) span {
+  font-family: system-ui, 'Segoe UI', Tahoma, sans-serif;
+}

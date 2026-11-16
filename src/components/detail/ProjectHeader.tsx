@@ -1,3 +1,5 @@
+'use client'
+
 import { FaArrowUpRightFromSquare } from 'react-icons/fa6'
 import type { Metric } from '@/lib/content/posts'
 import styles from './ProjectHeader.module.css'

@@ -55,7 +55,11 @@ Open: review the Arabic copy (especially Arabic brand names: رحلتي, عيا�
 
 ## Phase 5 — Under the hood
 
-- [ ] Lighthouse pass: measure, and turn particles off on mobile if they cost performance
+- [x] Lighthouse pass (2026-11-16). Mobile performance, median of runs: home 78 → 89, Arabic home 77 → 85–89, case study 87 → 90–93; desktop 95–100 → 100. Blocking time on mobile home 784 → ~320 ms, JavaScript 451 → 319 KB
+  - framer-motion replaced by CSS-only animations (load "rise" that never starts invisible, scroll-driven reveals); the hero is now the LCP instead of the language switch
+  - Home page rendered on the server with small client islands; tilt writes CSS variables instead of re-rendering React
+  - Particles and smooth scrolling load after idle; particles use 4 plugins instead of "slim", no collisions, normal resolution on phones; no smooth scrolling on touch screens
+  - What's left on mobile is mostly React's own runtime; the remaining simulated LCP (~2.4–2.9 s) is Lighthouse's slow-4G model, real first paint is ~0.35 s
 - [ ] Admin session: move the token from `localStorage` to a secure, script-inaccessible cookie
 - [ ] Rate limiting: back it with the database or Upstash (in-memory counts reset constantly on Vercel)
 - [ ] Email notification for new guestbook entries; weekly traffic summary

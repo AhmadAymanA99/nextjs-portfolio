@@ -21,9 +21,9 @@ export default function ExperienceClient({ data }: { data: any }) {
           <h1 className={utilStyles.headingXl}>{data.title}</h1>
           <div className={utilStyles.lightText}>
             {before}
-            <FormattedDate dateString={data.date} />
+            <FormattedDate lang={lang} dateString={data.date} />
             {between}
-            <FormattedDate dateString={data.till} />
+            <FormattedDate lang={lang} dateString={data.till} />
             {after}
             {data.readingTime && (
               <span> · {plural(lang, dict.common.readingTime, data.readingTime)}</span>

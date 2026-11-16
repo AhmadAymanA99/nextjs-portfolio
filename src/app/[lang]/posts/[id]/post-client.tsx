@@ -9,7 +9,6 @@ import RelatedProjects from '@/components/detail/RelatedProjects'
 import ProjectHeader from '@/components/detail/ProjectHeader'
 import Footer from '@/components/layout/Footer'
 import { DetailLayout } from '@/components/layout/PageLayout'
-import useScrollReveal from '@/lib/useScrollReveal'
 import utilStyles from '@/styles/utils.module.css'
 import { useI18n } from '@/i18n/I18nProvider'
 import { plural } from '@/i18n/config'
@@ -17,16 +16,15 @@ import { plural } from '@/i18n/config'
 const Lightbox = dynamic(() => import('@/components/detail/Lightbox'), { ssr: false })
 
 export default function PostClient({ postData, allPosts }: { postData: any; allPosts: any[] }) {
-  const articleRef = useScrollReveal()
   const { lang, dict } = useI18n()
 
   return (
     <>
       <DetailLayout>
-        <article className="article" ref={articleRef}>
+        <article className="article">
           <h1 className={utilStyles.headingXl}>{postData.title}</h1>
           <div className={utilStyles.lightText}>
-            <FormattedDate dateString={postData.date} />
+            <FormattedDate lang={lang} dateString={postData.date} />
             {postData.readingTime && (
               <span> · {plural(lang, dict.common.readingTime, postData.readingTime)}</span>
             )}

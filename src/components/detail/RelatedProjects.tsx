@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import styles from './RelatedProjects.module.css'
 import { useI18n } from '@/i18n/I18nProvider'
