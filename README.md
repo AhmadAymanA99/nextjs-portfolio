@@ -6,6 +6,7 @@ Personal portfolio of **Ahmad Ayman Elsaeid**, Frontend & Mobile Engineer (React
 
 ## Features
 
+- **English and Arabic:** every page in both languages, with a full right-to-left layout, an Arabic font, Arabic dates and plurals, and a language switch that keeps you on the same page. English lives at `/…`, Arabic at `/ar/…`, and each page links its other-language version for search engines (hreflang)
 - **Bento-style home page:** hero with availability and CV download, skills with brand logos, projects with thumbnails, summaries and tag filters, experience timeline and contact form
 - **Project case studies** with role, stack, metrics and live link up top, then problem / what I did / result, plus a screenshot lightbox; the first screenshot doubles as the link-preview image
 - **Experience pages** written in Markdown, with table of contents, view counter and share buttons
@@ -72,11 +73,15 @@ CI runs lint, typecheck, tests and build on every push to `main`.
 content/
   experience/        # one .md file per job
   posts/             # one .mdx file per project
+  ar/                # Arabic translations, same file names
 public/              # CV PDF, images, logos, service worker
 src/
   app/               # routes: pages, API route handlers, sitemap, RSS
-    admin/           # dashboard and login
+    [lang]/          # public pages (en, ar); English is served at unprefixed URLs
+    admin/           # dashboard and login (English only, its own root layout)
     api/             # contact, guestbook, track, views, github, spotify, admin/*
+  i18n/              # languages, URL helpers, interface text (dictionaries/en.ts, ar.ts)
+  proxy.ts           # rewrites /faq to the internal /en/faq route; /en/… redirects to /…
   components/
     admin/           # dashboard panels
     detail/          # project/experience page parts
@@ -84,7 +89,7 @@ src/
     layout/          # footer, page layout, background, smooth scroll
     ui/              # shared primitives
   lib/
-    content/         # Markdown loading, tags, skills, FAQ
+    content/         # Markdown loading (with translation fallback), tags, skills
     server/          # database, auth, rate limiting, analytics helpers
     site.ts          # site URL, name, description, CV path
   styles/            # global styles
@@ -122,10 +127,11 @@ Then add its tags in `src/lib/content/tags.ts` (`postTags`). Put screenshots in 
 
 **Add a job:** create `content/experience/<id>.md` with `title`, `date` and `till` (`'now'` for a current role), and add tags in `experienceTags`.
 
+**Translate into Arabic:** create the same file name under `content/ar/posts/` or `content/ar/experience/`. It only needs the fields that change (title, summary, company, role, platform, status, metric labels) and the body; dates, stack, links and screenshots come from the English file. Without a translation, the Arabic page shows the English text. Links inside Arabic bodies should point to `/ar/…`.
+
 **Other content:**
 - **Skills:** `src/lib/content/skills.ts`; logos in `src/components/home/SkillIcon.tsx`
-- **FAQ:** `src/lib/content/faq.ts`
-- **Hero text:** `src/components/home/BentoHome.tsx`
+- **Interface text, hero, FAQ, tag names:** `src/i18n/dictionaries/en.ts` and `ar.ts` (the Arabic file must have every key the English one has; TypeScript enforces it)
 - **CV:** replace `public/Ahmad_Ayman_CV.pdf`
 
 ## Deployment

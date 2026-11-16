@@ -39,7 +39,7 @@ export default function Accordion({ items }: { items: AccordionItem[] }) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                textAlign: 'left',
+                textAlign: 'start',
                 gap: '0.5rem',
               }}
             >

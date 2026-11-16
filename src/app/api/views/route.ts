@@ -10,8 +10,9 @@ export async function GET(req: Request) {
   try {
     const sql = await ensureDB()
 
+    // A page's views in every language: /posts/rehlte and /ar/posts/rehlte
     const result = await sql`
-      SELECT COUNT(*) as count FROM page_views WHERE path = ${path}
+      SELECT COUNT(*) as count FROM page_views WHERE path = ${path} OR path = ${`/ar${path}`}
     `
 
     return Response.json({ count: Number(result[0].count) })

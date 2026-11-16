@@ -7,17 +7,27 @@ import TableOfContents from '@/components/detail/TableOfContents'
 import ViewCounter from '@/components/detail/ViewCounter'
 import { DetailLayout } from '@/components/layout/PageLayout'
 import utilStyles from '@/styles/utils.module.css'
+import { useI18n } from '@/i18n/I18nProvider'
+import { plural } from '@/i18n/config'
 
 export default function ExperienceClient({ data }: { data: any }) {
+  const { lang, dict } = useI18n()
+  const [before, between, after] = dict.common.dateRange.split(/\{start\}|\{end\}/)
+
   return (
     <>
       <DetailLayout>
         <article className="article">
           <h1 className={utilStyles.headingXl}>{data.title}</h1>
           <div className={utilStyles.lightText}>
-            <FormattedDate dateString={data.date} /> to{' '}
-            {data.till === 'now' ? <span>now</span> : <FormattedDate dateString={data.till} />}
-            {data.readingTime && <span> · {data.readingTime} min read</span>}
+            {before}
+            <FormattedDate dateString={data.date} />
+            {between}
+            <FormattedDate dateString={data.till} />
+            {after}
+            {data.readingTime && (
+              <span> · {plural(lang, dict.common.readingTime, data.readingTime)}</span>
+            )}
             <span> · </span>
             <ViewCounter path={`/experiences/${data.id}`} />
           </div>

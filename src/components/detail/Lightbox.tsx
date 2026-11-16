@@ -3,12 +3,17 @@ import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { FaPlus, FaMinus, FaExpand, FaCompress } from 'react-icons/fa6'
 import styles from './Lightbox.module.css'
+import { useI18n } from '@/i18n/I18nProvider'
+import { format } from '@/i18n/config'
 
 const MIN_SCALE = 0.5
 const MAX_SCALE = 5
 const ZOOM_STEP = 1.5
 
-export default function Lightbox({ images, postId }) {
+export default function Lightbox({ images, title }: { images: string[]; title: string }) {
+  const { dir, dict } = useI18n()
+  const t = dict.project
+  const rtl = dir === 'rtl'
   const [open, setOpen] = useState(false)
   const [index, setIndex] = useState(0)
   const [scale, setScale] = useState(1)
@@ -39,8 +44,9 @@ export default function Lightbox({ images, postId }) {
         close()
         return
       }
-      if (e.key === 'ArrowRight') changeImage(1)
-      if (e.key === 'ArrowLeft') changeImage(-1)
+      // In RTL the next image is to the left
+      if (e.key === 'ArrowRight') changeImage(rtl ? -1 : 1)
+      if (e.key === 'ArrowLeft') changeImage(rtl ? 1 : -1)
     }
     const fsHandler = () => setFullscreen(!!document.fullscreenElement)
     document.addEventListener('keydown', handler)
@@ -51,7 +57,7 @@ export default function Lightbox({ images, postId }) {
       document.removeEventListener('fullscreenchange', fsHandler)
       document.body.style.overflow = ''
     }
-  }, [open])
+  }, [open, rtl])
 
   const toggleFullscreen = useCallback((e) => {
     e.stopPropagation()
@@ -167,16 +173,21 @@ export default function Lightbox({ images, postId }) {
 
   return (
     <div className={styles.gallery}>
-      <h3 className={styles.title}>Screenshots</h3>
+      <h3 className={styles.title}>{t.screenshots}</h3>
       <div className={styles.thumbs}>
         {images.map((src, i) => (
           <button
             key={i}
             className={styles.thumb}
             onClick={() => handleThumbClick(i)}
-            aria-label={`View screenshot ${i + 1}`}
+            aria-label={format(t.viewScreenshot, { n: i + 1 })}
           >
-            <Image src={src} alt={`Screenshot ${i + 1} of ${postId}`} width={200} height={125} />
+            <Image
+              src={src}
+              alt={format(t.screenshotAlt, { n: i + 1, title })}
+              width={200}
+              height={125}
+            />
           </button>
         ))}
       </div>
@@ -190,29 +201,30 @@ export default function Lightbox({ images, postId }) {
             onClick={close}
             role="dialog"
             aria-modal="true"
-            aria-label="Image viewer"
+            aria-label={t.imageViewer}
           >
-            <button className={styles.close} onClick={close} aria-label="Close">
+            <button className={styles.close} onClick={close} aria-label={t.close}>
               &times;
             </button>
 
             {images.length > 1 && (
               <>
+                {/* Logical positions: "previous" sits on the right in RTL */}
                 <button
                   className={`${styles.nav} ${styles.prev}`}
                   onClick={prev}
                   disabled={index === 0}
-                  aria-label="Previous image"
+                  aria-label={t.previousImage}
                 >
-                  ‹
+                  {rtl ? '›' : '‹'}
                 </button>
                 <button
                   className={`${styles.nav} ${styles.next}`}
                   onClick={next}
                   disabled={index === images.length - 1}
-                  aria-label="Next image"
+                  aria-label={t.nextImage}
                 >
-                  ›
+                  {rtl ? '‹' : '›'}
                 </button>
               </>
             )}
@@ -234,7 +246,7 @@ export default function Lightbox({ images, postId }) {
               <Image
                 className={styles.full}
                 src={images[index]}
-                alt={`Screenshot ${index + 1} of ${postId}`}
+                alt={format(t.screenshotAlt, { n: index + 1, title })}
                 fill
                 sizes="90vw"
                 priority
@@ -244,13 +256,13 @@ export default function Lightbox({ images, postId }) {
 
             <div className={styles.bottomBar}>
               <div className={styles.barGroup}>
-                <button onClick={zoomIn} aria-label="Zoom in">
+                <button onClick={zoomIn} aria-label={t.zoomIn}>
                   <FaPlus />
                 </button>
-                <button onClick={toggleFullscreen} aria-label="Toggle fullscreen">
+                <button onClick={toggleFullscreen} aria-label={t.toggleFullscreen}>
                   {fullscreen ? <FaCompress /> : <FaExpand />}
                 </button>
-                <button onClick={zoomOut} aria-label="Zoom out">
+                <button onClick={zoomOut} aria-label={t.zoomOut}>
                   <FaMinus />
                 </button>
                 <span className={styles.barDivider} />

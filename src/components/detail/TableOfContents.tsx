@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import styles from './TableOfContents.module.css'
+import { useI18n } from '@/i18n/I18nProvider'
 
 export default function TableOfContents({
   headings,
 }: {
   headings: { id: string; text: string; depth: number }[]
 }) {
+  const { dict } = useI18n()
   const [activeId, setActiveId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -32,8 +34,8 @@ export default function TableOfContents({
   if (headings.length < 2) return null
 
   return (
-    <nav className={styles.toc}>
-      <h3 className={styles.title}>On this page</h3>
+    <nav className={styles.toc} aria-label={dict.project.onThisPage}>
+      <h3 className={styles.title}>{dict.project.onThisPage}</h3>
       <ul className={styles.list}>
         {headings.map((h) => (
           <li

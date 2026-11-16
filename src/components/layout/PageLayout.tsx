@@ -6,35 +6,16 @@ import Link from 'next/link'
 import BackToTop from './BackToTop'
 import styles from './PageLayout.module.css'
 import utilStyles from '@/styles/utils.module.css'
-
-const name = 'Ahmad Ayman'
-
-export function HomeLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <Image
-          priority
-          src="/images/profile.png"
-          className={utilStyles.borderCircle}
-          height={200}
-          width={200}
-          sizes="200px"
-          alt={name}
-        />
-        <h1 className={utilStyles.heading2Xl}>{name}</h1>
-      </header>
-      <main id="main-content">{children}</main>
-      <BackToTop />
-    </div>
-  )
-}
+import { useI18n } from '@/i18n/I18nProvider'
 
 export function DetailLayout({ children }: { children: ReactNode }) {
+  const { dict, href } = useI18n()
+  const name = dict.common.name
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Link href="/">
+        <Link href={href('/')}>
           <Image
             priority
             src="/images/profile.png"
@@ -46,13 +27,13 @@ export function DetailLayout({ children }: { children: ReactNode }) {
           />
         </Link>
         <h2 className={utilStyles.headingLg}>
-          <Link href="/" className={utilStyles.colorInherit}>
+          <Link href={href('/')} className={utilStyles.colorInherit}>
             {name}
           </Link>
         </h2>
       </header>
       <div className={styles.backToHome}>
-        <Link href="/">← Back to home</Link>
+        <Link href={href('/')}>{dict.common.backHome}</Link>
       </div>
       <main id="main-content">{children}</main>
       <BackToTop />

@@ -1,12 +1,5 @@
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
-import { remark } from 'remark'
-import remarkRehype from 'remark-rehype'
-import rehypeHighlight from 'rehype-highlight'
-import rehypeStringify from 'rehype-stringify'
-import rehypeSlug from 'rehype-slug'
-import { extractHeadings, normalizeBullets } from './markdown'
+import type { Locale } from '@/i18n/config'
+import { listIds, readEntry, renderBody } from './markdown'
 import { postTags } from './tags'
 
 export type Metric = { value: string; label: string }
@@ -42,74 +35,33 @@ function readMeta(data: Record<string, unknown>): ProjectMeta {
   }
 }
 
-const postsDirectory = path.join(process.cwd(), 'content', 'posts')
-
-function stripExt(name: string) {
-  return name.replace(/\.mdx?$/, '')
+function readPost(id: string, lang: Locale) {
+  const entry = readEntry('posts', id, lang)
+  if (!entry) throw new Error(`Post not found: ${id}`)
+  return entry
 }
 
-export function getSortedPostsData() {
-  const fileNames = fs.readdirSync(postsDirectory)
-  const allPostsData = fileNames
-    .filter((f) => /\.mdx?$/.test(f))
-    .map((fileName) => {
-      const id = stripExt(fileName)
-      const fullPath = path.join(postsDirectory, fileName)
-      const fileContents = fs.readFileSync(fullPath, 'utf8')
-      const matterResult = matter(fileContents)
-      return {
-        id,
-        tags: postTags[id] || [],
-        ...readMeta(matterResult.data),
-      }
-    })
-  return allPostsData.sort((a, b) => {
-    if (a.date < b.date) return 1
-    return -1
-  })
+export function getSortedPostsData(lang: Locale = 'en') {
+  return listIds('posts')
+    .map((id) => ({
+      id,
+      tags: postTags[id] || [],
+      ...readMeta(readPost(id, lang).data),
+    }))
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
 export function getAllPostIds() {
-  const fileNames = fs.readdirSync(postsDirectory)
-  return fileNames
-    .filter((f) => /\.mdx?$/.test(f))
-    .map((fileName) => ({
-      params: {
-        id: stripExt(fileName),
-      },
-    }))
+  return listIds('posts').map((id) => ({ params: { id } }))
 }
 
-export async function getPostData(id: string) {
-  const files = fs.readdirSync(postsDirectory)
-  const file = files.find((f) => stripExt(f) === id && /\.mdx?$/.test(f))
-  if (!file) throw new Error(`Post not found: ${id}`)
-  const fullPath = path.join(postsDirectory, file)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
-
-  const matterResult = matter(fileContents)
-  const meta = readMeta(matterResult.data)
-
-  const wordCount = matterResult.content.split(/\s+/g).filter(Boolean).length
-  const readingTime = Math.max(1, Math.ceil(wordCount / 200))
-
-  const headings = extractHeadings(matterResult.content)
-
-  const processedContent = normalizeBullets(matterResult.content)
-
-  const contentHtml = await remark()
-    .use(remarkRehype)
-    .use(rehypeHighlight)
-    .use(rehypeSlug)
-    .use(rehypeStringify)
-    .process(processedContent)
-    .then((r) => r.toString())
+export async function getPostData(id: string, lang: Locale = 'en') {
+  const entry = readPost(id, lang)
+  const meta = readMeta(entry.data)
 
   return {
     id,
-    contentHtml,
-    readingTime,
-    headings: headings.filter((h) => h.depth >= 2),
+    ...(await renderBody(entry.content)),
     ...meta,
     tags: postTags[id] || [],
     description: meta.summary,

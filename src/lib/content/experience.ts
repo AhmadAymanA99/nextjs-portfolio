@@ -1,88 +1,39 @@
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
-import { remark } from 'remark'
-import remarkRehype from 'remark-rehype'
-import rehypeHighlight from 'rehype-highlight'
-import rehypeStringify from 'rehype-stringify'
-import rehypeSlug from 'rehype-slug'
-import { extractHeadings, normalizeBullets } from './markdown'
+import type { Locale } from '@/i18n/config'
+import { listIds, readEntry, renderBody } from './markdown'
 import { experienceTags } from './tags'
 
-const experienceDirectory = path.join(process.cwd(), 'content', 'experience')
+function readExperience(id: string, lang: Locale) {
+  const entry = readEntry('experience', id, lang)
+  if (!entry) throw new Error(`Experience not found: ${id}`)
+  return entry
+}
 
-export function getSortedExperiencesData() {
-  // Get file names under /experience
-  const fileNames = fs.readdirSync(experienceDirectory)
-  const allExperiencesData = fileNames.map((fileName) => {
-    // Remove ".md" from file name to get id
-    const id = fileName.replace(/\.md$/, '')
-
-    // Read markdown file as string
-    const fullPath = path.join(experienceDirectory, fileName)
-    const fileContents = fs.readFileSync(fullPath, 'utf8')
-
-    // Use gray-matter to parse the post metadata section
-    const matterResult = matter(fileContents)
-
-    // Combine the data with the id
-    const data = matterResult.data as Record<string, unknown>
-    return {
-      id,
-      tags: experienceTags[id] || [],
-      ...data,
-      date: data.date as string,
-    }
-  })
-  // Sort posts by date
-  return allExperiencesData.sort((a, b) => {
-    if (a.date < b.date) {
-      return 1
-    } else {
-      return -1
-    }
-  })
+export function getSortedExperiencesData(lang: Locale = 'en') {
+  return listIds('experience')
+    .map((id) => {
+      const data = readExperience(id, lang).data
+      return {
+        id,
+        tags: experienceTags[id] || [],
+        ...data,
+        title: data.title as string,
+        date: data.date as string,
+        till: data.till as string | undefined,
+      }
+    })
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
 export function getAllExperienceIds() {
-  const fileNames = fs.readdirSync(experienceDirectory)
-  return fileNames.map((fileName) => {
-    return {
-      params: {
-        id: fileName.replace(/\.md$/, ''),
-      },
-    }
-  })
+  return listIds('experience').map((id) => ({ params: { id } }))
 }
 
-export async function getExperienceData(id: string) {
-  const fullPath = path.join(experienceDirectory, `${id}.md`)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
+export async function getExperienceData(id: string, lang: Locale = 'en') {
+  const { data, content } = readExperience(id, lang)
 
-  // Use gray-matter to parse the post metadata section
-  const matterResult = matter(fileContents)
-  const data = matterResult.data as Record<string, unknown>
-
-  const wordCount = matterResult.content.split(/\s+/g).filter(Boolean).length
-  const readingTime = Math.max(1, Math.ceil(wordCount / 200))
-
-  const headings = extractHeadings(matterResult.content)
-
-  // Use remark to convert markdown into HTML string with syntax highlighting
-  const processedContent = await remark()
-    .use(remarkRehype)
-    .use(rehypeHighlight)
-    .use(rehypeSlug)
-    .use(rehypeStringify)
-    .process(normalizeBullets(matterResult.content))
-  const contentHtml = processedContent.toString()
-
-  // Combine the data with the id and contentHtml
   return {
     id,
-    contentHtml,
-    readingTime,
-    headings: headings.filter((h) => h.depth >= 2),
+    ...(await renderBody(content)),
     title: data.title as string,
     date: data.date as string,
     till: data.till as string,

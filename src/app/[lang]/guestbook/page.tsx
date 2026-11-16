@@ -1,15 +1,21 @@
 import { ensureDB } from '@/lib/server/db'
 import Guestbook from '@/components/Guestbook'
 import { DetailLayout } from '@/components/layout/PageLayout'
+import { alternates, getDictionary, isLocale } from '@/i18n'
 
 export const dynamic = 'force-dynamic'
-export const metadata = {
-  title: 'Guestbook - Ahmad Ayman',
-  description: 'Leave a message for Ahmad Ayman.',
-  openGraph: {
-    title: 'Guestbook - Ahmad Ayman',
-    description: 'Leave a message for Ahmad Ayman.',
-  },
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  if (!isLocale(lang)) return {}
+  const { guestbook, meta } = getDictionary(lang)
+  const title = `${guestbook.metaTitle}${meta.titleSuffix}`
+  return {
+    title,
+    description: guestbook.metaDescription,
+    openGraph: { title, description: guestbook.metaDescription },
+    alternates: alternates(lang, '/guestbook'),
+  }
 }
 
 export default async function GuestbookPage() {

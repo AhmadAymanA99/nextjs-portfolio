@@ -3,11 +3,14 @@ import { Turnstile } from '@marsidev/react-turnstile'
 import Spinner from '@/components/ui/Spinner'
 import { useTheme } from '@/lib/ThemeContext'
 import styles from './ContactForm.module.css'
+import { useI18n } from '@/i18n/I18nProvider'
 
 const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
 
 export default function ContactForm() {
   const { theme } = useTheme()
+  const { dict, lang } = useI18n()
+  const t = dict.contact
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [status, setStatus] = useState('idle')
   const [token, setToken] = useState('')
@@ -19,7 +22,7 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (SITE_KEY && !token) {
-      setStatus('error: Please complete the security check')
+      setStatus(`error: ${t.completeCheck}`)
       return
     }
     setStatus('sending')
@@ -45,22 +48,22 @@ export default function ContactForm() {
         setToken('')
       } else {
         const data = await res.json()
-        setStatus(`error: ${data.error || 'Something went wrong'}`)
+        setStatus(`error: ${data.error || t.genericError}`)
       }
     } catch {
-      setStatus('error: Network error')
+      setStatus(`error: ${t.networkError}`)
     }
   }
 
   return (
     <section id="contact" className={styles.section}>
-      <h2 className={styles.title}>Get in Touch</h2>
+      <h2 className={styles.title}>{t.title}</h2>
       {status === 'success' ? (
         <div className={styles.success}>
           <div className={styles.successIcon}>✓</div>
-          <p>Thanks for reaching out! I&apos;ll get back to you soon.</p>
+          <p>{t.thanks}</p>
           <button onClick={() => setStatus('idle')} className={styles.sendAnother}>
-            Send another message
+            {t.sendAnother}
           </button>
         </div>
       ) : (
@@ -71,51 +74,55 @@ export default function ContactForm() {
           <div className={styles.row}>
             <input
               name="name"
-              placeholder="Your name"
+              placeholder={t.name}
               value={form.name}
               onChange={handleChange}
               required
               className={styles.input}
               autoComplete="off"
-              aria-label="Your name"
+              aria-label={t.name}
             />
             <input
               name="email"
               type="email"
-              placeholder="Your email"
+              placeholder={t.email}
               value={form.email}
               onChange={handleChange}
               required
               className={styles.input}
               autoComplete="off"
-              aria-label="Your email"
+              aria-label={t.email}
             />
           </div>
           <input
             name="subject"
-            placeholder="Subject (optional)"
+            placeholder={t.subject}
             value={form.subject}
             onChange={handleChange}
             className={styles.input}
             autoComplete="off"
-            aria-label="Subject"
+            aria-label={t.subjectLabel}
           />
           <textarea
             name="message"
-            placeholder="Your message"
+            placeholder={t.message}
             value={form.message}
             onChange={handleChange}
             required
             rows={5}
             className={styles.textarea}
-            aria-label="Your message"
+            aria-label={t.message}
           />
           {SITE_KEY && (
             <Turnstile
               siteKey={SITE_KEY}
               onSuccess={setToken}
               onError={() => setToken('')}
-              options={{ size: 'flexible', theme: theme === 'dark' ? 'dark' : 'light' }}
+              options={{
+                size: 'flexible',
+                theme: theme === 'dark' ? 'dark' : 'light',
+                language: lang,
+              }}
             />
           )}
           <button
@@ -125,10 +132,10 @@ export default function ContactForm() {
           >
             {status === 'sending' ? (
               <>
-                <Spinner size={16} /> Sending...
+                <Spinner size={16} /> {dict.common.sending}
               </>
             ) : (
-              'Send Message'
+              t.send
             )}
           </button>
         </form>

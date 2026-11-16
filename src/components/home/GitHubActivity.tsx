@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { FaGithub } from 'react-icons/fa'
 import { VscRepoForked, VscStarEmpty, VscGitCommit, VscIssueReopened } from 'react-icons/vsc'
 import utilStyles from '@/styles/utils.module.css'
+import { useI18n } from '@/i18n/I18nProvider'
 
 const iconMap = {
   PushEvent: VscGitCommit,
@@ -21,6 +22,7 @@ interface Activity {
 }
 
 export default function GitHubActivity() {
+  const { dict } = useI18n()
   const [activities, setActivities] = useState<Activity[]>([])
   const [loaded, setLoaded] = useState(false)
 
@@ -61,7 +63,7 @@ export default function GitHubActivity() {
           fontWeight: 600,
         }}
       >
-        <FaGithub size={12} /> Recent Activity
+        <FaGithub size={12} /> {dict.home.recentActivity}
       </div>
       {!loaded ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>

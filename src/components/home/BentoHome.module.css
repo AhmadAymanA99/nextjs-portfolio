@@ -130,7 +130,8 @@
 .availabilityDot {
   display: inline-block;
   vertical-align: middle;
-  margin: -2px 0.5rem 0 3px;
+  margin-block: -2px 0;
+  margin-inline: 3px 0.5rem;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -510,7 +511,7 @@
 
   .layout {
     padding: 0 1rem;
-    margin: 2rem auto 4rem;
+    margin: 3.25rem auto 4rem;
   }
 
   .heroRow {
@@ -559,7 +560,7 @@
 @media (max-width: 400px) {
   .layout {
     padding: 0 0.75rem;
-    margin: 1.5rem auto 3rem;
+    margin: 3.25rem auto 3rem;
   }
 
   .heroRow {
@@ -601,7 +602,7 @@
 @media (max-width: 375px) {
   .layout {
     padding: 0 0.5rem;
-    margin: 1rem auto 2rem;
+    margin: 3.25rem auto 2rem;
   }
 
   .heroRow {

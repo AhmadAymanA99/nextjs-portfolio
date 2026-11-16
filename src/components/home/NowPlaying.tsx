@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { FaSpotify } from 'react-icons/fa'
 import utilStyles from '@/styles/utils.module.css'
+import { useI18n } from '@/i18n/I18nProvider'
 
 interface TrackData {
   isPlaying: boolean
@@ -21,6 +22,7 @@ const dividerStyle = {
 }
 
 export default function NowPlaying() {
+  const { dict } = useI18n()
   const [data, setData] = useState<TrackData | null>(null)
 
   useEffect(() => {
@@ -82,7 +84,7 @@ export default function NowPlaying() {
           marginBottom: '0.4rem',
         }}
       >
-        <FaSpotify size={12} /> Last Played
+        <FaSpotify size={12} /> {dict.home.lastPlayed}
       </div>
       <div
         style={{

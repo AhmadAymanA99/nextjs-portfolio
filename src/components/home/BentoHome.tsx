@@ -16,10 +16,9 @@ import SkillIcon from './SkillIcon'
 import styles from './BentoHome.module.css'
 import utilStyles from '@/styles/utils.module.css'
 import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa'
+import { useI18n } from '@/i18n/I18nProvider'
 
 const ContactForm = dynamic(() => import('./ContactForm'), { ssr: false })
-
-const name = 'Ahmad Ayman'
 
 /** Cairo's current UTC offset: GMT+2, or GMT+3 during Egyptian summer time. */
 function getCairoOffset() {
@@ -41,6 +40,10 @@ export default function BentoHome({
   cvUrl,
   skillCategories,
 }) {
+  const { dict, href } = useI18n()
+  const t = dict.home
+  const name = dict.common.name
+  const tagLabel = (tag: string) => dict.tags[tag] ?? tag
   const [activeTag, setActiveTag] = useState(null)
   // The page is statically rendered, so refresh the offset in the browser
   const [cairoOffset, setCairoOffset] = useState(getCairoOffset)
@@ -78,27 +81,24 @@ export default function BentoHome({
             <div className={styles.heroContent}>
               <h1 className={styles.heroName}>{name}</h1>
               <p className={styles.heroTitle}>
-                Frontend & Mobile Engineer{' '}
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                  (React / React Native / Next.js)
+                {t.role}{' '}
+                <span dir="ltr" style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+                  {t.roleStack}
                 </span>
               </p>
-              <p className={styles.heroBio}>
-                6 years building React, Next.js, and React Native apps for travel, healthcare,
-                e-commerce, and government platforms across the MENA region. Shipped bilingual
-                Arabic/English RTL interfaces, a government service used by 3M+ people, and
-                enterprise apps serving 600K+ users.
-              </p>
+              <p className={styles.heroBio}>{t.bio}</p>
               <p className={styles.availability}>
                 <span className={styles.availabilityDot} aria-hidden />
-                Open to remote roles & freelance · Cairo, Egypt ({cairoOffset})
+                <span>
+                  {t.availability} (<bdi dir="ltr">{cairoOffset}</bdi>)
+                </span>
               </p>
               <div className={styles.heroActions}>
                 <a href="#contact" className={`${styles.cvButton} ${styles.ctaPrimary}`}>
-                  Contact me
+                  {t.contactMe}
                 </a>
                 <a href={cvUrl} className={styles.cvButton} download>
-                  <span>↓</span> Download CV
+                  <span aria-hidden="true">↓</span> {t.downloadCv}
                 </a>
               </div>
             </div>
@@ -108,14 +108,14 @@ export default function BentoHome({
         {/* Latest Experience */}
         <Reveal direction="up" delay={0.1} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
-            <span className={styles.midCardLabel}>Latest Experience</span>
+            <span className={styles.midCardLabel}>{t.latestExperience}</span>
             {latestExp ? (
               <>
                 <h3 className={styles.midCardTitle}>{latestExp.title}</h3>
                 <p className={styles.midCardSub}>
                   <FormattedDate dateString={latestExp.date} />
                   {latestExp.till === 'now' ? (
-                    <span className={utilStyles.badge}>Current</span>
+                    <span className={utilStyles.badge}>{t.current}</span>
                   ) : latestExp.till ? (
                     <>
                       {' '}
@@ -123,12 +123,12 @@ export default function BentoHome({
                     </>
                   ) : null}
                 </p>
-                <Link href={`/experiences/${latestExp.id}`} className={styles.midCardLink}>
-                  View details →
+                <Link href={href(`/experiences/${latestExp.id}`)} className={styles.midCardLink}>
+                  {t.viewDetails} <span className="rtl-flip">→</span>
                 </Link>
               </>
             ) : (
-              <p className={styles.midCardSub}>No experience listed yet</p>
+              <p className={styles.midCardSub}>{t.noExperience}</p>
             )}
           </TiltCard>
         </Reveal>
@@ -136,7 +136,7 @@ export default function BentoHome({
         {/* Skills Mini Grid */}
         <Reveal direction="up" delay={0.15} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
-            <span className={styles.midCardLabel}>Skills</span>
+            <span className={styles.midCardLabel}>{t.skills}</span>
             <div className={styles.skillsGrid}>
               {allSkills.slice(0, 12).map((skill) => (
                 <span key={skill} className={styles.skillItem}>
@@ -151,7 +151,7 @@ export default function BentoHome({
         {/* Contact Quick Card */}
         <Reveal direction="up" delay={0.2} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
-            <span className={styles.midCardLabel}>Connect</span>
+            <span className={styles.midCardLabel}>{t.connect}</span>
             <div className={styles.contactLinks}>
               <a href="mailto:ahmadaymana99@gmail.com" className={styles.contactLink}>
                 <FaEnvelope /> ahmadaymana99@gmail.com
@@ -162,7 +162,10 @@ export default function BentoHome({
                 rel="noopener noreferrer"
                 className={styles.contactLink}
               >
-                <FaGithub /> GitHub <span className={styles.contactHandle}>@AhmadAymanA99</span>
+                <FaGithub /> GitHub{' '}
+                <span className={styles.contactHandle} dir="ltr">
+                  @AhmadAymanA99
+                </span>
               </a>
               <a
                 href="https://linkedin.com/in/ahmadaymana99"
@@ -170,7 +173,10 @@ export default function BentoHome({
                 rel="noopener noreferrer"
                 className={styles.contactLink}
               >
-                <FaLinkedin /> LinkedIn <span className={styles.contactHandle}>@ahmadaymana99</span>
+                <FaLinkedin /> LinkedIn{' '}
+                <span className={styles.contactHandle} dir="ltr">
+                  @ahmadaymana99
+                </span>
               </a>
             </div>
             <NowPlaying />
@@ -186,13 +192,13 @@ export default function BentoHome({
           className={styles.gridItem}
         >
           <div className={`${styles.card} ${styles.bottomSection}`}>
-            <h2 className={styles.bottomSectionTitle}>Projects</h2>
+            <h2 className={styles.bottomSectionTitle}>{t.projects}</h2>
             <div className={styles.filterRow}>
               <button
                 className={`${styles.filterTag} ${activeTag === null ? styles.filterTagActive : ''}`}
                 onClick={() => setActiveTag(null)}
               >
-                All
+                {t.allTags}
               </button>
               {allTags.map((tag) => (
                 <button
@@ -200,18 +206,18 @@ export default function BentoHome({
                   className={`${styles.filterTag} ${activeTag === tag ? styles.filterTagActive : ''}`}
                   onClick={() => setActiveTag(activeTag === tag ? null : tag)}
                 >
-                  {tag}
+                  {tagLabel(tag)}
                 </button>
               ))}
             </div>
             <StaggerContainer key={activeTag ?? 'all'} className={styles.projectList}>
               {filteredPosts.length === 0 ? (
-                <p className={styles.emptyState}>No projects match this filter.</p>
+                <p className={styles.emptyState}>{t.noProjectsMatch}</p>
               ) : (
                 filteredPosts.map((post, i) => (
                   <StaggerItem key={post.id} index={i}>
                     <Link
-                      href={`/posts/${post.id}`}
+                      href={href(`/posts/${post.id}`)}
                       className={`${styles.projectItem} ${styles.projectCase}`}
                     >
                       <div className={styles.projectThumb}>
@@ -242,7 +248,7 @@ export default function BentoHome({
                       <div className={styles.projectTags}>
                         {post.tags?.map((t) => (
                           <span key={t} className={styles.projectTag}>
-                            {t}
+                            {tagLabel(t)}
                           </span>
                         ))}
                       </div>
@@ -262,19 +268,23 @@ export default function BentoHome({
           className={styles.gridItem}
         >
           <div className={`${styles.card} ${styles.bottomSection}`}>
-            <h2 className={styles.bottomSectionTitle}>Experience</h2>
+            <h2 className={styles.bottomSectionTitle}>{t.experience}</h2>
             <div className={styles.projectList}>
               {allExperiencesData.length === 0 ? (
-                <p className={styles.emptyState}>No experience listed yet.</p>
+                <p className={styles.emptyState}>{t.noExperience}</p>
               ) : (
                 allExperiencesData.map((exp) => (
-                  <Link key={exp.id} href={`/experiences/${exp.id}`} className={styles.projectItem}>
+                  <Link
+                    key={exp.id}
+                    href={href(`/experiences/${exp.id}`)}
+                    className={styles.projectItem}
+                  >
                     <div className={styles.projectItemLeft}>
                       <span className={styles.projectName}>{exp.title}</span>
                       <span className={styles.projectMeta}>
                         <FormattedDate dateString={exp.date} />
                         {exp.till === 'now' ? (
-                          <span className={utilStyles.badge}>Current</span>
+                          <span className={utilStyles.badge}>{t.current}</span>
                         ) : exp.till ? (
                           <>
                             {' '}
@@ -286,7 +296,7 @@ export default function BentoHome({
                     <div className={styles.projectTags}>
                       {exp.tags?.map((t) => (
                         <span key={t} className={styles.projectTag}>
-                          {t}
+                          {tagLabel(t)}
                         </span>
                       ))}
                     </div>

@@ -31,9 +31,21 @@ Every project is now a case study with the same structure.
 
 Open: none. Swap Rehlte's website screenshots for app screens at launch, and add result numbers whenever they become available.
 
-## Phase 3 — Show the differentiator (1–2 weeks)
+## Phase 3 — Show the differentiator ✅ (2026-11-16)
 
-- [ ] Arabic version of the site with an EN/AR switch and full RTL layout, as a live demo of bilingual/RTL skills and to reach Gulf clients
+- [x] Arabic version of the site with an EN/AR switch and full RTL layout, as a live demo of bilingual/RTL skills and to reach Gulf clients
+  - English keeps its URLs; Arabic lives under `/ar`. The switch keeps you on the same page
+  - All interface text, the FAQ, the 7 case studies and the 5 jobs translated into Modern Standard Arabic
+  - Logical CSS (start/end instead of left/right), IBM Plex Sans Arabic, Arabic month names with Western digits, Arabic plural forms
+  - SEO: hreflang links on every page and in the sitemap, `ar_AR` Open Graph locale
+  - View counts add up both languages; analytics record the public URL
+  - Admin stays English-only
+
+Decisions:
+- No automatic redirect by browser language: English stays the default for everyone.
+- Western digits (1, 2, 3) on Arabic pages, matching the metrics and tech names.
+
+Open: review the Arabic copy (especially Arabic brand names: رحلتي, عيادة عوافي, الفجالة, أكاديمية سكينة, بيسان للسفر, السجلات العسكرية). The RSS feed is English only.
 
 ## Phase 4 — Trust and reach
 
