@@ -12,18 +12,19 @@ Personal portfolio of **Ahmad Ayman Elsaeid**, Frontend & Mobile Engineer (React
 - **Experience pages** written in Markdown, with table of contents, view counter and share buttons
 - **Guestbook** with moderation and spam filtering
 - **Admin dashboard** (`/admin`):
-  - **Analytics:** real visitors only (bots, crawlers and admin visits excluded), change vs the previous period, traffic sources, countries, devices and CSV export
+  - **Analytics:** real visitors only, change vs the previous period, traffic sources, countries, devices and CSV export. A view is counted only after a person interacts with the page (pointer, touch, key or wheel); crawlers, automated browsers, the admin's own visits and cloud networks (AWS, Google, Azure, Oracle, DigitalOcean, Meta: e-mail link scanners, uptime monitors) are left out, including in data recorded before this filter existed
   - **Messages inbox:** read/unread, reply by email, bulk actions
   - **Guestbook moderation:** pending, likely spam and approved views
 - **Integrations:** live GitHub activity and Spotify "recently played"
-- **Light/dark theme,** smooth scrolling, `prefers-reduced-motion` support, RSS feed, sitemap and robots.txt
+- **Light/dark theme,** CSS-only entrance and scroll animations, a particle background and smooth scrolling that load after the page is ready, `prefers-reduced-motion` support, RSS feed, sitemap and robots.txt
+- **Fast on phones:** the home page is rendered on the server with small interactive islands; Lighthouse mobile performance is about 89 on the home page and 100 on desktop
 
 ## Tech stack
 
 | Area | Tools |
 | --- | --- |
 | Framework | Next.js 16 (App Router, Turbopack), React 19, TypeScript |
-| Styling | CSS Modules, framer-motion, tsParticles, Lenis |
+| Styling | CSS Modules (scroll-driven animations), tsParticles, Lenis |
 | Data | Neon Postgres (serverless HTTP driver) |
 | Content | Markdown with gray-matter and remark/rehype |
 | Security | Cloudflare Turnstile, HMAC admin tokens, rate limiting |
@@ -64,6 +65,7 @@ npm run dev            # http://localhost:3000
 | `npm run format` | Format with Prettier |
 | `npm run typecheck` | TypeScript check |
 | `npm test` | Unit and API tests (Vitest) |
+| `npm run update:datacenters` | Refresh the cloud IP ranges the analytics leave out (`src/lib/server/datacenter-ranges.json`) |
 
 CI runs lint, typecheck, tests and build on every push to `main`.
 

@@ -1,6 +1,8 @@
 # Portfolio Roadmap
 
-Goal: make the first 30 seconds count for recruiters and clients. Traffic is mostly desktop (87%), led by the US, and arrives from job posts and LinkedIn.
+Goal: make the first 30 seconds count for recruiters and clients. Visitors arrive from job posts and LinkedIn.
+
+Traffic note (2026-11-16): the earlier "87% desktop, led by the US" figure was mostly automated traffic. About 200 of ~210 US views came from cloud networks (e-mail link scanners such as Outlook Safe Links, Google fetchers) posing as desktop Chrome, and ~340 "Unknown" views were the dev machine. With those excluded, real visitors are led by Egypt. Re-check the audience once a few weeks of filtered data exist.
 
 Phases are ordered by impact. Tick items off as they ship.
 
@@ -60,6 +62,8 @@ Open: review the Arabic copy (especially Arabic brand names: رحلتي, عيا�
   - Home page rendered on the server with small client islands; tilt writes CSS variables instead of re-rendering React
   - Particles and smooth scrolling load after idle; particles use 4 plugins instead of "slim", no collisions, normal resolution on phones; no smooth scrolling on touch screens
   - What's left on mobile is mostly React's own runtime; the remaining simulated LCP (~2.4–2.9 s) is Lighthouse's slow-4G model, real first paint is ~0.35 s
+- [x] Analytics count real people only (2026-11-16): a view is sent after the first pointer, touch, key or wheel input; `/api/track` rejects cloud and crawler networks and localhost; the dashboard excludes them from old rows too. Refresh the ranges with `npm run update:datacenters`
+- [x] Mobile polish (2026-11-16): two-column skills on phones, pulsing availability dot, background animation visible through translucent cards on phones, Turnstile loaded only when a form is used (clean console), skip link shown only for keyboard users
 - [ ] Admin session: move the token from `localStorage` to a secure, script-inaccessible cookie
 - [ ] Rate limiting: back it with the database or Upstash (in-memory counts reset constantly on Vercel)
 - [ ] Email notification for new guestbook entries; weekly traffic summary
