@@ -1,6 +1,13 @@
 import { requireAdmin } from '@/lib/server/auth'
 import sql, { ensureDB } from '@/lib/server/db'
-import { describeAgent, humanViews, inRange, maskIP, parseDays } from '@/lib/server/pageViews'
+import {
+  automatedIps,
+  describeAgent,
+  humanViews,
+  inRange,
+  maskIP,
+  parseDays,
+} from '@/lib/server/pageViews'
 
 function csvCell(value: unknown) {
   const s = value instanceof Date ? value.toISOString() : String(value ?? '')
@@ -14,9 +21,10 @@ export async function GET(req: Request) {
   try {
     await ensureDB()
     const days = parseDays(req)
+    const human = humanViews(await automatedIps())
     const rows = await sql`
       SELECT timestamp, path, referrer, country, device_type, ip_address, user_agent
-      FROM page_views WHERE ${humanViews()} AND ${inRange(days)}
+      FROM page_views WHERE ${human} AND ${inRange(days)}
       ORDER BY timestamp DESC LIMIT 20000
     `
 

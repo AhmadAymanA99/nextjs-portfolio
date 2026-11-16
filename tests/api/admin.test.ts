@@ -39,14 +39,18 @@ beforeAll(async () => {
     CREATE TABLE guestbook_entries (id SERIAL PRIMARY KEY, name TEXT, message TEXT, website TEXT DEFAULT '',
       approved BOOLEAN DEFAULT false, flagged BOOLEAN DEFAULT false, created_at TIMESTAMPTZ DEFAULT NOW());
     INSERT INTO page_views (path, referrer, user_agent, ip_address, country, device_type, timestamp) VALUES
-      ('/', 'https://www.linkedin.com/feed', '$UA_HUMAN', '1.1.1.1', 'EG', 'desktop', NOW() - interval '1 day'),
-      ('/posts/rehlte', 'internal', '$UA_HUMAN', '1.1.1.1', 'EG', 'desktop', NOW() - interval '1 day'),
-      ('/', 'direct', '$UA_PHONE', '2.2.2.2', 'SA', 'mobile', NOW() - interval '2 days'),
-      ('/', 'https://google.com/', '$UA_HUMAN', '3.3.3.3', 'US', 'desktop', NOW() - interval '10 days'),
-      ('/', 'direct', 'Mozilla/5.0 (compatible; Googlebot/2.1)', '9.9.9.9', 'US', 'desktop', NOW() - interval '1 day'),
-      ('/', 'direct', 'Mozilla/5.0 HeadlessChrome/120', '9.9.9.8', 'US', 'desktop', NOW() - interval '1 day'),
-      ('/admin/analytics', 'direct', '$UA_HUMAN', '1.1.1.1', 'EG', 'desktop', NOW() - interval '1 day'),
-      ('/', 'https://ahmad-ayman.vercel.app/', '$UA_HUMAN', '4.4.4.4', 'EG', 'desktop', NOW() - interval '1 day');
+      ('/', 'https://www.linkedin.com/feed', '$UA_HUMAN', '192.0.2.1', 'EG', 'desktop', NOW() - interval '1 day'),
+      ('/posts/rehlte', 'internal', '$UA_HUMAN', '192.0.2.1', 'EG', 'desktop', NOW() - interval '1 day'),
+      ('/', 'direct', '$UA_PHONE', '192.0.2.2', 'SA', 'mobile', NOW() - interval '2 days'),
+      ('/', 'https://google.com/', '$UA_HUMAN', '192.0.2.3', 'US', 'desktop', NOW() - interval '10 days'),
+      ('/', 'direct', 'Mozilla/5.0 (compatible; Googlebot/2.1)', '192.0.2.9', 'US', 'desktop', NOW() - interval '1 day'),
+      ('/', 'direct', 'Mozilla/5.0 HeadlessChrome/120', '192.0.2.8', 'US', 'desktop', NOW() - interval '1 day'),
+      ('/admin/analytics', 'direct', '$UA_HUMAN', '192.0.2.1', 'EG', 'desktop', NOW() - interval '1 day'),
+      ('/', 'https://ahmad-ayman.vercel.app/', '$UA_HUMAN', '192.0.2.4', 'EG', 'desktop', NOW() - interval '1 day'),
+      -- A scanner that looks like Chrome, from Google's crawler network
+      ('/', 'direct', '$UA_HUMAN', '66.249.66.1', 'US', 'desktop', NOW() - interval '1 day'),
+      -- The development machine
+      ('/', 'direct', '$UA_HUMAN', '::1', 'Unknown', 'desktop', NOW() - interval '1 day');
     INSERT INTO contact_messages (name, email, message) VALUES ('A', 'a@x.com', 'hi'), ('B', 'b@x.com', 'yo');
     INSERT INTO guestbook_entries (name, message, flagged) VALUES ('A', 'nice', false), ('S', 'casino', true);
   `)
@@ -70,7 +74,7 @@ describe('admin analytics', () => {
     expect(data.stats.views).toBe(4)
     expect(data.stats.visitors).toBe(3)
     expect(data.stats.prevViews).toBe(1)
-    expect(data.stats.excludedBots).toBe(3)
+    expect(data.stats.excludedBots).toBe(5)
     expect(data.dailyViews).toHaveLength(7)
     expect(data.referrers.map((r: any) => r.source).sort()).toEqual(['Direct', 'linkedin.com'])
   })
@@ -143,18 +147,21 @@ describe('messages + guestbook bulk', () => {
 })
 
 describe('track', () => {
-  it('skips bots and admin paths, records humans', async () => {
+  it('skips bots, cloud networks and admin paths, records humans', async () => {
     const { POST } = await import('@/app/api/track/route')
-    const post = (path: string, ua: string) =>
+    const post = (path: string, ua: string, ip = '192.0.2.5') =>
       POST(
         new Request('https://x/api/track', {
           method: 'POST',
-          headers: { 'user-agent': ua, 'x-forwarded-for': '5.5.5.5' },
+          headers: { 'user-agent': ua, 'x-forwarded-for': ip },
           body: JSON.stringify({ path, referrer: 'direct' }),
         }),
       )
     expect((await post('/', 'Googlebot/2.1')).status).toBe(204)
     expect((await post('/admin/login', UA_HUMAN)).status).toBe(204)
     expect((await post('/', UA_HUMAN)).status).toBe(200)
+    // Cloud networks: Azure (e-mail link scanners) and AWS
+    expect((await post('/', UA_HUMAN, '20.40.1.1')).status).toBe(204)
+    expect((await post('/', UA_HUMAN, '3.80.0.1')).status).toBe(204)
   })
 })

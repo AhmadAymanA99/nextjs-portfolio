@@ -6,7 +6,7 @@ import { MotionConfig } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext'
-import { isTrackingDisabled } from '@/lib/tracking'
+import { isTrackingDisabled, trackPageView } from '@/lib/tracking'
 import SmoothScroll from '@/components/layout/SmoothScroll'
 import LanguageSwitch from '@/components/layout/LanguageSwitch'
 import { useI18n } from '@/i18n/I18nProvider'
@@ -30,11 +30,7 @@ function ShellInner({ children }: { children: ReactNode }) {
     const referrer = isFirstView.current ? document.referrer || 'direct' : 'internal'
     isFirstView.current = false
     if (process.env.NODE_ENV === 'production' && !isTrackingDisabled()) {
-      fetch('/api/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: pathname, referrer }),
-      }).catch(() => {})
+      trackPageView(pathname, referrer)
     }
     ;(window as any).__lenis?.scrollTo(0, { immediate: true })
   }, [pathname])

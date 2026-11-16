@@ -1,6 +1,13 @@
 import { requireAdmin } from '@/lib/server/auth'
 import sql, { batch, ensureDB, isConnectionError } from '@/lib/server/db'
-import { describeAgent, humanViews, inRange, maskIP, parseDays } from '@/lib/server/pageViews'
+import {
+  automatedIps,
+  describeAgent,
+  humanViews,
+  inRange,
+  maskIP,
+  parseDays,
+} from '@/lib/server/pageViews'
 import { siteUrl } from '@/lib/site'
 
 const siteHost = new URL(siteUrl).hostname
@@ -17,8 +24,9 @@ export async function GET(req: Request) {
     await ensureDB()
 
     const days = parseDays(req)
-    const current = sql`${humanViews()} AND ${inRange(days)}`
-    const previous = sql`${humanViews()} AND ${inRange(days, 1)}`
+    const human = humanViews(await automatedIps())
+    const current = sql`${human} AND ${inRange(days)}`
+    const previous = sql`${human} AND ${inRange(days, 1)}`
     // The chart always shows a continuous range, capped at 90 days for "all time".
     const chartDays = days ?? 90
 
@@ -28,14 +36,14 @@ export async function GET(req: Request) {
           FROM page_views WHERE ${current}`,
         sql`SELECT COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
           FROM page_views WHERE ${previous}`,
-        sql`SELECT COUNT(*)::int AS count FROM page_views WHERE ${inRange(days)} AND NOT (${humanViews()})`,
+        sql`SELECT COUNT(*)::int AS count FROM page_views WHERE ${inRange(days)} AND NOT (${human})`,
         sql`SELECT COALESCE(device_type, 'desktop') AS device, COUNT(*)::int AS count
           FROM page_views WHERE ${current} GROUP BY 1`,
         sql`SELECT d::date::text AS date,
                  COUNT(pv.id)::int AS views,
                  COUNT(DISTINCT pv.ip_address)::int AS visitors
           FROM generate_series(CURRENT_DATE - ${chartDays - 1}::int, CURRENT_DATE, '1 day') d
-          LEFT JOIN page_views pv ON pv.timestamp::date = d::date AND ${humanViews()}
+          LEFT JOIN page_views pv ON pv.timestamp::date = d::date AND ${human}
           GROUP BY d ORDER BY d`,
         sql`SELECT path, COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
           FROM page_views WHERE ${current}

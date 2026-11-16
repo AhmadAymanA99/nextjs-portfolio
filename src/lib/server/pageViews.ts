@@ -1,6 +1,7 @@
 import { UAParser } from 'ua-parser-js'
 import sql from './db'
 import { BOT_UA_PATTERN } from './analytics'
+import { isDatacenterIp } from './datacenters'
 
 export const MAX_DAYS = 365
 
@@ -10,15 +11,28 @@ export function parseDays(req: Request) {
 }
 
 /**
- * Human page views only: drops admin/API paths and automated agents, including
- * rows recorded before tracking filtered them. A function so the DB client is
- * only created at request time.
+ * Addresses in the table that belong to cloud/crawler networks or the dev
+ * machine. Looked up in code (the ranges don't fit in SQL), so rows recorded
+ * before tracking filtered them are excluded too.
  */
-export function humanViews() {
+export async function automatedIps() {
+  const rows = (await sql`SELECT DISTINCT ip_address FROM page_views`) as {
+    ip_address: string | null
+  }[]
+  return rows.map((r) => r.ip_address).filter((ip): ip is string => isDatacenterIp(ip))
+}
+
+/**
+ * Human page views only: drops admin/API paths, automated agents and the
+ * `excludedIps` from automatedIps(). A function so the DB client is only
+ * created at request time.
+ */
+export function humanViews(excludedIps: string[]) {
   return sql`
   path NOT LIKE '/admin%' AND path NOT LIKE '/api%'
   AND COALESCE(user_agent, '') <> ''
   AND user_agent !~* ${BOT_UA_PATTERN}
+  AND COALESCE(ip_address, '') <> ALL(${excludedIps}::text[])
 `
 }
 
