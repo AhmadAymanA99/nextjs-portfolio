@@ -141,7 +141,7 @@ export default function BentoHome({
               {allSkills.slice(0, 12).map((skill) => (
                 <span key={skill} className={styles.skillItem}>
                   <SkillIcon skill={skill} />
-                  {skill}
+                  <span className={styles.skillName}>{skill}</span>
                 </span>
               ))}
             </div>

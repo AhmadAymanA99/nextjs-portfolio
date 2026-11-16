@@ -31,6 +31,8 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [token, setToken] = useState('')
+  // Load the Cloudflare check only once someone starts filling in the form
+  const [armed, setArmed] = useState(false)
   const [company, setCompany] = useState('')
 
   useEffect(() => {
@@ -99,7 +101,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
 
       {success && <div className={styles.success}>{t.success}</div>}
 
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit} onFocus={() => setArmed(true)}>
         <input
           className={styles.input}
           placeholder={t.name}
@@ -147,7 +149,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           aria-label={t.messageLabel}
         />
         {error && <p className={styles.error}>{error}</p>}
-        {SITE_KEY && (
+        {SITE_KEY && armed && (
           <Turnstile
             siteKey={SITE_KEY}
             onSuccess={setToken}

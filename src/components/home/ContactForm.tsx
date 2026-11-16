@@ -14,6 +14,8 @@ export default function ContactForm() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [status, setStatus] = useState('idle')
   const [token, setToken] = useState('')
+  // Load the Cloudflare check only once someone starts filling in the form
+  const [armed, setArmed] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -67,7 +69,7 @@ export default function ContactForm() {
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit} onFocus={() => setArmed(true)} className={styles.form}>
           {status.startsWith('error') && (
             <div className={styles.error}>{status.replace('error: ', '')}</div>
           )}
@@ -113,7 +115,7 @@ export default function ContactForm() {
             className={styles.textarea}
             aria-label={t.message}
           />
-          {SITE_KEY && (
+          {SITE_KEY && armed && (
             <Turnstile
               siteKey={SITE_KEY}
               onSuccess={setToken}

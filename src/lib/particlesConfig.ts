@@ -44,5 +44,22 @@ export default function particlesConfig(theme: string | null): ISourceOptions {
       size: { random: true, value: 3 },
     },
     detectRetina: true,
+    // Phones: density scaling by screen area leaves only ~20 particles, so use a
+    // fixed count with shorter links; no collisions, to spare the battery
+    responsive: [
+      {
+        maxWidth: 768,
+        options: {
+          fpsLimit: 45,
+          particles: {
+            number: { density: { enable: false }, value: 45 },
+            links: { distance: 130, opacity: 0.55 },
+            opacity: { value: 0.45 },
+            collisions: { enable: false },
+            move: { speed: 1.6 },
+          },
+        },
+      },
+    ],
   }
 }

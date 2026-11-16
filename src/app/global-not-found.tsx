@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import RootDocument from './root-document'
-import NotFound from './[lang]/not-found'
+import NotFound from '@/components/layout/NotFoundPage'
 
 export const metadata: Metadata = {
   title: '404 - Page Not Found',
