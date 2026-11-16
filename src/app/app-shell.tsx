@@ -43,7 +43,10 @@ function ShellInner({ children }: { children: ReactNode }) {
   const isAdmin = pathname.startsWith('/admin')
 
   return (
-    <div style={{ position: 'relative', zIndex: 1, overflowX: 'clip' }}>
+    // flow-root keeps the page's top margin inside this box (so the absolutely
+    // positioned language switch stays at the top); overflow clip, not hidden,
+    // so scroll-driven animations follow the page scroll
+    <div style={{ position: 'relative', zIndex: 1, overflowX: 'clip', display: 'flow-root' }}>
       <a href="#main-content" className="skip-link">
         {dict.common.skipToContent}
       </a>

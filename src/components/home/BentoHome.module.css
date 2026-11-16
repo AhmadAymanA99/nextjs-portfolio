@@ -1,6 +1,7 @@
 .layout {
   max-width: 64rem;
-  margin: 3rem auto 6rem;
+  /* Room above the hero for the language switch */
+  margin: 4.25rem auto 6rem;
   padding: 0 1.5rem;
 }
 
