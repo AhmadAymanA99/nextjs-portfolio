@@ -1,5 +1,8 @@
 import type { ISourceOptions } from '@tsparticles/engine'
 
+const touchScreen = () =>
+  typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+
 export default function particlesConfig(theme: string | null): ISourceOptions {
   const isDark = theme === 'dark'
 
@@ -26,7 +29,8 @@ export default function particlesConfig(theme: string | null): ISourceOptions {
         opacity: 0.4,
         width: 1,
       },
-      collisions: { enable: true, mode: 'bounce' },
+      // Collisions off: they cost a check between particles every frame
+      collisions: { enable: false },
       move: {
         direction: 'none' as const,
         enable: true,
@@ -43,6 +47,24 @@ export default function particlesConfig(theme: string | null): ISourceOptions {
       shape: { type: 'circle' },
       size: { random: true, value: 3 },
     },
-    detectRetina: true,
+    // Full-resolution canvas on desktop only: on phones (2-3x screens) it would
+    // mean 4-9x the drawing work for barely visible lines
+    detectRetina: !touchScreen(),
+    // Phones: density scaling by screen area leaves only ~20 particles, so use a
+    // fixed count with shorter links
+    responsive: [
+      {
+        maxWidth: 768,
+        options: {
+          fpsLimit: 45,
+          particles: {
+            number: { density: { enable: false }, value: 45 },
+            links: { distance: 130, opacity: 0.55 },
+            opacity: { value: 0.45 },
+            move: { speed: 1.6 },
+          },
+        },
+      },
+    ],
   }
 }

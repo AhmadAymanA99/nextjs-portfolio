@@ -1,47 +1,31 @@
-'use client'
+import type { CSSProperties, ReactNode } from 'react'
 
-import { type ReactNode } from 'react'
-import { motion } from 'framer-motion'
-
-type Direction = 'up' | 'down' | 'left' | 'right'
-
-interface RevealProps {
-  children: ReactNode
-  direction?: Direction
-  delay?: number
-  duration?: number
-  distance?: number
-  className?: string
-  style?: React.CSSProperties
-  once?: boolean
-}
-
+/**
+ * Entrance animation, in CSS only (see "Entrance animations" in global.css).
+ * - `on="load"`: rises in as the page paints, for content above the fold.
+ *   Never starts invisible, so it does not delay Largest Contentful Paint.
+ * - `on="scroll"`: fades in as it scrolls into view.
+ */
 export default function Reveal({
   children,
-  direction = 'up',
+  on = 'scroll',
   delay = 0,
-  duration = 0.5,
-  distance = 24,
-  className,
+  className = '',
   style,
-  once = true,
-}: RevealProps) {
-  const offset = { x: 0, y: 0 }
-  if (direction === 'up') offset.y = distance
-  else if (direction === 'down') offset.y = -distance
-  else if (direction === 'left') offset.x = distance
-  else if (direction === 'right') offset.x = -distance
-
+}: {
+  children: ReactNode
+  on?: 'load' | 'scroll'
+  /** Seconds; load animations only */
+  delay?: number
+  className?: string
+  style?: CSSProperties
+}) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: offset.x, y: offset.y }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once, margin: '-40px' }}
-      transition={{ duration, delay, ease: [0.25, 0.46, 0.45, 0.94] as const }}
-      className={className}
-      style={style}
+    <div
+      className={`${on === 'load' ? 'reveal-load' : 'reveal-scroll'} ${className}`}
+      style={delay ? ({ ...style, '--reveal-delay': `${delay}s` } as CSSProperties) : style}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }

@@ -1,78 +1,58 @@
 'use client'
 
-import { useRef, useState, useEffect, type ReactNode, type MouseEvent } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useRef, type PointerEvent, type ReactNode } from 'react'
 
-interface TiltCardProps {
+/**
+ * Tilts toward the mouse pointer, with an optional glare. The angle is written
+ * to CSS variables once per frame, so moving the mouse doesn't re-render React.
+ * Styles live in global.css (.tilt); they switch off on touch screens and for
+ * reduced motion.
+ */
+export default function TiltCard({
+  children,
+  className = '',
+  maxTilt = 6,
+  glare = false,
+}: {
   children: ReactNode
   className?: string
   maxTilt?: number
-  perspective?: number
   glare?: boolean
-}
-
-export default function TiltCard({
-  children,
-  className,
-  maxTilt = 6,
-  perspective = 1000,
-  glare = false,
-}: TiltCardProps) {
+}) {
   const ref = useRef<HTMLDivElement>(null)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
-  const [glarePos, setGlarePos] = useState({ x: 50, y: 50 })
-  const [reducedMotion, setReducedMotion] = useState(false)
+  const frame = useRef(0)
 
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReducedMotion(mq.matches)
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
+  useEffect(() => () => cancelAnimationFrame(frame.current), [])
 
-  function handleMouseMove(e: MouseEvent<HTMLDivElement>) {
-    if (!ref.current) return
+  const set = (tiltX: number, tiltY: number, glareX: number, glareY: number) => {
+    cancelAnimationFrame(frame.current)
+    frame.current = requestAnimationFrame(() => {
+      const style = ref.current?.style
+      if (!style) return
+      style.setProperty('--tilt-x', `${tiltX}deg`)
+      style.setProperty('--tilt-y', `${tiltY}deg`)
+      style.setProperty('--glare-x', `${glareX}%`)
+      style.setProperty('--glare-y', `${glareY}%`)
+    })
+  }
+
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse' || !ref.current) return
     const rect = ref.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width
     const y = (e.clientY - rect.top) / rect.height
-    setTilt({ x: (y - 0.5) * -maxTilt, y: (x - 0.5) * maxTilt })
-    if (glare) setGlarePos({ x: x * 100, y: y * 100 })
+    set((y - 0.5) * -maxTilt, (x - 0.5) * maxTilt, x * 100, y * 100)
   }
-
-  function handleMouseLeave() {
-    setTilt({ x: 0, y: 0 })
-    if (glare) setGlarePos({ x: 50, y: 50 })
-  }
-
-  const tiltProps = reducedMotion
-    ? {}
-    : {
-        onMouseMove: handleMouseMove,
-        onMouseLeave: handleMouseLeave,
-        style: { perspective, position: 'relative' } as const,
-        animate: { rotateX: tilt.x, rotateY: tilt.y },
-      }
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      className={className}
-      {...tiltProps}
-      transition={{ type: 'spring', stiffness: 200, damping: 25, mass: 0.5 }}
+      className={`tilt ${glare ? 'tilt-glare' : ''} ${className}`}
+      style={{ transition: 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease' }}
+      onPointerMove={onPointerMove}
+      onPointerLeave={() => set(0, 0, 50, 50)}
     >
       {children}
-      {glare && !reducedMotion && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            pointerEvents: 'none',
-            background: `radial-gradient(circle at ${glarePos.x}% ${glarePos.y}%, rgba(255,255,255,0.08), transparent 60%)`,
-            transition: 'background 0.1s ease',
-          }}
-        />
-      )}
-    </motion.div>
+    </div>
   )
 }

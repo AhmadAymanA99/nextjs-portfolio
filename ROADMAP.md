@@ -1,6 +1,8 @@
 # Portfolio Roadmap
 
-Goal: make the first 30 seconds count for recruiters and clients. Traffic is mostly desktop (87%), led by the US, and arrives from job posts and LinkedIn.
+Goal: make the first 30 seconds count for recruiters and clients. Visitors arrive from job posts and LinkedIn.
+
+Traffic note (2026-11-16): the earlier "87% desktop, led by the US" figure was mostly automated traffic. About 200 of ~210 US views came from cloud networks (e-mail link scanners such as Outlook Safe Links, Google fetchers) posing as desktop Chrome, and ~340 "Unknown" views were the dev machine. With those excluded, real visitors are led by Egypt. Re-check the audience once a few weeks of filtered data exist.
 
 Phases are ordered by impact. Tick items off as they ship.
 
@@ -31,9 +33,21 @@ Every project is now a case study with the same structure.
 
 Open: none. Swap Rehlte's website screenshots for app screens at launch, and add result numbers whenever they become available.
 
-## Phase 3 — Show the differentiator (1–2 weeks)
+## Phase 3 — Show the differentiator ✅ (2026-11-16)
 
-- [ ] Arabic version of the site with an EN/AR switch and full RTL layout, as a live demo of bilingual/RTL skills and to reach Gulf clients
+- [x] Arabic version of the site with an EN/AR switch and full RTL layout, as a live demo of bilingual/RTL skills and to reach Gulf clients
+  - English keeps its URLs; Arabic lives under `/ar`. The switch keeps you on the same page
+  - All interface text, the FAQ, the 7 case studies and the 5 jobs translated into Modern Standard Arabic
+  - Logical CSS (start/end instead of left/right), IBM Plex Sans Arabic, Arabic month names with Western digits, Arabic plural forms
+  - SEO: hreflang links on every page and in the sitemap, `ar_AR` Open Graph locale
+  - View counts add up both languages; analytics record the public URL
+  - Admin stays English-only
+
+Decisions:
+- No automatic redirect by browser language: English stays the default for everyone.
+- Western digits (1, 2, 3) on Arabic pages, matching the metrics and tech names.
+
+Open: review the Arabic copy (especially Arabic brand names: رحلتي, عيادة عوافي, الفجالة, أكاديمية سكينة, بيسان للسفر, السجلات العسكرية). The RSS feed is English only.
 
 ## Phase 4 — Trust and reach
 
@@ -43,7 +57,13 @@ Open: none. Swap Rehlte's website screenshots for app screens at launch, and add
 
 ## Phase 5 — Under the hood
 
-- [ ] Lighthouse pass: measure, and turn particles off on mobile if they cost performance
+- [x] Lighthouse pass (2026-11-16). Mobile performance, median of runs: home 78 → 89, Arabic home 77 → 85–89, case study 87 → 90–93; desktop 95–100 → 100. Blocking time on mobile home 784 → ~320 ms, JavaScript 451 → 319 KB
+  - framer-motion replaced by CSS-only animations (load "rise" that never starts invisible, scroll-driven reveals); the hero is now the LCP instead of the language switch
+  - Home page rendered on the server with small client islands; tilt writes CSS variables instead of re-rendering React
+  - Particles and smooth scrolling load after idle; particles use 4 plugins instead of "slim", no collisions, normal resolution on phones; no smooth scrolling on touch screens
+  - What's left on mobile is mostly React's own runtime; the remaining simulated LCP (~2.4–2.9 s) is Lighthouse's slow-4G model, real first paint is ~0.35 s
+- [x] Analytics count real people only (2026-11-16): a view is sent after the first pointer, touch, key or wheel input; `/api/track` rejects cloud and crawler networks and localhost; the dashboard excludes them from old rows too. Refresh the ranges with `npm run update:datacenters`
+- [x] Mobile polish (2026-11-16): two-column skills on phones, pulsing availability dot, background animation visible through translucent cards on phones, Turnstile loaded only when a form is used (clean console), skip link shown only for keyboard users
 - [ ] Admin session: move the token from `localStorage` to a secure, script-inaccessible cookie
 - [ ] Rate limiting: back it with the database or Upstash (in-memory counts reset constantly on Vercel)
 - [ ] Email notification for new guestbook entries; weekly traffic summary

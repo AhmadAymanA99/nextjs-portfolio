@@ -1,6 +1,9 @@
+'use client'
+
 import { FaArrowUpRightFromSquare } from 'react-icons/fa6'
 import type { Metric } from '@/lib/content/posts'
 import styles from './ProjectHeader.module.css'
+import { useI18n } from '@/i18n/I18nProvider'
 
 type Props = {
   summary: string
@@ -24,15 +27,17 @@ export default function ProjectHeader({
   metrics,
   link,
 }: Props) {
+  const { dict } = useI18n()
+  const t = dict.project
   const facts = [
-    ['Role', role],
-    ['Company', company],
-    ['Platform', platform],
-    ['Status', status],
+    [t.role, role],
+    [t.company, company],
+    [t.platform, platform],
+    [t.status, status],
   ].filter((f): f is [string, string] => Boolean(f[1]))
 
   return (
-    <section className={styles.header} aria-label="Project overview">
+    <section className={styles.header} aria-label={t.overview}>
       {summary && <p className={styles.summary}>{summary}</p>}
 
       {facts.length > 0 && (
@@ -50,7 +55,9 @@ export default function ProjectHeader({
         <ul className={styles.metrics}>
           {metrics.map((m) => (
             <li key={m.label} className={styles.metric}>
-              <span className={styles.metricValue}>{m.value}</span>
+              <span className={styles.metricValue} dir="ltr">
+                {m.value}
+              </span>
               <span className={styles.metricLabel}>{m.label}</span>
             </li>
           ))}
@@ -58,7 +65,7 @@ export default function ProjectHeader({
       )}
 
       {stack.length > 0 && (
-        <ul className={styles.stack} aria-label="Tech stack">
+        <ul className={styles.stack} aria-label={t.techStack}>
           {stack.map((s) => (
             <li key={s} className={styles.stackItem}>
               {s}
@@ -69,7 +76,7 @@ export default function ProjectHeader({
 
       {link && (
         <a className={styles.link} href={link} target="_blank" rel="noopener noreferrer">
-          Visit live site <FaArrowUpRightFromSquare aria-hidden="true" />
+          {t.visitLive} <FaArrowUpRightFromSquare aria-hidden="true" className="rtl-flip" />
         </a>
       )}
     </section>

@@ -8,14 +8,15 @@ export async function POST(req: Request) {
   try {
     const { path, referrer } = await req.json()
     const userAgent = req.headers.get('user-agent') || ''
+    const ip = getClientIp(req)
 
-    if (!isTrackablePath(path) || isAutomated(userAgent)) {
+    // Bots, and cloud networks (e-mail link scanners, crawlers, monitors)
+    if (!isTrackablePath(path) || isAutomated(userAgent, ip)) {
       return new Response(null, { status: 204 })
     }
 
     await ensureDB()
 
-    const ip = getClientIp(req)
     const country = req.headers.get('x-vercel-ip-country') || geoip.lookup(ip)?.country || 'Unknown'
     const ua = new UAParser(userAgent).getResult()
 

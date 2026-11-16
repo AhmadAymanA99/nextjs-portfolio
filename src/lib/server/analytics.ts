@@ -1,4 +1,5 @@
 import { isBot } from 'ua-parser-js/helpers'
+import { isDatacenterIp } from './datacenters'
 
 /**
  * Catches automated agents that ua-parser's isBot misses (headless browsers,
@@ -6,7 +7,7 @@ import { isBot } from 'ua-parser-js/helpers'
  * recorded before filtering existed are excluded from stats.
  */
 export const BOT_UA_PATTERN =
-  'bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|screenshot|vercel|curl|wget|python|axios|node-fetch|go-http|java/|okhttp|facebookexternalhit|whatsapp|telegram'
+  'bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|screenshot|vercel|curl|wget|python|axios|node-fetch|go-http|java/|okhttp|facebookexternalhit|whatsapp|telegram|googleother|google-'
 
 const botRe = new RegExp(BOT_UA_PATTERN, 'i')
 
@@ -20,6 +21,6 @@ export function isTrackablePath(path: unknown): path is string {
   )
 }
 
-export function isAutomated(userAgent: string) {
-  return !userAgent || botRe.test(userAgent) || isBot(userAgent)
+export function isAutomated(userAgent: string, ip?: string) {
+  return !userAgent || botRe.test(userAgent) || isBot(userAgent) || isDatacenterIp(ip)
 }

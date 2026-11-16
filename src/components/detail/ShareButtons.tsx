@@ -1,13 +1,18 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { FaLinkedin, FaXTwitter } from 'react-icons/fa6'
 import { FaLink } from 'react-icons/fa'
+import { useI18n } from '@/i18n/I18nProvider'
+import { publicPath } from '@/i18n/config'
 
 export default function ShareButtons({ title }: { title: string }) {
+  const { dict } = useI18n()
   const pathname = usePathname()
   const [url, setUrl] = useState('')
   useEffect(() => {
-    setUrl(window.location.origin + pathname)
+    setUrl(window.location.origin + publicPath(pathname))
   }, [pathname])
   const encodedUrl = encodeURIComponent(url)
   const encodedTitle = encodeURIComponent(title)
@@ -29,7 +34,9 @@ export default function ShareButtons({ title }: { title: string }) {
         borderTop: '1px solid var(--border-color)',
       }}
     >
-      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1 }}>Share</span>
+      <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1 }}>
+        {dict.project.share}
+      </span>
       <a
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
@@ -44,7 +51,7 @@ export default function ShareButtons({ title }: { title: string }) {
         }}
         onMouseOver={(e) => (e.currentTarget.style.color = '#0a66c2')}
         onMouseOut={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
-        aria-label="Share on LinkedIn"
+        aria-label={dict.project.shareLinkedIn}
       >
         <FaLinkedin />
       </a>
@@ -62,7 +69,7 @@ export default function ShareButtons({ title }: { title: string }) {
         }}
         onMouseOver={(e) => (e.currentTarget.style.color = '#000')}
         onMouseOut={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
-        aria-label="Share on X"
+        aria-label={dict.project.shareX}
       >
         <FaXTwitter />
       </a>
@@ -81,7 +88,7 @@ export default function ShareButtons({ title }: { title: string }) {
         }}
         onMouseOver={(e) => (e.currentTarget.style.color = 'var(--text-link)')}
         onMouseOut={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
-        aria-label="Copy link"
+        aria-label={dict.project.copyLink}
       >
         <FaLink />
       </button>

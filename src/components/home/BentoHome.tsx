@@ -1,54 +1,49 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import FormattedDate from '@/components/ui/FormattedDate'
 import BackToTop from '@/components/layout/BackToTop'
 import Footer from '@/components/layout/Footer'
 import Reveal from '@/components/ui/Reveal'
-import { StaggerContainer, StaggerItem } from '@/components/ui/StaggerContainer'
+import TiltCard from '@/components/ui/TiltCard'
 import NowPlaying from './NowPlaying'
 import GitHubActivity from './GitHubActivity'
-import TiltCard from '@/components/ui/TiltCard'
 import SkillIcon from './SkillIcon'
+import CairoOffset from './CairoOffset'
+import ProjectFilter from './ProjectFilter'
+import LazyContactForm from './LazyContactForm'
 import styles from './BentoHome.module.css'
 import utilStyles from '@/styles/utils.module.css'
 import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa'
+import { getDictionary, localePath, type Locale } from '@/i18n'
+import type { getSortedPostsData } from '@/lib/content/posts'
+import type { getSortedExperiencesData } from '@/lib/content/experience'
+import type { skillCategories as SkillCategories } from '@/lib/content/skills'
 
-const ContactForm = dynamic(() => import('./ContactForm'), { ssr: false })
-
-const name = 'Ahmad Ayman'
-
-/** Cairo's current UTC offset: GMT+2, or GMT+3 during Egyptian summer time. */
-function getCairoOffset() {
-  try {
-    return (
-      new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Cairo', timeZoneName: 'shortOffset' })
-        .formatToParts(new Date())
-        .find((p) => p.type === 'timeZoneName')?.value ?? 'GMT+2'
-    )
-  } catch {
-    return 'GMT+2'
-  }
-}
-
+/**
+ * The home page. Rendered on the server; only the interactive parts (tilt,
+ * Cairo offset, project filter, widgets, contact form, footer) run in the
+ * browser, which keeps hydration small.
+ */
 export default function BentoHome({
+  lang,
   allPostsData,
   allExperiencesData,
   allTags,
   cvUrl,
   skillCategories,
+}: {
+  lang: Locale
+  allPostsData: ReturnType<typeof getSortedPostsData>
+  allExperiencesData: ReturnType<typeof getSortedExperiencesData>
+  allTags: string[]
+  cvUrl: string
+  skillCategories: typeof SkillCategories
 }) {
-  const [activeTag, setActiveTag] = useState(null)
-  // The page is statically rendered, so refresh the offset in the browser
-  const [cairoOffset, setCairoOffset] = useState(getCairoOffset)
-  useEffect(() => setCairoOffset(getCairoOffset()), [])
-
-  const filteredPosts = activeTag
-    ? allPostsData.filter((p) => p.tags?.includes(activeTag))
-    : allPostsData
+  const dict = getDictionary(lang)
+  const href = (path: string) => localePath(lang, path)
+  const t = dict.home
+  const name = dict.common.name
+  const tagLabel = (tag: string) => dict.tags[tag] ?? tag
 
   const latestExp = allExperiencesData?.[0]
 
@@ -58,13 +53,7 @@ export default function BentoHome({
     <main id="main-content" className={styles.layout}>
       <div className={styles.grid}>
         {/* Hero */}
-        <Reveal
-          direction="up"
-          distance={30}
-          duration={0.6}
-          style={{ gridColumn: '1 / -1' }}
-          className={styles.gridItem}
-        >
+        <Reveal on="load" style={{ gridColumn: '1 / -1' }} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.heroRow}`} maxTilt={3}>
             <Image
               priority
@@ -78,27 +67,24 @@ export default function BentoHome({
             <div className={styles.heroContent}>
               <h1 className={styles.heroName}>{name}</h1>
               <p className={styles.heroTitle}>
-                Frontend & Mobile Engineer{' '}
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                  (React / React Native / Next.js)
+                {t.role}{' '}
+                <span dir="ltr" style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+                  {t.roleStack}
                 </span>
               </p>
-              <p className={styles.heroBio}>
-                6 years building React, Next.js, and React Native apps for travel, healthcare,
-                e-commerce, and government platforms across the MENA region. Shipped bilingual
-                Arabic/English RTL interfaces, a government service used by 3M+ people, and
-                enterprise apps serving 600K+ users.
-              </p>
+              <p className={styles.heroBio}>{t.bio}</p>
               <p className={styles.availability}>
                 <span className={styles.availabilityDot} aria-hidden />
-                Open to remote roles & freelance · Cairo, Egypt ({cairoOffset})
+                <span>
+                  {t.availability} (<CairoOffset />)
+                </span>
               </p>
               <div className={styles.heroActions}>
                 <a href="#contact" className={`${styles.cvButton} ${styles.ctaPrimary}`}>
-                  Contact me
+                  {t.contactMe}
                 </a>
                 <a href={cvUrl} className={styles.cvButton} download>
-                  <span>↓</span> Download CV
+                  <span aria-hidden="true">↓</span> {t.downloadCv}
                 </a>
               </div>
             </div>
@@ -106,42 +92,42 @@ export default function BentoHome({
         </Reveal>
 
         {/* Latest Experience */}
-        <Reveal direction="up" delay={0.1} className={styles.gridItem}>
+        <Reveal on="load" delay={0.08} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
-            <span className={styles.midCardLabel}>Latest Experience</span>
+            <span className={styles.midCardLabel}>{t.latestExperience}</span>
             {latestExp ? (
               <>
                 <h3 className={styles.midCardTitle}>{latestExp.title}</h3>
                 <p className={styles.midCardSub}>
-                  <FormattedDate dateString={latestExp.date} />
+                  <FormattedDate lang={lang} dateString={latestExp.date} />
                   {latestExp.till === 'now' ? (
-                    <span className={utilStyles.badge}>Current</span>
+                    <span className={utilStyles.badge}>{t.current}</span>
                   ) : latestExp.till ? (
                     <>
                       {' '}
-                      — <FormattedDate dateString={latestExp.till} />
+                      — <FormattedDate lang={lang} dateString={latestExp.till} />
                     </>
                   ) : null}
                 </p>
-                <Link href={`/experiences/${latestExp.id}`} className={styles.midCardLink}>
-                  View details →
+                <Link href={href(`/experiences/${latestExp.id}`)} className={styles.midCardLink}>
+                  {t.viewDetails} <span className="rtl-flip">→</span>
                 </Link>
               </>
             ) : (
-              <p className={styles.midCardSub}>No experience listed yet</p>
+              <p className={styles.midCardSub}>{t.noExperience}</p>
             )}
           </TiltCard>
         </Reveal>
 
         {/* Skills Mini Grid */}
-        <Reveal direction="up" delay={0.15} className={styles.gridItem}>
+        <Reveal on="load" delay={0.16} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
-            <span className={styles.midCardLabel}>Skills</span>
+            <span className={styles.midCardLabel}>{t.skills}</span>
             <div className={styles.skillsGrid}>
               {allSkills.slice(0, 12).map((skill) => (
                 <span key={skill} className={styles.skillItem}>
                   <SkillIcon skill={skill} />
-                  {skill}
+                  <span className={styles.skillName}>{skill}</span>
                 </span>
               ))}
             </div>
@@ -149,9 +135,9 @@ export default function BentoHome({
         </Reveal>
 
         {/* Contact Quick Card */}
-        <Reveal direction="up" delay={0.2} className={styles.gridItem}>
+        <Reveal on="load" delay={0.24} className={styles.gridItem}>
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
-            <span className={styles.midCardLabel}>Connect</span>
+            <span className={styles.midCardLabel}>{t.connect}</span>
             <div className={styles.contactLinks}>
               <a href="mailto:ahmadaymana99@gmail.com" className={styles.contactLink}>
                 <FaEnvelope /> ahmadaymana99@gmail.com
@@ -162,7 +148,10 @@ export default function BentoHome({
                 rel="noopener noreferrer"
                 className={styles.contactLink}
               >
-                <FaGithub /> GitHub <span className={styles.contactHandle}>@AhmadAymanA99</span>
+                <FaGithub /> GitHub{' '}
+                <span className={styles.contactHandle} dir="ltr">
+                  @AhmadAymanA99
+                </span>
               </a>
               <a
                 href="https://linkedin.com/in/ahmadaymana99"
@@ -170,7 +159,10 @@ export default function BentoHome({
                 rel="noopener noreferrer"
                 className={styles.contactLink}
               >
-                <FaLinkedin /> LinkedIn <span className={styles.contactHandle}>@ahmadaymana99</span>
+                <FaLinkedin /> LinkedIn{' '}
+                <span className={styles.contactHandle} dir="ltr">
+                  @ahmadaymana99
+                </span>
               </a>
             </div>
             <NowPlaying />
@@ -179,106 +171,84 @@ export default function BentoHome({
         </Reveal>
 
         {/* Projects */}
-        <Reveal
-          direction="up"
-          delay={0.1}
-          style={{ gridColumn: '1 / -1' }}
-          className={styles.gridItem}
-        >
+        <Reveal style={{ gridColumn: '1 / -1' }} className={styles.gridItem}>
           <div className={`${styles.card} ${styles.bottomSection}`}>
-            <h2 className={styles.bottomSectionTitle}>Projects</h2>
-            <div className={styles.filterRow}>
-              <button
-                className={`${styles.filterTag} ${activeTag === null ? styles.filterTagActive : ''}`}
-                onClick={() => setActiveTag(null)}
-              >
-                All
-              </button>
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  className={`${styles.filterTag} ${activeTag === tag ? styles.filterTagActive : ''}`}
-                  onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-            <StaggerContainer key={activeTag ?? 'all'} className={styles.projectList}>
-              {filteredPosts.length === 0 ? (
-                <p className={styles.emptyState}>No projects match this filter.</p>
-              ) : (
-                filteredPosts.map((post, i) => (
-                  <StaggerItem key={post.id} index={i}>
-                    <Link
-                      href={`/posts/${post.id}`}
-                      className={`${styles.projectItem} ${styles.projectCase}`}
-                    >
-                      <div className={styles.projectThumb}>
-                        {post.screenshots?.[0] ? (
-                          <Image
-                            src={post.screenshots[0]}
-                            alt=""
-                            fill
-                            sizes="96px"
-                            className={styles.projectThumbImg}
-                          />
-                        ) : (
-                          <span className={styles.projectThumbInitial} aria-hidden="true">
-                            {post.title.charAt(0)}
-                          </span>
-                        )}
-                      </div>
-                      <div className={styles.projectItemLeft}>
-                        <span className={styles.projectName}>{post.title}</span>
-                        {post.summary && (
-                          <span className={styles.projectSummary}>{post.summary}</span>
-                        )}
-                        <span className={styles.projectMeta}>
-                          {post.company && <>{post.company} · </>}
-                          <FormattedDate dateString={post.date} />
+            <h2 className={styles.bottomSectionTitle}>{t.projects}</h2>
+            <ProjectFilter
+              allLabel={t.allTags}
+              emptyLabel={t.noProjectsMatch}
+              tags={allTags.map((tag) => ({ value: tag, label: tagLabel(tag) }))}
+              items={allPostsData.map((post) => ({
+                id: post.id,
+                tags: post.tags ?? [],
+                content: (
+                  <Link
+                    href={href(`/posts/${post.id}`)}
+                    className={`${styles.projectItem} ${styles.projectCase}`}
+                  >
+                    <div className={styles.projectThumb}>
+                      {post.screenshots?.[0] ? (
+                        <Image
+                          src={post.screenshots[0]}
+                          alt=""
+                          fill
+                          sizes="96px"
+                          className={styles.projectThumbImg}
+                        />
+                      ) : (
+                        <span className={styles.projectThumbInitial} aria-hidden="true">
+                          {post.title.charAt(0)}
                         </span>
-                      </div>
-                      <div className={styles.projectTags}>
-                        {post.tags?.map((t) => (
-                          <span key={t} className={styles.projectTag}>
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    </Link>
-                  </StaggerItem>
-                ))
-              )}
-            </StaggerContainer>
+                      )}
+                    </div>
+                    <div className={styles.projectItemLeft}>
+                      <span className={styles.projectName}>{post.title}</span>
+                      {post.summary && (
+                        <span className={styles.projectSummary}>{post.summary}</span>
+                      )}
+                      <span className={styles.projectMeta}>
+                        {post.company && <>{post.company} · </>}
+                        <FormattedDate lang={lang} dateString={post.date} />
+                      </span>
+                    </div>
+                    <div className={styles.projectTags}>
+                      {post.tags?.map((t) => (
+                        <span key={t} className={styles.projectTag}>
+                          {tagLabel(t)}
+                        </span>
+                      ))}
+                    </div>
+                  </Link>
+                ),
+              }))}
+            />
           </div>
         </Reveal>
 
         {/* All Experiences */}
-        <Reveal
-          direction="up"
-          delay={0.1}
-          style={{ gridColumn: '1 / -1' }}
-          className={styles.gridItem}
-        >
+        <Reveal style={{ gridColumn: '1 / -1' }} className={styles.gridItem}>
           <div className={`${styles.card} ${styles.bottomSection}`}>
-            <h2 className={styles.bottomSectionTitle}>Experience</h2>
+            <h2 className={styles.bottomSectionTitle}>{t.experience}</h2>
             <div className={styles.projectList}>
               {allExperiencesData.length === 0 ? (
-                <p className={styles.emptyState}>No experience listed yet.</p>
+                <p className={styles.emptyState}>{t.noExperience}</p>
               ) : (
                 allExperiencesData.map((exp) => (
-                  <Link key={exp.id} href={`/experiences/${exp.id}`} className={styles.projectItem}>
+                  <Link
+                    key={exp.id}
+                    href={href(`/experiences/${exp.id}`)}
+                    className={styles.projectItem}
+                  >
                     <div className={styles.projectItemLeft}>
                       <span className={styles.projectName}>{exp.title}</span>
                       <span className={styles.projectMeta}>
-                        <FormattedDate dateString={exp.date} />
+                        <FormattedDate lang={lang} dateString={exp.date} />
                         {exp.till === 'now' ? (
-                          <span className={utilStyles.badge}>Current</span>
+                          <span className={utilStyles.badge}>{t.current}</span>
                         ) : exp.till ? (
                           <>
                             {' '}
-                            — <FormattedDate dateString={exp.till} />
+                            — <FormattedDate lang={lang} dateString={exp.till} />
                           </>
                         ) : null}
                       </span>
@@ -286,7 +256,7 @@ export default function BentoHome({
                     <div className={styles.projectTags}>
                       {exp.tags?.map((t) => (
                         <span key={t} className={styles.projectTag}>
-                          {t}
+                          {tagLabel(t)}
                         </span>
                       ))}
                     </div>
@@ -298,7 +268,7 @@ export default function BentoHome({
         </Reveal>
       </div>
 
-      <ContactForm />
+      <LazyContactForm />
       <BackToTop />
       <Footer />
     </main>

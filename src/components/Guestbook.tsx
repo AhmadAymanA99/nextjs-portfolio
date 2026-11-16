@@ -2,10 +2,12 @@
 
 import { useState, useEffect, type FormEvent } from 'react'
 import { formatDistanceToNow } from 'date-fns'
+import { ar } from 'date-fns/locale'
 import { Turnstile } from '@marsidev/react-turnstile'
 import Spinner from '@/components/ui/Spinner'
 import { useTheme } from '@/lib/ThemeContext'
 import styles from './Guestbook.module.css'
+import { useI18n } from '@/i18n/I18nProvider'
 
 const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
 
@@ -19,6 +21,8 @@ interface Entry {
 
 export default function Guestbook({ initialEntries }: { initialEntries: Entry[] }) {
   const { theme } = useTheme()
+  const { dict, lang } = useI18n()
+  const t = dict.guestbook
   const [entries, setEntries] = useState<Entry[]>(initialEntries)
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
@@ -27,6 +31,8 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [token, setToken] = useState('')
+  // Load the Cloudflare check only once someone starts filling in the form
+  const [armed, setArmed] = useState(false)
   const [company, setCompany] = useState('')
 
   useEffect(() => {
@@ -41,7 +47,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
     setError('')
 
     if (SITE_KEY && !token) {
-      setError('Please complete the security check')
+      setError(dict.contact.completeCheck)
       return
     }
 
@@ -49,7 +55,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
     const trimmedMessage = message.trim()
 
     if (!trimmedName || !trimmedMessage) {
-      setError('Name and message are required')
+      setError(t.required)
       return
     }
 
@@ -71,7 +77,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || 'Failed to submit')
+        setError(data.error || t.failed)
         setLoading(false)
         return
       }
@@ -83,39 +89,37 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
       setSuccess(true)
       setLoading(false)
     } catch {
-      setError('Network error. Please try again.')
+      setError(t.networkError)
       setLoading(false)
     }
   }
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Guestbook</h1>
-      <p className={styles.subtitle}>Leave a message. Say hello. Share your thoughts.</p>
+      <h1 className={styles.title}>{t.title}</h1>
+      <p className={styles.subtitle}>{t.subtitle}</p>
 
-      {success && (
-        <div className={styles.success}>Thanks! Your message will appear after approval.</div>
-      )}
+      {success && <div className={styles.success}>{t.success}</div>}
 
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit} onFocus={() => setArmed(true)}>
         <input
           className={styles.input}
-          placeholder="Your name *"
+          placeholder={t.name}
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={100}
           required
           disabled={loading}
-          aria-label="Your name"
+          aria-label={t.nameLabel}
         />
         <input
           className={styles.input}
-          placeholder="Website (optional)"
+          placeholder={t.website}
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
           maxLength={500}
           disabled={loading}
-          aria-label="Website"
+          aria-label={t.websiteLabel}
         />
         {/* Honeypot: hidden from people, filled in by bots */}
         <input
@@ -126,25 +130,35 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           tabIndex={-1}
           autoComplete="off"
           aria-hidden="true"
-          style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+          style={{
+            position: 'absolute',
+            insetInlineStart: '-9999px',
+            width: 1,
+            height: 1,
+            opacity: 0,
+          }}
         />
         <textarea
           className={styles.textarea}
-          placeholder="Your message *"
+          placeholder={t.message}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           maxLength={2000}
           required
           disabled={loading}
-          aria-label="Your message"
+          aria-label={t.messageLabel}
         />
         {error && <p className={styles.error}>{error}</p>}
-        {SITE_KEY && (
+        {SITE_KEY && armed && (
           <Turnstile
             siteKey={SITE_KEY}
             onSuccess={setToken}
             onError={() => setToken('')}
-            options={{ size: 'flexible', theme: theme === 'dark' ? 'dark' : 'light' }}
+            options={{
+              size: 'flexible',
+              theme: theme === 'dark' ? 'dark' : 'light',
+              language: lang,
+            }}
           />
         )}
         <button
@@ -154,10 +168,10 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
         >
           {loading ? (
             <>
-              <Spinner size={16} /> Submitting...
+              <Spinner size={16} /> {t.submitting}
             </>
           ) : (
-            'Sign the Guestbook'
+            t.submit
           )}
         </button>
       </form>
@@ -167,12 +181,19 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
           entries.map((entry) => (
             <div key={entry.id} className={styles.entry}>
               <div className={styles.entryHeader}>
-                <span className={styles.entryName}>{entry.name}</span>
+                <span className={styles.entryName} dir="auto">
+                  {entry.name}
+                </span>
                 <span className={styles.entryDate}>
-                  {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(entry.created_at), {
+                    addSuffix: true,
+                    locale: lang === 'ar' ? ar : undefined,
+                  })}
                 </span>
               </div>
-              <div className={styles.entryMessage}>{entry.message}</div>
+              <div className={styles.entryMessage} dir="auto">
+                {entry.message}
+              </div>
               {entry.website && (
                 <a
                   href={entry.website}
@@ -186,7 +207,7 @@ export default function Guestbook({ initialEntries }: { initialEntries: Entry[] 
             </div>
           ))
         ) : (
-          <div className={styles.emptyState}>No messages yet. Be the first!</div>
+          <div className={styles.emptyState}>{t.empty}</div>
         )}
       </div>
     </div>

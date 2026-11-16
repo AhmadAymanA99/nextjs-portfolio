@@ -6,23 +6,25 @@ Personal portfolio of **Ahmad Ayman Elsaeid**, Frontend & Mobile Engineer (React
 
 ## Features
 
+- **English and Arabic:** every page in both languages, with a full right-to-left layout, an Arabic font, Arabic dates and plurals, and a language switch that keeps you on the same page. English lives at `/…`, Arabic at `/ar/…`, and each page links its other-language version for search engines (hreflang)
 - **Bento-style home page:** hero with availability and CV download, skills with brand logos, projects with thumbnails, summaries and tag filters, experience timeline and contact form
 - **Project case studies** with role, stack, metrics and live link up top, then problem / what I did / result, plus a screenshot lightbox; the first screenshot doubles as the link-preview image
 - **Experience pages** written in Markdown, with table of contents, view counter and share buttons
 - **Guestbook** with moderation and spam filtering
 - **Admin dashboard** (`/admin`):
-  - **Analytics:** real visitors only (bots, crawlers and admin visits excluded), change vs the previous period, traffic sources, countries, devices and CSV export
+  - **Analytics:** real visitors only, change vs the previous period, traffic sources, countries, devices and CSV export. A view is counted only after a person interacts with the page (pointer, touch, key or wheel); crawlers, automated browsers, the admin's own visits and cloud networks (AWS, Google, Azure, Oracle, DigitalOcean, Meta: e-mail link scanners, uptime monitors) are left out, including in data recorded before this filter existed
   - **Messages inbox:** read/unread, reply by email, bulk actions
   - **Guestbook moderation:** pending, likely spam and approved views
 - **Integrations:** live GitHub activity and Spotify "recently played"
-- **Light/dark theme,** smooth scrolling, `prefers-reduced-motion` support, RSS feed, sitemap and robots.txt
+- **Light/dark theme,** CSS-only entrance and scroll animations, a particle background and smooth scrolling that load after the page is ready, `prefers-reduced-motion` support, RSS feed, sitemap and robots.txt
+- **Fast on phones:** the home page is rendered on the server with small interactive islands; Lighthouse mobile performance is about 89 on the home page and 100 on desktop
 
 ## Tech stack
 
 | Area | Tools |
 | --- | --- |
 | Framework | Next.js 16 (App Router, Turbopack), React 19, TypeScript |
-| Styling | CSS Modules, framer-motion, tsParticles, Lenis |
+| Styling | CSS Modules (scroll-driven animations), tsParticles, Lenis |
 | Data | Neon Postgres (serverless HTTP driver) |
 | Content | Markdown with gray-matter and remark/rehype |
 | Security | Cloudflare Turnstile, HMAC admin tokens, rate limiting |
@@ -63,6 +65,7 @@ npm run dev            # http://localhost:3000
 | `npm run format` | Format with Prettier |
 | `npm run typecheck` | TypeScript check |
 | `npm test` | Unit and API tests (Vitest) |
+| `npm run update:datacenters` | Refresh the cloud IP ranges the analytics leave out (`src/lib/server/datacenter-ranges.json`) |
 
 CI runs lint, typecheck, tests and build on every push to `main`.
 
@@ -72,11 +75,15 @@ CI runs lint, typecheck, tests and build on every push to `main`.
 content/
   experience/        # one .md file per job
   posts/             # one .mdx file per project
+  ar/                # Arabic translations, same file names
 public/              # CV PDF, images, logos, service worker
 src/
   app/               # routes: pages, API route handlers, sitemap, RSS
-    admin/           # dashboard and login
+    [lang]/          # public pages (en, ar); English is served at unprefixed URLs
+    admin/           # dashboard and login (English only, its own root layout)
     api/             # contact, guestbook, track, views, github, spotify, admin/*
+  i18n/              # languages, URL helpers, interface text (dictionaries/en.ts, ar.ts)
+  proxy.ts           # rewrites /faq to the internal /en/faq route; /en/… redirects to /…
   components/
     admin/           # dashboard panels
     detail/          # project/experience page parts
@@ -84,7 +91,7 @@ src/
     layout/          # footer, page layout, background, smooth scroll
     ui/              # shared primitives
   lib/
-    content/         # Markdown loading, tags, skills, FAQ
+    content/         # Markdown loading (with translation fallback), tags, skills
     server/          # database, auth, rate limiting, analytics helpers
     site.ts          # site URL, name, description, CV path
   styles/            # global styles
@@ -122,10 +129,11 @@ Then add its tags in `src/lib/content/tags.ts` (`postTags`). Put screenshots in 
 
 **Add a job:** create `content/experience/<id>.md` with `title`, `date` and `till` (`'now'` for a current role), and add tags in `experienceTags`.
 
+**Translate into Arabic:** create the same file name under `content/ar/posts/` or `content/ar/experience/`. It only needs the fields that change (title, summary, company, role, platform, status, metric labels) and the body; dates, stack, links and screenshots come from the English file. Without a translation, the Arabic page shows the English text. Links inside Arabic bodies should point to `/ar/…`.
+
 **Other content:**
 - **Skills:** `src/lib/content/skills.ts`; logos in `src/components/home/SkillIcon.tsx`
-- **FAQ:** `src/lib/content/faq.ts`
-- **Hero text:** `src/components/home/BentoHome.tsx`
+- **Interface text, hero, FAQ, tag names:** `src/i18n/dictionaries/en.ts` and `ar.ts` (the Arabic file must have every key the English one has; TypeScript enforces it)
 - **CV:** replace `public/Ahmad_Ayman_CV.pdf`
 
 ## Deployment

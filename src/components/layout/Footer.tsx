@@ -1,12 +1,18 @@
+'use client'
+
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import styles from './Footer.module.css'
 import { FaLinkedin, FaFacebook, FaGithub, FaEnvelope } from 'react-icons/fa'
 import { FaXTwitter, FaTelegram, FaWhatsapp, FaSun, FaMoon } from 'react-icons/fa6'
 import { useTheme } from '@/lib/ThemeContext'
+import { useI18n } from '@/i18n/I18nProvider'
+import { format } from '@/i18n/config'
 
 const Footer = () => {
   const { theme, toggleTheme } = useTheme()
+  const { dict, href } = useI18n()
+  const t = dict.footer
   const [clicks, setClicks] = useState(0)
   const [showAdmin, setShowAdmin] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -36,14 +42,14 @@ const Footer = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.contact}>
-        <h3 onClick={handleNameClick}>Ahmad Ayman Elsaeid</h3>
-        <p>Cairo, Egypt</p>
+        <h3 onClick={handleNameClick}>{t.fullName}</h3>
+        <p>{t.location}</p>
         <div className={styles.footerLinks}>
-          <Link href="/guestbook" className={styles.guestBtn}>
-            Guestbook
+          <Link href={href('/guestbook')} className={styles.guestBtn}>
+            {t.guestbook}
           </Link>
-          <Link href="/faq" className={styles.guestBtn}>
-            FAQ
+          <Link href={href('/faq')} className={styles.guestBtn}>
+            {t.faq}
           </Link>
           {showAdmin && (
             <Link href="/admin/login" className={styles.adminLink}>
@@ -106,17 +112,13 @@ const Footer = () => {
         </a>
       </div>
       <div className={styles.objective}>
-        <p>
-          Frontend and mobile engineer building React, Next.js, and React Native apps with bilingual
-          Arabic/English RTL support. Focused on performance, SEO, and maintainable component
-          architecture.
-        </p>
+        <p>{t.objective}</p>
       </div>
       <button className={styles.themeToggle} onClick={toggleTheme}>
         {theme === 'dark' ? <FaSun /> : <FaMoon />}
-        {theme === 'dark' ? 'Light' : 'Dark'} Mode
+        {theme === 'dark' ? t.lightMode : t.darkMode}
       </button>
-      <p className={styles.copyright}>All rights reserved. &copy; {new Date().getFullYear()}.</p>
+      <p className={styles.copyright}>{format(t.rights, { year: new Date().getFullYear() })}</p>
     </footer>
   )
 }

@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
-import { MotionConfig } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext'
-import { isTrackingDisabled } from '@/lib/tracking'
+import { isTrackingDisabled, trackPageView } from '@/lib/tracking'
 import SmoothScroll from '@/components/layout/SmoothScroll'
+import LanguageSwitch from '@/components/layout/LanguageSwitch'
+import { useI18n } from '@/i18n/I18nProvider'
+import { publicPath } from '@/i18n/config'
 
 const ParticlesBackground = dynamic(() => import('@/components/layout/ParticlesBackground'), {
   ssr: false,
@@ -15,7 +17,9 @@ const ParticlesBackground = dynamic(() => import('@/components/layout/ParticlesB
 
 function ShellInner({ children }: { children: ReactNode }) {
   const { theme } = useTheme()
-  const pathname = usePathname()
+  const { dict } = useI18n()
+  // English pages are served from internal /en routes; record the public URL
+  const pathname = publicPath(usePathname())
 
   const isFirstView = useRef(true)
 
@@ -25,11 +29,7 @@ function ShellInner({ children }: { children: ReactNode }) {
     const referrer = isFirstView.current ? document.referrer || 'direct' : 'internal'
     isFirstView.current = false
     if (process.env.NODE_ENV === 'production' && !isTrackingDisabled()) {
-      fetch('/api/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: pathname, referrer }),
-      }).catch(() => {})
+      trackPageView(pathname, referrer)
     }
     ;(window as any).__lenis?.scrollTo(0, { immediate: true })
   }, [pathname])
@@ -40,15 +40,16 @@ function ShellInner({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const isAdmin = pathname.startsWith('/admin')
+
   return (
-    <div style={{ position: 'relative', zIndex: 1, overflowX: 'hidden' }}>
+    <div style={{ position: 'relative', zIndex: 1, overflowX: 'clip' }}>
       <a href="#main-content" className="skip-link">
-        Skip to main content
+        {dict.common.skipToContent}
       </a>
-      {!pathname.startsWith('/admin') && <ParticlesBackground theme={theme} />}
-      <MotionConfig reducedMotion="user">
-        <SmoothScroll>{children}</SmoothScroll>
-      </MotionConfig>
+      {!isAdmin && <LanguageSwitch />}
+      {!isAdmin && <ParticlesBackground theme={theme} />}
+      <SmoothScroll>{children}</SmoothScroll>
     </div>
   )
 }

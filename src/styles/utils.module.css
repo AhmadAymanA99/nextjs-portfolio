@@ -52,6 +52,10 @@
   transform: translateX(4px);
 }
 
+:global([dir='rtl']) .listItem:hover {
+  transform: translateX(-4px);
+}
+
 .listItemLink {
   display: block;
   text-decoration: none;
@@ -129,5 +133,5 @@
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
-  margin-left: 0.5rem;
+  margin-inline-start: 0.5rem;
 }
