@@ -9,11 +9,12 @@ export default function ViewCounter({ path }: { path: string }) {
 
   useEffect(() => {
     fetch(`/api/views?path=${encodeURIComponent(path)}`)
-      .then((r) => r.json())
-      .then((d) => setCount(d.count))
-      .catch(() => setCount(0))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setCount(typeof d?.count === 'number' ? d.count : null))
+      .catch(() => setCount(null))
   }, [path])
 
+  // Hidden while loading, or if the count is unavailable (e.g. database down)
   if (count === null) return null
 
   return (
