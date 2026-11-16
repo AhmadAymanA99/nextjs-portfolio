@@ -355,9 +355,11 @@ li {
   color: white;
 }
 
+/* Keyboard users only: hidden by its own height (not a percentage of the page,
+   which is briefly short while a page loads) and shown on keyboard focus */
 .skip-link {
-  position: absolute;
-  top: -100%;
+  position: fixed;
+  top: 0;
   inset-inline-start: 1rem;
   z-index: 1000;
   padding: 0.5rem 1rem;
@@ -367,11 +369,11 @@ li {
   border-radius: 0 0 6px 6px;
   font-size: 0.85rem;
   font-weight: 600;
-  transition: top 0.2s ease;
+  transform: translateY(-150%);
 }
 
-.skip-link:focus {
-  top: 0;
+.skip-link:focus-visible {
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
