@@ -51,6 +51,9 @@ const Footer = () => {
           <Link href={href('/faq')} className={styles.guestBtn}>
             {t.faq}
           </Link>
+          <Link href={href('/games')} className={styles.guestBtn}>
+            {t.games}
+          </Link>
           {showAdmin && (
             <Link href="/admin/login" className={styles.adminLink}>
               Admin
