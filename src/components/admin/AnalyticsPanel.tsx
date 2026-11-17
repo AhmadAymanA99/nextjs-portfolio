@@ -46,6 +46,9 @@ interface Analytics {
   }[]
 }
 
+/** Recent visits listed before "Show all" */
+const RECENT_SHOWN = 10
+
 const RANGES: { label: string; days: number | null }[] = [
   { label: '7d', days: 7 },
   { label: '30d', days: 30 },
@@ -126,6 +129,8 @@ export default function AnalyticsPanel() {
   const [exporting, setExporting] = useState(false)
   // The recent visit whose details are open
   const [openVisit, setOpenVisit] = useState<number | null>(null)
+  // Recent visits show the latest few until "Show all" is pressed
+  const [showAllVisits, setShowAllVisits] = useState(false)
 
   const load = useCallback(() => {
     setLoading(true)
@@ -313,7 +318,19 @@ export default function AnalyticsPanel() {
           <div className={styles.card}>
             <h3>Recent visits</h3>
             <div className={styles.tableWrapper}>
-              <table className={styles.table}>
+              {/* Fixed column widths so the table always fits its card; long
+                  values end in "…" and show in full on hover */}
+              <table className={`${styles.table} ${styles.tableFixed}`}>
+                <colgroup>
+                  <col style={{ width: '14%' }} />
+                  <col style={{ width: '14%' }} />
+                  <col style={{ width: '11%' }} />
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '16%' }} />
+                  <col style={{ width: '15%' }} />
+                  <col style={{ width: '9%' }} />
+                  <col style={{ width: '11%' }} />
+                </colgroup>
                 <thead>
                   <tr>
                     <th>Page</th>
@@ -330,7 +347,7 @@ export default function AnalyticsPanel() {
                 </thead>
                 <tbody>
                   {data.recentViews.length ? (
-                    data.recentViews.map((v) => (
+                    data.recentViews.slice(0, showAllVisits ? undefined : RECENT_SHOWN).map((v) => (
                       <Fragment key={v.id}>
                         <tr className={openVisit === v.id ? styles.rowOpen : undefined}>
                           <td className={styles.mono} title={v.path}>
@@ -343,14 +360,16 @@ export default function AnalyticsPanel() {
                                 ? 'Direct'
                                 : v.referrer.replace(/^https?:\/\/(www\.)?/, '')}
                           </td>
-                          <td>{countryName(v.country)}</td>
+                          <td title={countryName(v.country)}>{countryName(v.country)}</td>
                           <td>
                             <span className={styles.chip}>{v.device_type || 'desktop'}</span>
                           </td>
-                          <td>
+                          <td title={`${v.browser} / ${v.os}`}>
                             {v.browser} / {v.os}
                           </td>
-                          <td className={styles.mono}>{v.ip}</td>
+                          <td className={styles.mono} title={v.ip}>
+                            {v.ip}
+                          </td>
                           <td title={new Date(v.timestamp).toLocaleString()}>
                             {timeAgo(v.timestamp)}
                           </td>
@@ -384,6 +403,16 @@ export default function AnalyticsPanel() {
                 </tbody>
               </table>
             </div>
+            {data.recentViews.length > RECENT_SHOWN && (
+              <button
+                className={`${styles.button} ${styles.showAll}`}
+                onClick={() => setShowAllVisits(!showAllVisits)}
+              >
+                {showAllVisits
+                  ? `Show the latest ${RECENT_SHOWN}`
+                  : `Show all ${data.recentViews.length} recent visits`}
+              </button>
+            )}
           </div>
         </div>
       ) : null}

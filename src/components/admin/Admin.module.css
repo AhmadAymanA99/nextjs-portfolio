@@ -752,3 +752,24 @@
     gap: 0;
   }
 }
+
+/* A table whose columns are sized by <colgroup>, so it never grows past its
+   container; every cell is cut with an ellipsis instead */
+.tableFixed {
+  table-layout: fixed;
+}
+
+.tableFixed th,
+.tableFixed td {
+  max-width: none;
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+}
+
+.tableFixed .detailRow td {
+  overflow: visible;
+}
+
+.showAll {
+  margin-top: 0.75rem;
+}
