@@ -5,12 +5,9 @@ import {
   describeAgent,
   humanViews,
   inRange,
-  maskIP,
   parseDays,
+  topSources,
 } from '@/lib/server/pageViews'
-import { siteUrl } from '@/lib/site'
-
-const siteHost = new URL(siteUrl).hostname
 
 function percent(part: unknown, total: number) {
   return total ? Math.round((Number(part || 0) / total) * 100) : 0
@@ -48,18 +45,11 @@ export async function GET(req: Request) {
         sql`SELECT path, COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
           FROM page_views WHERE ${current}
           GROUP BY path ORDER BY views DESC LIMIT 10`,
-        sql`SELECT source, COUNT(DISTINCT ip_address)::int AS visitors FROM (
-            SELECT ip_address,
-              CASE WHEN referrer IS NULL OR referrer IN ('', 'direct') THEN 'Direct'
-                   ELSE substring(referrer from '^https?://(?:www\\.)?([^/:?#]+)') END AS source
-            FROM page_views WHERE ${current} AND COALESCE(referrer, '') <> 'internal'
-          ) r
-          WHERE source IS NOT NULL AND source <> ${siteHost} AND source NOT LIKE '%localhost%'
-          GROUP BY source ORDER BY visitors DESC LIMIT 10`,
+        topSources(current, 10),
         sql`SELECT COALESCE(country, 'Unknown') AS country, COUNT(DISTINCT ip_address)::int AS visitors
           FROM page_views WHERE ${current}
           GROUP BY 1 ORDER BY visitors DESC LIMIT 10`,
-        sql`SELECT path, country, device_type, referrer, timestamp, ip_address, user_agent
+        sql`SELECT id, path, country, device_type, referrer, timestamp, ip_address, user_agent
           FROM page_views WHERE ${current} ORDER BY timestamp DESC LIMIT 50`,
       ])
 
@@ -88,12 +78,13 @@ export async function GET(req: Request) {
       referrers,
       countries,
       recentViews: recent.map((v) => ({
+        id: v.id,
         path: v.path,
         country: v.country,
         device_type: v.device_type,
         referrer: v.referrer,
         timestamp: v.timestamp,
-        ip: maskIP(v.ip_address),
+        ip: v.ip_address || '—',
         ...describeAgent(v.user_agent),
       })),
     })

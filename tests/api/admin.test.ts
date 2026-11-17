@@ -38,6 +38,11 @@ beforeAll(async () => {
       is_read BOOLEAN DEFAULT false, created_at TIMESTAMPTZ DEFAULT NOW());
     CREATE TABLE guestbook_entries (id SERIAL PRIMARY KEY, name TEXT, message TEXT, website TEXT DEFAULT '',
       approved BOOLEAN DEFAULT false, flagged BOOLEAN DEFAULT false, created_at TIMESTAMPTZ DEFAULT NOW());
+    CREATE TABLE ip_networks (ip TEXT PRIMARY KEY, asn TEXT, holder TEXT, prefix TEXT,
+      fetched_at TIMESTAMPTZ DEFAULT NOW());
+    CREATE TABLE owner_ips (ip TEXT NOT NULL, day DATE NOT NULL, PRIMARY KEY (ip, day));
+    CREATE TABLE rate_limits (key TEXT PRIMARY KEY, window_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      count INT NOT NULL DEFAULT 0);
     INSERT INTO page_views (path, referrer, user_agent, ip_address, country, device_type, timestamp) VALUES
       ('/', 'https://www.linkedin.com/feed', '$UA_HUMAN', '192.0.2.1', 'EG', 'desktop', NOW() - interval '1 day'),
       ('/posts/rehlte', 'internal', '$UA_HUMAN', '192.0.2.1', 'EG', 'desktop', NOW() - interval '1 day'),
@@ -57,8 +62,8 @@ beforeAll(async () => {
 })
 
 async function auth() {
-  const { createToken } = await import('@/lib/server/auth')
-  return { Authorization: `Bearer ${createToken()}` }
+  const { createToken, SESSION_COOKIE } = await import('@/lib/server/auth')
+  return { Cookie: `${SESSION_COOKIE}=${createToken()}` }
 }
 
 // Runs the real route handlers against an in-memory Postgres (PGlite). Neon
@@ -100,6 +105,65 @@ describe('admin analytics', () => {
   it('rejects missing token', async () => {
     const { GET } = await import('@/app/api/admin/analytics/route')
     expect((await GET(new Request('https://x/api/admin/analytics'))).status).toBe(401)
+  })
+})
+
+describe('admin session', () => {
+  const login = async (password: string, ip: string) => {
+    const { POST } = await import('@/app/api/admin/login/route')
+    return POST(
+      new Request('https://x/api/admin/login', {
+        method: 'POST',
+        headers: { 'x-forwarded-for': ip },
+        body: JSON.stringify({ password }),
+      }),
+    )
+  }
+
+  it('signs in with an HttpOnly cookie and no token in the body', async () => {
+    const res = await login('secret', '198.51.100.1')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ ok: true })
+    const cookie = res.headers.get('set-cookie')!
+    expect(cookie).toMatch(/^admin_session=[\w-]+\.[0-9a-f]+;/)
+    expect(cookie).toContain('HttpOnly')
+    expect(cookie).toContain('SameSite=Strict')
+    expect(cookie).toContain('Path=/api/admin')
+
+    // The cookie it set opens the admin API
+    const { GET } = await import('@/app/api/admin/session/route')
+    const session = cookie.split(';')[0]
+    expect((await GET(new Request('https://x', { headers: { Cookie: session } }))).status).toBe(200)
+    expect((await GET(new Request('https://x'))).status).toBe(401)
+  })
+
+  it('rejects a wrong password, then rate limits (counts kept in the database)', async () => {
+    const statuses: number[] = []
+    for (let i = 0; i < 4; i++) statuses.push((await login('wrong', '198.51.100.2')).status)
+    expect(statuses).toEqual([401, 401, 401, 429])
+    // Another client is unaffected
+    expect((await login('wrong', '198.51.100.3')).status).toBe(401)
+    const [row] = (
+      await pg.query('SELECT count FROM rate_limits WHERE key LIKE $1', ['/api/admin/login:%'])
+    ).rows as any[]
+    expect(row).toBeTruthy()
+  })
+
+  it('log out clears the cookie', async () => {
+    const { DELETE } = await import('@/app/api/admin/session/route')
+    expect((await DELETE()).headers.get('set-cookie')).toContain('Max-Age=0')
+  })
+
+  it('blocks changes sent from another site', async () => {
+    const m = await import('@/app/api/admin/messages/route')
+    const res = await m.DELETE(
+      new Request('https://x/api/admin/messages', {
+        method: 'DELETE',
+        headers: { ...(await auth()), Origin: 'https://evil.example' },
+        body: JSON.stringify({ ids: [2] }),
+      }),
+    )
+    expect(res.status).toBe(403)
   })
 })
 
@@ -146,6 +210,58 @@ describe('messages + guestbook bulk', () => {
   })
 })
 
+describe('guestbook', () => {
+  const sign = async (name: string, message: string, ip: string) => {
+    const { POST } = await import('@/app/api/guestbook/route')
+    return POST(
+      new Request('https://x/api/guestbook', {
+        method: 'POST',
+        headers: { 'x-forwarded-for': ip },
+        body: JSON.stringify({ name, message }),
+      }),
+    )
+  }
+
+  it('flags likely spam when it is saved', async () => {
+    expect((await sign('Sara', 'Lovely site!', '198.51.100.20')).status).toBe(200)
+    expect((await sign('Bot', 'Best casino bonus', '198.51.100.21')).status).toBe(200)
+    const rows = (
+      await pg.query(`SELECT name, flagged FROM guestbook_entries WHERE name IN ('Sara', 'Bot')`)
+    ).rows as any[]
+    expect(Object.fromEntries(rows.map((r) => [r.name, r.flagged]))).toEqual({
+      Sara: false,
+      Bot: true,
+    })
+  }, 30_000) // first import of the route loads nodemailer
+})
+
+describe('weekly summary', () => {
+  it('summarizes real visitors and what is waiting', async () => {
+    const { getWeeklySummary, formatWeeklySummary } = await import('@/lib/server/weeklySummary')
+    const s = await getWeeklySummary()
+    // Same human rows as the 7-day analytics test
+    expect(s.views).toBe(4)
+    expect(s.visitors).toBe(3)
+    expect(s.prevViews).toBe(1)
+    expect(s.sources.map((x) => x.label).sort()).toEqual(['Direct', 'linkedin.com'])
+    expect(s.pendingGuestbook).toBe(1) // Sara; the casino entry is flagged
+    const mail = formatWeeklySummary(s)
+    expect(mail.subject).toBe('[Portfolio] Weekly summary: 3 visitors')
+    expect(mail.text).toContain('Visitors: 3 (+200% vs last week)')
+  })
+
+  it('only runs for the cron secret', async () => {
+    const { GET } = await import('@/app/api/cron/weekly-summary/route')
+    process.env.CRON_SECRET = 'cron'
+    const call = (auth?: string) =>
+      GET(new Request('https://x', { headers: auth ? { authorization: auth } : {} }))
+    expect((await call()).status).toBe(401)
+    expect((await call('Bearer nope')).status).toBe(401)
+    // Right secret, but no SMTP configured in tests
+    expect((await call('Bearer cron')).status).toBe(503)
+  })
+})
+
 describe('track', () => {
   it('skips bots, cloud networks and admin paths, records humans', async () => {
     const { POST } = await import('@/app/api/track/route')
@@ -163,5 +279,68 @@ describe('track', () => {
     // Cloud networks: Azure (e-mail link scanners) and AWS
     expect((await post('/', UA_HUMAN, '20.40.1.1')).status).toBe(204)
     expect((await post('/', UA_HUMAN, '3.80.0.1')).status).toBe(204)
+  })
+})
+
+describe('owner visits', () => {
+  it('signing in remembers the current address', async () => {
+    const { GET } = await import('@/app/api/admin/session/route')
+    await GET(
+      new Request('https://x', {
+        headers: { ...(await auth()), 'x-forwarded-for': '203.0.113.9' },
+      }),
+    )
+    const rows = (await pg.query(`SELECT day FROM owner_ips WHERE ip = '203.0.113.9'`)).rows
+    expect(rows).toHaveLength(1)
+  })
+})
+
+describe('visit details', () => {
+  it('reads the device, app, network and history of a visit', async () => {
+    const FB =
+      'Mozilla/5.0 (Linux; Android 13; SM-A225F Build/TP1A.220624.014) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/155.0.8059.76 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/583.0.0.39.55;IABMV/1;]'
+    await pg.exec(`
+      INSERT INTO page_views (path, referrer, user_agent, ip_address, country, device_type, timestamp) VALUES
+        ('/', 'http://ahmad-ayman.vercel.app/', '${FB}', '197.53.47.104', 'EG', 'mobile', NOW() - interval '3 days'),
+        ('/posts/kptc', 'internal', '${FB}', '197.53.47.104', 'EG', 'mobile', NOW() - interval '1 day');
+    `)
+    const [{ id }] = (
+      await pg.query(`SELECT id FROM page_views WHERE ip_address = '197.53.47.104' AND path = '/'`)
+    ).rows as any[]
+
+    // The registry (RIPEstat), faked
+    const fetchMock = vi.fn(async (url: string) =>
+      Response.json({
+        data: url.includes('network-info')
+          ? { asns: ['8452'], prefix: '197.48.0.0/13' }
+          : { holder: 'TE-AS - TE Data' },
+      }),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    const { GET } = await import('@/app/api/admin/visit/route')
+    const get = async () =>
+      (
+        await GET(new Request(`https://x/api/admin/visit?id=${id}`, { headers: await auth() }))
+      ).json()
+
+    const d = await get()
+    expect(d.ip).toBe('197.53.47.104')
+    expect(d.network).toEqual({ asn: '8452', holder: 'TE-AS - TE Data', prefix: '197.48.0.0/13' })
+    expect(d.device).toEqual({ type: 'mobile', vendor: 'Samsung', model: 'SM-A225F' })
+    expect(d.inApp).toBe('Facebook')
+    expect(d.os).toBe('Android 13')
+    expect(d.history).toMatchObject({ views: 2, days: 2 })
+    expect(d.notes.join(' ')).toContain('Opened inside the Facebook app')
+    expect(d.notes.join(' ')).toContain('Most likely a real person')
+
+    // Looked up once, then read from the database
+    await get()
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    vi.unstubAllGlobals()
+  })
+
+  it('needs a session', async () => {
+    const { GET } = await import('@/app/api/admin/visit/route')
+    expect((await GET(new Request('https://x/api/admin/visit?id=1'))).status).toBe(401)
   })
 })

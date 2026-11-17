@@ -1,51 +1,16 @@
-import nodemailer from 'nodemailer'
 import { ensureDB } from '@/lib/server/db'
+import { escapeHtml, sendToOwner } from '@/lib/server/mail'
 import rateLimit from '@/lib/server/rateLimit'
 import { verifyTurnstileToken } from '@/lib/server/turnstile'
 
 const limiter = rateLimit({ windowMs: 60000, max: 5 })
 
-function createTransporter() {
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) return null
+type Message = { name: string; email: string; subject?: string; message: string }
 
-  const port = parseInt(SMTP_PORT || '465')
-
-  return nodemailer.createTransport({
-    host: SMTP_HOST,
-    port,
-    secure: port === 465,
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
-    connectionTimeout: 10000,
-  })
-}
-
-function escapeHtml(s: string) {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
-
-async function sendEmailNotification({ name, email, subject, message }) {
-  const { CONTACT_EMAIL, SMTP_USER } = process.env
-  if (!CONTACT_EMAIL || !SMTP_USER) {
-    console.error('Missing CONTACT_EMAIL or SMTP_USER')
-    return
-  }
-
-  const transporter = createTransporter()
-  if (!transporter) {
-    console.error('Failed to create transporter')
-    return
-  }
-
-  await transporter.sendMail({
-    from: `"Portfolio Contact" <${SMTP_USER}>`,
+function sendEmailNotification({ name, email, subject, message }: Message) {
+  return sendToOwner({
+    fromName: 'Portfolio Contact',
     replyTo: email,
-    to: CONTACT_EMAIL,
     subject: `[Portfolio] ${subject || 'New Message'} from ${name}`,
     text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject || 'N/A'}\n\nMessage:\n${message}`,
     html: `<p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Subject:</strong> ${escapeHtml(subject || 'N/A')}</p><p><strong>Message:</strong></p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`,
@@ -53,7 +18,7 @@ async function sendEmailNotification({ name, email, subject, message }) {
 }
 
 export async function POST(req: Request) {
-  const limited = limiter(req)
+  const limited = await limiter(req)
   if (limited) return limited
 
   const { name, email, subject, message, turnstileToken } = await req.json().catch(() => ({}))

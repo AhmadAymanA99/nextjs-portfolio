@@ -1,6 +1,8 @@
 import { ensureDB } from '@/lib/server/db'
+import { escapeHtml, sendToOwner } from '@/lib/server/mail'
 import rateLimit from '@/lib/server/rateLimit'
 import { verifyTurnstileToken } from '@/lib/server/turnstile'
+import { siteUrl } from '@/lib/site'
 
 const limiter = rateLimit({ windowMs: 60000, max: 10 })
 
@@ -11,6 +13,18 @@ const SPAM_WORDS =
 function looksLikeSpam(name: string, message: string, website: string) {
   const links = (message.match(/https?:\/\/|www\./gi) || []).length
   return links >= 2 || SPAM_WORDS.test(`${name} ${message} ${website}`) || /https?:\/\//i.test(name)
+}
+
+const ADMIN_URL = `${siteUrl}/admin/analytics#guestbook`
+
+/** Tells the owner a new entry is waiting for approval. */
+function notifyOwner(name: string, message: string, website: string) {
+  return sendToOwner({
+    fromName: 'Portfolio Guestbook',
+    subject: `[Portfolio] New guestbook entry from ${name}`,
+    text: `${name}${website ? ` (${website})` : ''} wrote:\n\n${message}\n\nApprove or delete it: ${ADMIN_URL}`,
+    html: `<p><strong>${escapeHtml(name)}</strong>${website ? ` (${escapeHtml(website)})` : ''} wrote:</p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p><p><a href="${ADMIN_URL}">Approve or delete it</a></p>`,
+  })
 }
 
 export async function GET() {
@@ -31,7 +45,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const limited = limiter(req)
+  const limited = await limiter(req)
   if (limited) return limited
 
   const { name, message, website, company, turnstileToken } = await req.json().catch(() => ({}))
@@ -60,10 +74,17 @@ export async function POST(req: Request) {
 
   try {
     const sql = await ensureDB()
+    const flagged = looksLikeSpam(trimmedName, trimmedMessage, trimmedWebsite)
     await sql`
-      INSERT INTO guestbook_entries (name, message, website, approved, created_at)
-      VALUES (${trimmedName}, ${trimmedMessage}, ${trimmedWebsite}, false, NOW())
+      INSERT INTO guestbook_entries (name, message, website, approved, flagged, created_at)
+      VALUES (${trimmedName}, ${trimmedMessage}, ${trimmedWebsite}, false, ${flagged}, NOW())
     `
+    // Likely spam waits quietly in the admin; real entries send an email
+    if (!flagged) {
+      await notifyOwner(trimmedName, trimmedMessage, trimmedWebsite).catch((err) => {
+        console.error('Guestbook email failed:', err?.message || err)
+      })
+    }
     return Response.json({ success: true })
   } catch (err) {
     console.error('Guestbook POST error:', err)

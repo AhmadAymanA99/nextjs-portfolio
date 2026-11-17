@@ -49,6 +49,25 @@ export async function ensureDB() {
       approved BOOLEAN DEFAULT false,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )`
+    await db`CREATE TABLE IF NOT EXISTS rate_limits (
+      key TEXT PRIMARY KEY,
+      window_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      count INT NOT NULL DEFAULT 0
+    )`
+    // Addresses the owner used, by day (see rememberOwnerIp in pageViews.ts)
+    await db`CREATE TABLE IF NOT EXISTS owner_ips (
+      ip TEXT NOT NULL,
+      day DATE NOT NULL,
+      PRIMARY KEY (ip, day)
+    )`
+    // Who owns each visitor's network, looked up once (see network.ts)
+    await db`CREATE TABLE IF NOT EXISTS ip_networks (
+      ip TEXT PRIMARY KEY,
+      asn TEXT,
+      holder TEXT,
+      prefix TEXT,
+      fetched_at TIMESTAMPTZ DEFAULT NOW()
+    )`
     // Columns added after the tables first shipped
     await db`ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false`
     await db`ALTER TABLE guestbook_entries ADD COLUMN IF NOT EXISTS flagged BOOLEAN DEFAULT false`
