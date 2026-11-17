@@ -83,6 +83,27 @@ Open: review the Arabic copy (especially Arabic brand names: رحلتي, عيا�
 Decisions:
 - Visitors stay anonymous: no fingerprinting, no paid "identify the visitor" services, and no per-recipient tracking links (considered and declined, 2026-11-17). The admin shows network, location and device only.
 
+## Phase 6 — Turn visits into contacts (planned)
+
+Visitors read several case studies and leave (e.g. the Jordan visitor in September: 20 views over 4 days, no message). This phase makes the next step obvious and measures it.
+
+- [ ] Search engines: structured data (JSON-LD) describing a person named Ahmad Ayman, a frontend and mobile engineer, with links to GitHub and LinkedIn, plus each case study and article, so Google can show a rich result for the name. Then verify the site in Google Search Console (owner) to see which searches bring visitors in
+- [ ] A "Need something similar? Get in touch" prompt at the end of every case study, linking to the contact form (both languages)
+- [ ] Count actions, not just pages, still anonymously: CV downloads, "Contact me" clicks, live-site link clicks; shown in the admin and the weekly summary
+- [ ] Generated preview images (Open Graph) for the home page and articles, with name and role, so shared links look right on LinkedIn and WhatsApp
+- [ ] GitHub Dependabot for dependency and security updates
+- [ ] Accessibility checks (axe) in the end-to-end tests
+- [ ] Arabic RSS feed (`/ar/rss.xml`)
+
+Content (needs the owner; see Phase 3 and 4 for details):
+- [ ] Review and publish the draft article; write one or two posts from client work (HyperPay, React Native RTL)
+- [ ] Testimonials (LinkedIn recommendations are a good source, with permission)
+- [ ] Result numbers in case studies where they can be shared; Rehlte app screens at launch
+- [ ] Review the Arabic copy, especially brand names
+
+Decisions:
+- No custom domain for now; the site stays at ahmad-ayman.vercel.app (2026-11-17)
+
 ## Notes
 
 - Commit and push as **AhmadAymanA99**. The repo's `.git/config` pins the identity and credentials.
