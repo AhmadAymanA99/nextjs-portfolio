@@ -2,6 +2,8 @@ import { getSortedPostsData } from '@/lib/content/posts'
 import { getSortedExperiencesData } from '@/lib/content/experience'
 import { getAllTags } from '@/lib/content/tags'
 import { skillCategories } from '@/lib/content/skills'
+import { getSortedArticles } from '@/lib/content/articles'
+import { getTestimonials } from '@/lib/content/testimonials'
 import { getCvUrl } from '@/lib/site'
 import { alternates, isLocale } from '@/i18n'
 import BentoHome from '@/components/home/BentoHome'
@@ -28,6 +30,8 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       allTags={getAllTags()}
       cvUrl={getCvUrl()}
       skillCategories={skillCategories}
+      articles={getSortedArticles(lang)}
+      testimonials={getTestimonials(lang)}
     />
   )
 }

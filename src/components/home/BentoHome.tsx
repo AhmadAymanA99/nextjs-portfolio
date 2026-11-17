@@ -18,6 +18,8 @@ import { getDictionary, localePath, type Locale } from '@/i18n'
 import type { getSortedPostsData } from '@/lib/content/posts'
 import type { getSortedExperiencesData } from '@/lib/content/experience'
 import type { skillCategories as SkillCategories } from '@/lib/content/skills'
+import type { getSortedArticles } from '@/lib/content/articles'
+import type { getTestimonials } from '@/lib/content/testimonials'
 
 /**
  * The home page. Rendered on the server; only the interactive parts (tilt,
@@ -31,6 +33,8 @@ export default function BentoHome({
   allTags,
   cvUrl,
   skillCategories,
+  articles,
+  testimonials,
 }: {
   lang: Locale
   allPostsData: ReturnType<typeof getSortedPostsData>
@@ -38,6 +42,8 @@ export default function BentoHome({
   allTags: string[]
   cvUrl: string
   skillCategories: typeof SkillCategories
+  articles: ReturnType<typeof getSortedArticles>
+  testimonials: ReturnType<typeof getTestimonials>
 }) {
   const dict = getDictionary(lang)
   const href = (path: string) => localePath(lang, path)
@@ -225,6 +231,37 @@ export default function BentoHome({
           </div>
         </Reveal>
 
+        {/* Writing: technical articles, hidden until one is published */}
+        {articles.length > 0 && (
+          <Reveal style={{ gridColumn: '1 / -1' }} className={styles.gridItem}>
+            <div className={`${styles.card} ${styles.bottomSection}`}>
+              <h2 className={styles.bottomSectionTitle}>{t.writing}</h2>
+              <div className={styles.projectList}>
+                {articles.map((article) => (
+                  <Link
+                    key={article.id}
+                    href={href(`/articles/${article.id}`)}
+                    className={styles.projectItem}
+                  >
+                    <div className={styles.projectItemLeft}>
+                      <span className={styles.projectName}>
+                        {article.title}
+                        {article.draft && <span className={utilStyles.badge}>{t.draft}</span>}
+                      </span>
+                      {article.summary && (
+                        <span className={styles.projectSummary}>{article.summary}</span>
+                      )}
+                      <span className={styles.projectMeta}>
+                        <FormattedDate lang={lang} dateString={article.date} />
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        )}
+
         {/* All Experiences */}
         <Reveal style={{ gridColumn: '1 / -1' }} className={styles.gridItem}>
           <div className={`${styles.card} ${styles.bottomSection}`}>
@@ -266,6 +303,33 @@ export default function BentoHome({
             </div>
           </div>
         </Reveal>
+        {/* Testimonials, hidden until there are real quotes */}
+        {testimonials.length > 0 && (
+          <Reveal style={{ gridColumn: '1 / -1' }} className={styles.gridItem}>
+            <div className={`${styles.card} ${styles.bottomSection}`}>
+              <h2 className={styles.bottomSectionTitle}>{t.testimonials}</h2>
+              <div className={styles.testimonials}>
+                {testimonials.map((q) => (
+                  <figure key={q.name} className={styles.testimonial}>
+                    <blockquote className={styles.testimonialQuote}>{q.quote}</blockquote>
+                    <figcaption className={styles.testimonialBy}>
+                      {q.link ? (
+                        <a href={q.link} target="_blank" rel="noopener noreferrer">
+                          {q.name}
+                        </a>
+                      ) : (
+                        q.name
+                      )}
+                      <span className={styles.projectMeta}>
+                        {q.role} · {q.company}
+                      </span>
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        )}
       </div>
 
       <LazyContactForm />
