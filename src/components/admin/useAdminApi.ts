@@ -3,34 +3,23 @@
 import { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
-export const TOKEN_KEY = 'admin_token'
-
 /**
- * Fetch wrapper for admin endpoints: attaches the bearer token, sends JSON
- * bodies, redirects to login on 401 and throws with the API's error message.
+ * Fetch wrapper for admin endpoints. The session is an HttpOnly cookie the
+ * browser sends by itself; this sends JSON bodies, redirects to login on 401
+ * and throws with the API's error message.
  */
 export function useAdminApi() {
   const router = useRouter()
 
   return useCallback(
     async (path: string, init: { method?: string; body?: unknown } = {}) => {
-      const token = localStorage.getItem(TOKEN_KEY)
-      if (!token) {
-        router.replace('/admin/login')
-        throw new Error('Not signed in')
-      }
-
       const res = await fetch(path, {
         method: init.method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ...(init.body !== undefined ? { 'Content-Type': 'application/json' } : {}),
-        },
+        headers: init.body !== undefined ? { 'Content-Type': 'application/json' } : undefined,
         body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
       })
 
       if (res.status === 401) {
-        localStorage.removeItem(TOKEN_KEY)
         router.replace('/admin/login')
         throw new Error('Session expired')
       }

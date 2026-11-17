@@ -3,6 +3,8 @@
 const KEY = 'no_track'
 // Set once this tab has seen a real person interact with the site
 const HUMAN_KEY = 'human'
+// Set once this tab has reported an owner visit
+const OWNER_KEY = 'owner_reported'
 
 export function isTrackingDisabled() {
   try {
@@ -17,6 +19,20 @@ export function setTrackingDisabled(disabled: boolean) {
     if (disabled) localStorage.setItem(KEY, '1')
     else localStorage.removeItem(KEY)
   } catch {}
+}
+
+/**
+ * On the owner's browsers (tracking disabled), tells the server once per tab
+ * that the owner is here. While the admin session is valid, the server then
+ * leaves out today's views from this connection, including other devices on
+ * the same Wi-Fi. Without a session it does nothing.
+ */
+export function reportOwnerVisit() {
+  try {
+    if (sessionStorage.getItem(OWNER_KEY) === '1') return
+    sessionStorage.setItem(OWNER_KEY, '1')
+  } catch {}
+  fetch('/api/admin/session', { keepalive: true }).catch(() => {})
 }
 
 /**

@@ -2,7 +2,7 @@ import ranges from './datacenter-ranges.json'
 
 /**
  * Cloud, crawler and link-checker networks (AWS, Google, Azure, Oracle,
- * DigitalOcean, Meta). Page views from them are automated: e-mail link
+ * DigitalOcean, Leaseweb, Meta) and known scanner blocks. Page views from them are automated: e-mail link
  * scanners such as Outlook Safe Links, search crawlers, uptime monitors.
  * Refresh the list with `node scripts/update-datacenter-ranges.mjs`.
  */

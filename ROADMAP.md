@@ -49,11 +49,16 @@ Decisions:
 
 Open: review the Arabic copy (especially Arabic brand names: رحلتي, عيادة عوافي, الفجالة, أكاديمية سكينة, بيسان للسفر, السجلات العسكرية). The RSS feed is English only.
 
-## Phase 4 — Trust and reach
+## Phase 4 — Trust and reach (in progress, 2026-11-17)
 
 - [ ] 2–3 short testimonials from managers or clients (Softera, Bisan Travel, Vidills)
-- [ ] 2–3 technical posts (e.g. "HyperPay 3-D Secure in Expo", "RTL pitfalls in React Native"); the RSS feed is ready
+  - Ready to fill: add quotes to `src/lib/content/testimonials.ts` and the home page section appears. Waiting on the quotes themselves (real words, with permission)
+- [ ] 2–3 technical posts (e.g. "HyperPay 3-D Secure in Expo", "RTL pitfalls in React Native")
+  - Done: a "Writing" section (`content/articles`, pages at `/articles/<id>`, home page list, sitemap, RSS) with drafts visible only in development
+  - First draft: "Adding Arabic to a Next.js site: RTL, URLs, plurals and SEO" (`content/articles/bilingual-nextjs-rtl.md`), based on this site's own code. Review it, then remove `draft: true` to publish
+  - Still to write: one or two posts from client work (HyperPay, React Native RTL); these need your experience
 - [x] A social preview image for each project, so shared links show a picture (first screenshot; KPTC has none)
+- [x] Games page (`/games`, both languages, linked from the footer): Stack Match, Snake and Reaction Time, built from scratch for desktop and touch
 
 ## Phase 5 — Under the hood
 
@@ -64,13 +69,19 @@ Open: review the Arabic copy (especially Arabic brand names: رحلتي, عيا�
   - What's left on mobile is mostly React's own runtime; the remaining simulated LCP (~2.4–2.9 s) is Lighthouse's slow-4G model, real first paint is ~0.35 s
 - [x] Analytics count real people only (2026-11-16): a view is sent after the first pointer, touch, key or wheel input; `/api/track` rejects cloud and crawler networks and localhost; the dashboard excludes them from old rows too. Refresh the ranges with `npm run update:datacenters`
 - [x] Mobile polish (2026-11-16): two-column skills on phones, pulsing availability dot, background animation visible through translucent cards on phones, Turnstile loaded only when a form is used (clean console), skip link shown only for keyboard users
-- [ ] Admin session: move the token from `localStorage` to a secure, script-inaccessible cookie
-- [ ] Rate limiting: back it with the database or Upstash (in-memory counts reset constantly on Vercel)
-- [ ] Email notification for new guestbook entries; weekly traffic summary
-- [ ] End-to-end tests (contact form, admin login) in CI
+- [x] Admin session (2026-11-17): an HttpOnly, SameSite=Strict cookie scoped to `/api/admin` replaces the token in `localStorage`; changes from other origins are refused; log out clears it on the server. Existing sessions sign in once more
+- [x] Rate limiting (2026-11-17): counts live in a `rate_limits` table (one upsert per request, IPs hashed), shared by every serverless instance; falls back to in-memory if the database is unreachable
+- [x] Emails (2026-11-17): one per new guestbook entry (likely spam is skipped), and a weekly summary every Sunday 06:00 UTC via Vercel Cron (`vercel.json`). Needs `CRON_SECRET` set in Vercel
+  - Fixed on the way: the guestbook's spam check was never called, so nothing was ever flagged
+- [x] Leave out the owner's own visits on every device (2026-11-17): signed-in browsers report the current address (`owner_ips`, by day), which hides views from that connection from the day before to the day after, phone included. Sign in once on each device you use
+- [x] Leaseweb added to the cloud networks left out of the analytics (2026-11-17): two "United States" visitors were its servers posing as desktop Chrome. Its ranges come from the networks it announces (RIPEstat)
+- [x] Cleaned the page views (2026-11-17): deleted 195 of the owner's own views and 11 bot or owner views (Leaseweb, a Level 3 scanner block now filtered as "Known scanners", one owner session on Linux). Backups of the deleted rows are in the owner's home folder
+- [x] Visit details in the admin (2026-11-17): full IP addresses, and a Details view per recent visit with the network owner (RIPEstat, cached in `ip_networks`), city, device model, system, browser, in-app browser, all visits from that address and a plain-language guess
+- [x] End-to-end tests in CI (2026-11-17): Playwright, desktop and mobile Chrome, covering the contact form, admin sign-in/out with the cookie, and the games. No real database or emails involved
 
 ## Notes
 
 - Commit and push as **AhmadAymanA99**. The repo's `.git/config` pins the identity and credentials.
 - Pushes to `main` auto-deploy to Vercel.
 - `npm run dev` connects to the production database: admin actions there change real data.
+- After deploying Phase 5: set `CRON_SECRET` in Vercel for the weekly summary, and sign in to the admin again (the old token in `localStorage` no longer works).

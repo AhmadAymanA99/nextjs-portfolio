@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Spinner from '@/components/ui/Spinner'
-import { TOKEN_KEY } from '@/components/admin/useAdminApi'
 import { setTrackingDisabled } from '@/lib/tracking'
 import styles from './page.module.css'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
@@ -37,8 +36,10 @@ export default function AdminLogin() {
     setLoading(false)
 
     if (res.ok) {
-      const { token } = await res.json()
-      localStorage.setItem(TOKEN_KEY, token)
+      // The server set the session cookie. Remove the token older versions kept here.
+      try {
+        localStorage.removeItem('admin_token')
+      } catch {}
       // Don't count the owner's own visits from this browser
       setTrackingDisabled(true)
       setPassword('')

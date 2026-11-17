@@ -16,6 +16,16 @@ const get = async (url) => {
 }
 const json = async (url) => (await get(url)).json()
 
+/** The prefixes networks announce on the internet (RIPEstat), for providers that publish no list. */
+const announced = async (asns) => {
+  const lists = await Promise.all(
+    asns.map((as) =>
+      json(`https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS${as}`),
+    ),
+  )
+  return lists.flatMap((d) => d.data.prefixes.map((p) => p.prefix))
+}
+
 const sources = {
   // Official lists
   'Amazon AWS': async () => {
@@ -51,6 +61,12 @@ const sources = {
     )
     return d.values.flatMap((v) => v.properties.addressPrefixes)
   },
+  // Hosting company used for VPN servers and scanners that pose as desktop
+  // Chrome (seen in the analytics, Nov 2026). Its US, Dutch and Asian networks
+  Leaseweb: () => announced([60781, 16265, 30633, 394380, 7203, 59253, 133752]),
+  // Single blocks seen scanning the site with outdated desktop Chrome, inside
+  // networks too big to leave out whole (Level 3 carries real visitors too)
+  'Known scanners': async () => ['205.169.39.0/24'],
   // Meta (AS32934) publishes no list; these are its main announced ranges
   Meta: async () => [
     '31.13.24.0/21',

@@ -7,7 +7,7 @@ import { FaExternalLinkAlt, FaSignOutAlt } from 'react-icons/fa'
 import AnalyticsPanel from '@/components/admin/AnalyticsPanel'
 import MessagesPanel, { type ContactMessage } from '@/components/admin/MessagesPanel'
 import GuestbookPanel, { type GuestbookEntry } from '@/components/admin/GuestbookPanel'
-import { TOKEN_KEY, useAdminApi } from '@/components/admin/useAdminApi'
+import { useAdminApi } from '@/components/admin/useAdminApi'
 import styles from '@/components/admin/Admin.module.css'
 
 const TABS = ['analytics', 'messages', 'guestbook'] as const
@@ -46,17 +46,16 @@ export default function AdminDashboard() {
       .catch((err) => setLoadError(err.message))
   }, [api])
 
+  // The API redirects to the login page when the session cookie is missing or expired
   useEffect(() => {
-    if (!localStorage.getItem(TOKEN_KEY)) {
-      router.replace('/admin/login')
-      return
-    }
     loadMessages()
     loadGuestbook()
-  }, [router, loadMessages, loadGuestbook])
+    // Remembers today's address as the owner's (see /api/admin/session)
+    fetch('/api/admin/session').catch(() => {})
+  }, [loadMessages, loadGuestbook])
 
-  const logout = () => {
-    localStorage.removeItem(TOKEN_KEY)
+  const logout = async () => {
+    await fetch('/api/admin/session', { method: 'DELETE' }).catch(() => {})
     router.replace('/admin/login')
   }
 

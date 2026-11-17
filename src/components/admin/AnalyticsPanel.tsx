@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import {
   Area,
   AreaChart,
@@ -13,6 +13,7 @@ import {
 import { FaDownload, FaSyncAlt } from 'react-icons/fa'
 import { DashboardSkeleton } from '@/components/ui/Skeleton'
 import { timeAgo, useAdminApi } from './useAdminApi'
+import VisitDetails from './VisitDetails'
 import styles from './Admin.module.css'
 
 interface Analytics {
@@ -33,6 +34,7 @@ interface Analytics {
   referrers: { source: string; visitors: number }[]
   countries: { country: string; visitors: number }[]
   recentViews: {
+    id: number
     path: string
     country: string
     device_type: string
@@ -122,6 +124,8 @@ export default function AnalyticsPanel() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [exporting, setExporting] = useState(false)
+  // The recent visit whose details are open
+  const [openVisit, setOpenVisit] = useState<number | null>(null)
 
   const load = useCallback(() => {
     setLoading(true)
@@ -306,8 +310,8 @@ export default function AnalyticsPanel() {
             />
           </div>
 
-          <div className={styles.card} style={{ padding: 0, border: 'none' }}>
-            <h3 style={{ margin: '0 0 0.75rem' }}>Recent visits</h3>
+          <div className={styles.card}>
+            <h3>Recent visits</h3>
             <div className={styles.tableWrapper}>
               <table className={styles.table}>
                 <thead>
@@ -319,38 +323,60 @@ export default function AnalyticsPanel() {
                     <th>Browser / OS</th>
                     <th>IP</th>
                     <th>When</th>
+                    <th>
+                      <span className={styles.srOnly}>Details</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.recentViews.length ? (
-                    data.recentViews.map((v, i) => (
-                      <tr key={i}>
-                        <td className={styles.mono} title={v.path}>
-                          {v.path}
-                        </td>
-                        <td title={v.referrer}>
-                          {v.referrer === 'internal'
-                            ? '↳ internal'
-                            : !v.referrer || v.referrer === 'direct'
-                              ? 'Direct'
-                              : v.referrer.replace(/^https?:\/\/(www\.)?/, '')}
-                        </td>
-                        <td>{countryName(v.country)}</td>
-                        <td>
-                          <span className={styles.chip}>{v.device_type || 'desktop'}</span>
-                        </td>
-                        <td>
-                          {v.browser} / {v.os}
-                        </td>
-                        <td className={styles.mono}>{v.ip}</td>
-                        <td title={new Date(v.timestamp).toLocaleString()}>
-                          {timeAgo(v.timestamp)}
-                        </td>
-                      </tr>
+                    data.recentViews.map((v) => (
+                      <Fragment key={v.id}>
+                        <tr className={openVisit === v.id ? styles.rowOpen : undefined}>
+                          <td className={styles.mono} title={v.path}>
+                            {v.path}
+                          </td>
+                          <td title={v.referrer}>
+                            {v.referrer === 'internal'
+                              ? '↳ internal'
+                              : !v.referrer || v.referrer === 'direct'
+                                ? 'Direct'
+                                : v.referrer.replace(/^https?:\/\/(www\.)?/, '')}
+                          </td>
+                          <td>{countryName(v.country)}</td>
+                          <td>
+                            <span className={styles.chip}>{v.device_type || 'desktop'}</span>
+                          </td>
+                          <td>
+                            {v.browser} / {v.os}
+                          </td>
+                          <td className={styles.mono}>{v.ip}</td>
+                          <td title={new Date(v.timestamp).toLocaleString()}>
+                            {timeAgo(v.timestamp)}
+                          </td>
+                          <td>
+                            <button
+                              className={styles.rowAction}
+                              aria-expanded={openVisit === v.id}
+                              aria-controls={`visit-${v.id}`}
+                              onClick={() => setOpenVisit(openVisit === v.id ? null : v.id)}
+                            >
+                              {openVisit === v.id ? 'Hide' : 'Details'}
+                            </button>
+                          </td>
+                        </tr>
+                        {openVisit === v.id && (
+                          <tr id={`visit-${v.id}`} className={styles.detailRow}>
+                            <td colSpan={8}>
+                              <VisitDetails id={v.id} />
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={7} className={styles.empty}>
+                      <td colSpan={8} className={styles.empty}>
                         No visits in this period
                       </td>
                     </tr>

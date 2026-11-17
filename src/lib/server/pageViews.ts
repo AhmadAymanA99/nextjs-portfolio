@@ -2,6 +2,7 @@ import { UAParser } from 'ua-parser-js'
 import sql from './db'
 import { BOT_UA_PATTERN } from './analytics'
 import { isDatacenterIp } from './datacenters'
+import { siteUrl } from '@/lib/site'
 
 export const MAX_DAYS = 365
 
@@ -23,9 +24,15 @@ export async function automatedIps() {
 }
 
 /**
- * Human page views only: drops admin/API paths, automated agents and the
- * `excludedIps` from automatedIps(). A function so the DB client is only
- * created at request time.
+ * Human page views only: drops admin/API paths, automated agents, the
+ * `excludedIps` from automatedIps() and the owner's own visits. A function so
+ * the DB client is only created at request time.
+ *
+ * Owner visits: a view is the owner's when it came from an address the owner
+ * used within a day of it (owner_ips). Home addresses change and get handed to
+ * other people later, so an address only counts as the owner's around the days
+ * it was seen as theirs. Columns are unqualified so this also works when the
+ * caller gives page_views an alias.
  */
 export function humanViews(excludedIps: string[]) {
   return sql`
@@ -33,7 +40,22 @@ export function humanViews(excludedIps: string[]) {
   AND COALESCE(user_agent, '') <> ''
   AND user_agent !~* ${BOT_UA_PATTERN}
   AND COALESCE(ip_address, '') <> ALL(${excludedIps}::text[])
+  AND NOT EXISTS (
+    SELECT 1 FROM owner_ips o
+    WHERE o.ip = ip_address AND timestamp::date BETWEEN o.day - 1 AND o.day + 1
+  )
 `
+}
+
+/**
+ * Remembers `ip` as the owner's on the day of `at` (default: today), which
+ * leaves out every view from that address from the day before to the day after.
+ */
+export function rememberOwnerIp(ip: string, at: Date | string = new Date()) {
+  return sql`
+    INSERT INTO owner_ips (ip, day) VALUES (${ip}, (${new Date(at).toISOString()}::timestamptz)::date)
+    ON CONFLICT DO NOTHING
+  `
 }
 
 export function inRange(days: number | null, offsetPeriods = 0) {
@@ -43,13 +65,21 @@ export function inRange(days: number | null, offsetPeriods = 0) {
   return sql`timestamp >= NOW() - make_interval(days => ${from}) AND timestamp < NOW() - make_interval(days => ${to})`
 }
 
-export function maskIP(ip: string | null) {
-  if (!ip) return '—'
-  const parts = ip.split('.')
-  if (parts.length === 4) return `${parts[0]}.${parts[1]}.xxx.xxx`
-  const v6parts = ip.split(':')
-  if (v6parts.length >= 4) return `${v6parts[0]}:${v6parts[1]}:xxxx:xxxx`
-  return '—'
+const siteHost = new URL(siteUrl).hostname
+
+/**
+ * Visitors per traffic source (the referring site, or "Direct") among the
+ * views matching `where`. Moves between the site's own pages are left out.
+ */
+export function topSources(where: ReturnType<typeof sql>, limit: number) {
+  return sql`SELECT source, COUNT(DISTINCT ip_address)::int AS visitors FROM (
+      SELECT ip_address,
+        CASE WHEN referrer IS NULL OR referrer IN ('', 'direct') THEN 'Direct'
+             ELSE substring(referrer from '^https?://(?:www\\.)?([^/:?#]+)') END AS source
+      FROM page_views WHERE ${where} AND COALESCE(referrer, '') <> 'internal'
+    ) r
+    WHERE source IS NOT NULL AND source <> ${siteHost} AND source NOT LIKE '%localhost%'
+    GROUP BY source ORDER BY visitors DESC LIMIT ${limit}`
 }
 
 export function describeAgent(userAgent: string | null) {

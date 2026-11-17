@@ -1,13 +1,6 @@
 import { requireAdmin } from '@/lib/server/auth'
 import sql, { ensureDB } from '@/lib/server/db'
-import {
-  automatedIps,
-  describeAgent,
-  humanViews,
-  inRange,
-  maskIP,
-  parseDays,
-} from '@/lib/server/pageViews'
+import { automatedIps, describeAgent, humanViews, inRange, parseDays } from '@/lib/server/pageViews'
 
 function csvCell(value: unknown) {
   const s = value instanceof Date ? value.toISOString() : String(value ?? '')
@@ -31,16 +24,7 @@ export async function GET(req: Request) {
     const header = ['timestamp', 'path', 'referrer', 'country', 'device', 'browser', 'os', 'ip']
     const lines = rows.map((r) => {
       const { browser, os } = describeAgent(r.user_agent)
-      return [
-        r.timestamp,
-        r.path,
-        r.referrer,
-        r.country,
-        r.device_type,
-        browser,
-        os,
-        maskIP(r.ip_address),
-      ]
+      return [r.timestamp, r.path, r.referrer, r.country, r.device_type, browser, os, r.ip_address]
         .map(csvCell)
         .join(',')
     })

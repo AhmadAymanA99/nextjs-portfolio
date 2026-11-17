@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { getAllPostIds, getPostData, getSortedPostsData } from '@/lib/content/posts'
 import { getAllExperienceIds, getSortedExperiencesData } from '@/lib/content/experience'
 import { extractHeadings } from '@/lib/content/markdown'
@@ -39,5 +39,27 @@ describe('extractHeadings', () => {
   it('gives repeated headings unique ids', () => {
     const ids = extractHeadings('## Notes\n\n## Notes\n').map((h) => h.id)
     expect(ids).toEqual(['notes', 'notes-1'])
+  })
+})
+
+describe('articles', () => {
+  it('loads every article with a title, date and summary', async () => {
+    const { getSortedArticles, getArticle } = await import('@/lib/content/articles')
+    const articles = getSortedArticles()
+    for (const a of articles) {
+      expect(a.title).toBeTruthy()
+      expect(a.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+      expect(a.summary).toBeTruthy()
+      const full = await getArticle(a.id)
+      expect(full.contentHtml).toContain('<h2')
+    }
+  })
+
+  it('leaves drafts out of production', async () => {
+    vi.resetModules()
+    vi.stubEnv('NODE_ENV', 'production')
+    const { getArticleIds } = await import('@/lib/content/articles')
+    expect(getArticleIds()).not.toContain('bilingual-nextjs-rtl')
+    vi.unstubAllEnvs()
   })
 })

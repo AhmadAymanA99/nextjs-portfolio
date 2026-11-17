@@ -10,6 +10,9 @@ describe('isDatacenterIp', () => {
     expect(isDatacenterIp('3.80.0.1')).toBe(true) // AWS
     expect(isDatacenterIp('35.190.0.1')).toBe(true) // Google Cloud
     expect(isDatacenterIp('173.252.70.1')).toBe(true) // Meta
+    expect(isDatacenterIp('198.7.56.204')).toBe(true) // Leaseweb USA (VPN/scanner)
+    expect(isDatacenterIp('23.105.38.30')).toBe(true) // Leaseweb USA
+    expect(isDatacenterIp('205.169.39.53')).toBe(true) // known scanner block (Level 3)
     expect(isDatacenterIp('2a03:2880:f000::1')).toBe(true) // Meta IPv6
     expect(isDatacenterIp('2001:4860:4801:10::1')).toBe(true) // Googlebot IPv6
     expect(isDatacenterIp('::ffff:66.249.66.1')).toBe(true) // IPv4-mapped
@@ -23,6 +26,8 @@ describe('isDatacenterIp', () => {
   it('leaves ordinary and invalid addresses alone', () => {
     expect(isDatacenterIp('192.0.2.1')).toBe(false) // documentation range
     expect(isDatacenterIp('41.33.0.1')).toBe(false) // Egyptian ISP (TE Data)
+    expect(isDatacenterIp('197.53.47.104')).toBe(false) // TE Data home internet
+    expect(isDatacenterIp('105.199.240.5')).toBe(false) // Egyptian ISP
     expect(isDatacenterIp('2001:db8::1')).toBe(false)
     expect(isDatacenterIp('unknown')).toBe(false)
     expect(isDatacenterIp('999.1.1.1')).toBe(false)
