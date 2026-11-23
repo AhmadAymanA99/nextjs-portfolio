@@ -8,6 +8,8 @@ import { ThemeProvider, useTheme } from '@/lib/ThemeContext'
 import { isTrackingDisabled, reportOwnerVisit, trackPageView } from '@/lib/tracking'
 import SmoothScroll from '@/components/layout/SmoothScroll'
 import LanguageSwitch from '@/components/layout/LanguageSwitch'
+import ThemeSwitch from '@/components/layout/ThemeSwitch'
+import switchStyles from '@/components/layout/LanguageSwitch.module.css'
 import { useI18n } from '@/i18n/I18nProvider'
 import { publicPath } from '@/i18n/config'
 
@@ -45,13 +47,18 @@ function ShellInner({ children }: { children: ReactNode }) {
 
   return (
     // flow-root keeps the page's top margin inside this box (so the absolutely
-    // positioned language switch stays at the top); overflow clip, not hidden,
+    // positioned theme and language switches stays at the top); overflow clip, not hidden,
     // so scroll-driven animations follow the page scroll
     <div style={{ position: 'relative', zIndex: 1, overflowX: 'clip', display: 'flow-root' }}>
       <a href="#main-content" className="skip-link">
         {dict.common.skipToContent}
       </a>
-      {!isAdmin && <LanguageSwitch />}
+      {!isAdmin && (
+        <div className={switchStyles.controls}>
+          <ThemeSwitch />
+          <LanguageSwitch />
+        </div>
+      )}
       {!isAdmin && <ParticlesBackground theme={theme} />}
       <SmoothScroll>{children}</SmoothScroll>
     </div>

@@ -16,6 +16,7 @@ const ar: Dictionary = {
     backToTop: 'العودة إلى الأعلى',
     switchLanguage: 'English',
     switchLanguageLabel: 'Read this site in English',
+    switchThemeLabel: 'التبديل بين الوضع الفاتح والداكن',
     now: 'الآن',
     present: 'حتى الآن',
     dateRange: 'من {start} إلى {end}',

@@ -1,12 +1,21 @@
-.switch {
+/* Holds the theme and language switches at the top of the page */
+.controls {
   position: absolute;
   top: 1rem;
   inset-inline-end: 1rem;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.switch {
+  box-sizing: border-box;
+  height: 2.25rem;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.4rem 0.85rem;
+  padding: 0 0.85rem;
   font-size: 0.85rem;
   font-weight: 600;
   line-height: 1.2;
@@ -15,9 +24,31 @@
   background-color: var(--bg-primary);
   color: var(--text-secondary);
   box-shadow: var(--shadow-md);
+  cursor: pointer;
+  font-family: inherit;
   transition:
     color 0.2s ease,
     border-color 0.2s ease;
+}
+
+/* Round icon button, the same height as the language pill */
+.iconOnly {
+  justify-content: center;
+  width: 2.25rem;
+  padding: 0;
+}
+
+/* The sun shows in dark mode (switch to light), the moon in light mode */
+.sun {
+  display: none;
+}
+
+:global([data-theme='dark']) .sun {
+  display: block;
+}
+
+:global([data-theme='dark']) .moon {
+  display: none;
 }
 
 .switch svg {
@@ -30,10 +61,19 @@
 }
 
 @media (max-width: 768px) {
-  .switch {
+  .controls {
     top: 0.75rem;
     inset-inline-end: 0.75rem;
-    padding: 0.35rem 0.7rem;
+  }
+
+  .switch {
+    height: 2.1rem;
+    padding: 0 0.7rem;
+  }
+
+  .iconOnly {
+    width: 2.1rem;
+    padding: 0;
   }
 }
 

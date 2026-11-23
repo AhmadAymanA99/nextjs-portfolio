@@ -16,6 +16,7 @@ const en = {
     backToTop: 'Back to top',
     switchLanguage: 'العربية',
     switchLanguageLabel: 'اقرأ الموقع بالعربية',
+    switchThemeLabel: 'Switch between light and dark mode',
     now: 'now',
     present: 'Present',
     dateRange: '{start} to {end}',

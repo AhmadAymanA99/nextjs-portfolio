@@ -13,9 +13,6 @@
 
 .gridItem {
   min-width: 0;
-  /* clip, not hidden: "hidden" makes a scroll container, which would stop the
-     scroll-driven reveals inside from tracking the page scroll */
-  overflow: clip;
 }
 
 .card {
@@ -25,9 +22,11 @@
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
   min-width: 0;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  /* Clip long content on the card itself, not on its grid cell: a clipped
+     cell also cuts off the card's shadow. clip, not hidden, so no scroll
+     container is created. */
+  overflow: clip;
+  transition: box-shadow 0.25s ease;
 }
 
 .card:hover {

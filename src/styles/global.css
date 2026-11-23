@@ -23,9 +23,9 @@
   --border-color: #dddddd;
   --border-light: #e0e0e0;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.04), 0 14px 30px -8px rgba(0, 0, 0, 0.16);
 
   --badge-bg: #0070f3;
   --badge-text: #ffffff;
@@ -54,9 +54,9 @@
   --border-color: #30363d;
   --border-light: #30363d;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 8px -2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.3), 0 14px 30px -8px rgba(0, 0, 0, 0.6);
 
   --badge-bg: #58a6ff;
   --badge-text: #0d1117;
@@ -336,7 +336,8 @@ li {
 /* ---------- Tilt cards (see components/ui/TiltCard.tsx) ---------- */
 .tilt {
   position: relative;
-  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform: perspective(1200px) translateY(var(--tilt-lift, 0px)) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
 }
 
 .tilt-glare::after {
