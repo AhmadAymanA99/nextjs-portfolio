@@ -1,5 +1,6 @@
 :root {
-  --primary-color: #0070f3;
+  /* #0062d6, not #0070f3: 4.5:1 contrast on the grey card backgrounds */
+  --primary-color: #0062d6;
   --secondary-color: #666;
   --font-family:
     var(--font-geist), var(--font-arabic), -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
@@ -17,7 +18,7 @@
   --text-primary: #111111;
   --text-secondary: #666666;
   --text-muted: #666666;
-  --text-link: #0070f3;
+  --text-link: #0062d6;
   --text-link-hover: #0051cc;
 
   --border-color: #dddddd;
@@ -29,6 +30,8 @@
 
   --badge-bg: #0070f3;
   --badge-text: #ffffff;
+  /* Text on a --primary-color background */
+  --on-primary: #ffffff;
 
   --social-color: #555555;
   --social-hover: #0073b1;
@@ -60,6 +63,8 @@
 
   --badge-bg: #58a6ff;
   --badge-text: #0d1117;
+  /* Dark text: white on the light blue would be 2.5:1 */
+  --on-primary: #0d1117;
 
   --social-color: #8b949e;
   --social-hover: #58a6ff;
@@ -250,7 +255,9 @@ li {
 }
 
 .content pre {
-  background-color: var(--bg-secondary);
+  /* Always dark: the code colours are highlight.js's github-dark theme */
+  background-color: #0d1117;
+  color: #c9d1d9;
   padding: 1rem;
   border-radius: 8px;
   overflow-x: auto;
@@ -259,6 +266,8 @@ li {
 }
 
 .content pre code {
+  /* The focusable <pre> scrolls, not the code inside (highlight.js sets auto) */
+  overflow-x: visible !important;
   background: none;
   padding: 0;
   border-radius: 0;
@@ -408,7 +417,7 @@ li {
 
 .btn-cv:hover {
   background-color: var(--primary-color);
-  color: white;
+  color: var(--on-primary);
 }
 
 /* Keyboard users only: hidden by its own height (not a percentage of the page,
@@ -420,7 +429,7 @@ li {
   z-index: 1000;
   padding: 0.5rem 1rem;
   background: var(--primary-color);
-  color: white;
+  color: var(--on-primary);
   text-decoration: none;
   border-radius: 0 0 6px 6px;
   font-size: 0.85rem;

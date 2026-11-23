@@ -77,6 +77,8 @@ export async function renderBody(md: string) {
     .use(rehypeStringify)
     .process(normalizeBullets(md))
     .then((r) => r.toString())
+    // Code blocks scroll sideways, so keyboard users must be able to focus them
+    .then((html) => html.replaceAll('<pre>', '<pre tabindex="0">'))
 
   return {
     contentHtml,

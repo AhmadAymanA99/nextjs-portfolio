@@ -47,7 +47,7 @@
 
 .guestBtn:hover {
   background: var(--text-link);
-  color: #fff;
+  color: var(--on-primary);
   text-decoration: none;
 }
 

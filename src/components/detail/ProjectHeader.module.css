@@ -95,12 +95,12 @@
   font-size: 0.9rem;
   font-weight: 600;
   background: var(--primary-color);
-  color: #fff;
+  color: var(--on-primary);
   text-decoration: none;
 }
 
 .link:hover {
-  color: #fff;
+  color: var(--on-primary);
   text-decoration: none;
   filter: brightness(1.1);
 }

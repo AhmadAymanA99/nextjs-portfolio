@@ -37,7 +37,7 @@
   padding: 0.6rem 1.5rem;
   border-radius: 8px;
   background: var(--text-link);
-  color: #fff;
+  color: var(--on-primary);
   font-size: 0.95rem;
   font-weight: 600;
   text-decoration: none;
