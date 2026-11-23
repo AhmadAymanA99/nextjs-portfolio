@@ -1,6 +1,7 @@
 import sql, { batch, ensureDB } from './db'
 import { escapeHtml } from './mail'
-import { automatedIps, humanViews, inRange, topSources } from './pageViews'
+import { actionQueries, automatedIps, humanViews, inRange, topSources } from './pageViews'
+import { ACTIONS, isAction } from '@/lib/actions'
 import { siteUrl } from '@/lib/site'
 
 type Row = Record<string, any>
@@ -14,6 +15,8 @@ export type WeeklySummary = {
   topPages: Ranked
   sources: Ranked
   countries: Ranked
+  /** Clicks on CV, contact and live-site links (only those that happened) */
+  actions: Ranked
   newMessages: number
   unreadMessages: number
   pendingGuestbook: number
@@ -26,23 +29,25 @@ export async function getWeeklySummary(): Promise<WeeklySummary> {
   const week = sql`${human} AND ${inRange(7)}`
   const lastWeek = sql`${human} AND ${inRange(7, 1)}`
 
-  const [[now], [before], pages, sources, countries, [inbox], [guestbook]] = await batch<Row[][]>([
-    sql`SELECT COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
+  const [[now], [before], pages, sources, countries, [inbox], [guestbook], actions, liveSites] =
+    await batch<Row[][]>([
+      sql`SELECT COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
         FROM page_views WHERE ${week}`,
-    sql`SELECT COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
+      sql`SELECT COUNT(*)::int AS views, COUNT(DISTINCT ip_address)::int AS visitors
         FROM page_views WHERE ${lastWeek}`,
-    sql`SELECT path AS label, COUNT(*)::int AS value FROM page_views WHERE ${week}
+      sql`SELECT path AS label, COUNT(*)::int AS value FROM page_views WHERE ${week}
         GROUP BY path ORDER BY value DESC LIMIT 5`,
-    topSources(week, 5),
-    sql`SELECT COALESCE(country, 'Unknown') AS label, COUNT(DISTINCT ip_address)::int AS value
+      topSources(week, 5),
+      sql`SELECT COALESCE(country, 'Unknown') AS label, COUNT(DISTINCT ip_address)::int AS value
         FROM page_views WHERE ${week} GROUP BY 1 ORDER BY value DESC LIMIT 5`,
-    sql`SELECT
+      sql`SELECT
           COUNT(*) FILTER (WHERE created_at >= NOW() - interval '7 days')::int AS new,
           COUNT(*) FILTER (WHERE NOT is_read)::int AS unread
         FROM contact_messages`,
-    sql`SELECT COUNT(*)::int AS pending FROM guestbook_entries
+      sql`SELECT COUNT(*)::int AS pending FROM guestbook_entries
         WHERE NOT approved AND NOT COALESCE(flagged, false)`,
-  ])
+      ...actionQueries(week, 5),
+    ])
 
   return {
     views: now.views,
@@ -52,6 +57,12 @@ export async function getWeeklySummary(): Promise<WeeklySummary> {
     topPages: pages as Ranked,
     sources: sources.map((s) => ({ label: s.source, value: s.visitors })),
     countries: countries as Ranked,
+    actions: [
+      ...actions
+        .filter((a) => a.count > 0)
+        .map((a) => ({ label: isAction(a.name) ? ACTIONS[a.name] : a.name, value: a.count })),
+      ...liveSites.map((l) => ({ label: `Live site: ${l.target}`, value: l.count })),
+    ],
     newMessages: inbox.new,
     unreadMessages: inbox.unread,
     pendingGuestbook: guestbook.pending,
@@ -78,6 +89,7 @@ export function formatWeeklySummary(s: WeeklySummary) {
       `${s.pendingGuestbook} guestbook entr${s.pendingGuestbook === 1 ? 'y' : 'ies'} waiting for approval`,
   ].filter((x): x is string => Boolean(x))
   const lists: [string, Ranked][] = [
+    ['Actions (clicks)', s.actions],
     ['Top pages', s.topPages],
     ['Traffic sources', s.sources],
     ['Countries', s.countries],

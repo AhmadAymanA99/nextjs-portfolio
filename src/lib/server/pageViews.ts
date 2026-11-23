@@ -3,6 +3,7 @@ import sql from './db'
 import { BOT_UA_PATTERN } from './analytics'
 import { isDatacenterIp } from './datacenters'
 import { siteUrl } from '@/lib/site'
+import { ACTIONS } from '@/lib/actions'
 
 export const MAX_DAYS = 365
 
@@ -56,6 +57,22 @@ export function rememberOwnerIp(ip: string, at: Date | string = new Date()) {
     INSERT INTO owner_ips (ip, day) VALUES (${ip}, (${new Date(at).toISOString()}::timestamptz)::date)
     ON CONFLICT DO NOTHING
   `
+}
+
+/**
+ * Real visitors' actions in the period, by name (every action in lib/actions.ts,
+ * zero when none), and which projects' live sites were opened.
+ */
+export function actionQueries(where: ReturnType<typeof sql>, limit: number) {
+  return [
+    sql`SELECT a.name, COUNT(x.id)::int AS count, COUNT(DISTINCT x.ip_address)::int AS visitors
+      FROM unnest(${Object.keys(ACTIONS)}::text[]) AS a(name)
+      LEFT JOIN actions x ON x.name = a.name AND ${where}
+      GROUP BY a.name ORDER BY count DESC, a.name`,
+    sql`SELECT COALESCE(target, '?') AS target, COUNT(*)::int AS count
+      FROM actions WHERE name = 'live_site' AND ${where}
+      GROUP BY 1 ORDER BY count DESC LIMIT ${limit}`,
+  ] as const
 }
 
 export function inRange(days: number | null, offsetPeriods = 0) {

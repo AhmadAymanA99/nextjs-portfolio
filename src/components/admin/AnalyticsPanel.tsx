@@ -15,6 +15,7 @@ import { DashboardSkeleton } from '@/components/ui/Skeleton'
 import { timeAgo, useAdminApi } from './useAdminApi'
 import VisitDetails from './VisitDetails'
 import styles from './Admin.module.css'
+import { ACTIONS, isAction } from '@/lib/actions'
 
 interface Analytics {
   days: number | null
@@ -33,6 +34,8 @@ interface Analytics {
   topPages: { path: string; views: number; visitors: number }[]
   referrers: { source: string; visitors: number }[]
   countries: { country: string; visitors: number }[]
+  actions: { name: string; count: number; visitors: number }[]
+  liveSites: { target: string; count: number }[]
   recentViews: {
     id: number
     path: string
@@ -306,6 +309,19 @@ export default function AnalyticsPanel() {
                 label: countryName(c.country),
                 value: c.visitors,
               }))}
+            />
+            <BarList
+              title="Actions (clicks)"
+              rows={data.actions.map((a) => ({
+                label: isAction(a.name) ? ACTIONS[a.name] : a.name,
+                value: a.count,
+                title: `${a.count} clicks by ${a.visitors} visitor${a.visitors === 1 ? '' : 's'}`,
+              }))}
+            />
+            <BarList
+              title="Live sites opened (clicks)"
+              mono
+              rows={data.liveSites.map((l) => ({ label: l.target, value: l.count }))}
             />
             <BarList
               title="Devices (% of views)"

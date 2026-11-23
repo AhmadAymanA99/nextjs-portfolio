@@ -7,6 +7,7 @@ import TableOfContents from '@/components/detail/TableOfContents'
 import ViewCounter from '@/components/detail/ViewCounter'
 import RelatedProjects from '@/components/detail/RelatedProjects'
 import ProjectHeader from '@/components/detail/ProjectHeader'
+import ProjectCta from '@/components/detail/ProjectCta'
 import Footer from '@/components/layout/Footer'
 import { DetailLayout } from '@/components/layout/PageLayout'
 import utilStyles from '@/styles/utils.module.css'
@@ -15,7 +16,15 @@ import { plural } from '@/i18n/config'
 
 const Lightbox = dynamic(() => import('@/components/detail/Lightbox'), { ssr: false })
 
-export default function PostClient({ postData, allPosts }: { postData: any; allPosts: any[] }) {
+export default function PostClient({
+  postData,
+  allPosts,
+  cvUrl,
+}: {
+  postData: any
+  allPosts: any[]
+  cvUrl: string
+}) {
   const { lang, dict } = useI18n()
 
   return (
@@ -37,6 +46,7 @@ export default function PostClient({ postData, allPosts }: { postData: any; allP
             <div className="content" dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
             <TableOfContents headings={postData.headings || []} />
           </div>
+          <ProjectCta cvUrl={cvUrl} />
           <ShareButtons title={postData.title} />
           <RelatedProjects currentId={postData.id} tags={postData.tags} allPosts={allPosts} />
         </article>

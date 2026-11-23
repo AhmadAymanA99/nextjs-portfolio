@@ -59,3 +59,47 @@ describe('trackPageView', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 })
+
+describe('trackActions', () => {
+  const sent = () =>
+    fetchMock.mock.calls.map((c: any[]) => JSON.parse((c[1] as RequestInit).body as string))
+
+  function link(attrs: Record<string, string>) {
+    const a = document.createElement('a')
+    a.href = '#'
+    for (const [k, v] of Object.entries(attrs)) a.setAttribute(k, v)
+    a.innerHTML = '<span>label</span>'
+    document.body.appendChild(a)
+    return a
+  }
+
+  afterEach(() => {
+    document.body.innerHTML = ''
+    localStorage.clear()
+  })
+
+  it('sends clicks on marked links, with the page and target', async () => {
+    const { trackActions } = await load()
+    const stop = trackActions(() => '/posts/kptc')
+    const a = link({ 'data-track': 'live_site', 'data-track-target': 'kptc' })
+    a.querySelector('span')!.click() // a click inside the link counts
+    link({}).click() // unmarked links don't
+    expect(sent()).toEqual([{ action: 'live_site', path: '/posts/kptc', target: 'kptc' }])
+    stop()
+    a.click()
+    expect(sent()).toHaveLength(1)
+  })
+
+  it('skips the owner and automated browsers', async () => {
+    const { trackActions, setTrackingDisabled } = await load()
+    const stop = trackActions(() => '/')
+    const a = link({ 'data-track': 'cv_download' })
+    setTrackingDisabled(true)
+    a.click()
+    setTrackingDisabled(false)
+    Object.defineProperty(navigator, 'webdriver', { value: true, configurable: true })
+    a.click()
+    expect(fetchMock).not.toHaveBeenCalled()
+    stop()
+  })
+})

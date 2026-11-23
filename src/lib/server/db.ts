@@ -68,6 +68,20 @@ export async function ensureDB() {
       prefix TEXT,
       fetched_at TIMESTAMPTZ DEFAULT NOW()
     )`
+    // Clicks worth counting besides page views (see lib/actions.ts). Same
+    // columns as page_views, so the same "real people only" filter applies
+    await db`CREATE TABLE IF NOT EXISTS actions (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      target TEXT,
+      path TEXT,
+      user_agent TEXT,
+      ip_address TEXT,
+      timestamp TIMESTAMPTZ DEFAULT NOW(),
+      country TEXT,
+      device_type TEXT
+    )`
+    await db`CREATE INDEX IF NOT EXISTS actions_timestamp_idx ON actions (timestamp)`
     // Columns added after the tables first shipped
     await db`ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false`
     await db`ALTER TABLE guestbook_entries ADD COLUMN IF NOT EXISTS flagged BOOLEAN DEFAULT false`

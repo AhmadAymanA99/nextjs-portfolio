@@ -78,7 +78,12 @@ const Footer = () => {
         >
           <FaGithub />
         </a>
-        <a href="mailto:ahmadaymana99@gmail.com" aria-label="Email">
+        <a
+          href="mailto:ahmadaymana99@gmail.com"
+          aria-label="Email"
+          data-track="message_link"
+          data-track-target="email"
+        >
           <FaEnvelope />
         </a>
         <a
@@ -94,6 +99,8 @@ const Footer = () => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="WhatsApp"
+          data-track="message_link"
+          data-track-target="whatsapp"
         >
           <FaWhatsapp />
         </a>
@@ -102,6 +109,8 @@ const Footer = () => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Telegram"
+          data-track="message_link"
+          data-track-target="telegram"
         >
           <FaTelegram />
         </a>

@@ -52,7 +52,7 @@ function isConfirmedHuman() {
   return confirmed
 }
 
-function send(view: { path: string; referrer: string }) {
+function send(view: { path: string; referrer?: string; action?: string; target?: string }) {
   fetch('/api/track', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -86,5 +86,30 @@ export function trackPageView(path: string, referrer: string) {
     HUMAN_EVENTS.forEach((e) =>
       window.addEventListener(e, onHumanInput, { capture: true, passive: true }),
     )
+  }
+}
+
+/**
+ * Counts clicks on links marked `data-track="<action>"` (see lib/actions.ts),
+ * with an optional `data-track-target`. A click is a person, so it is sent
+ * straight away; the owner's browsers and browser automation are skipped.
+ * Middle-clicks (open in a new tab) count too. Returns a cleanup function.
+ */
+export function trackActions(currentPath: () => string) {
+  const onClick = (e: MouseEvent) => {
+    if (e.type === 'auxclick' && e.button !== 1) return
+    const el = (e.target as Element | null)?.closest?.('[data-track]')
+    if (!el || navigator.webdriver || isTrackingDisabled()) return
+    send({
+      action: el.getAttribute('data-track') ?? '',
+      path: currentPath(),
+      target: el.getAttribute('data-track-target') ?? undefined,
+    })
+  }
+  document.addEventListener('click', onClick, true)
+  document.addEventListener('auxclick', onClick, true)
+  return () => {
+    document.removeEventListener('click', onClick, true)
+    document.removeEventListener('auxclick', onClick, true)
   }
 }

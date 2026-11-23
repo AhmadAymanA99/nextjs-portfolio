@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext'
-import { isTrackingDisabled, reportOwnerVisit, trackPageView } from '@/lib/tracking'
+import { isTrackingDisabled, reportOwnerVisit, trackActions, trackPageView } from '@/lib/tracking'
 import SmoothScroll from '@/components/layout/SmoothScroll'
 import LanguageSwitch from '@/components/layout/LanguageSwitch'
 import ThemeSwitch from '@/components/layout/ThemeSwitch'
@@ -34,8 +34,15 @@ function ShellInner({ children }: { children: ReactNode }) {
       if (isTrackingDisabled()) reportOwnerVisit()
       else trackPageView(pathname, referrer)
     }
-    ;(window as any).__lenis?.scrollTo(0, { immediate: true })
+    // A link to a section (/#contact) scrolls there itself (see ContactForm)
+    if (!window.location.hash) (window as any).__lenis?.scrollTo(0, { immediate: true })
   }, [pathname])
+
+  // CV downloads, contact clicks, live-site links (data-track on the link)
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return
+    return trackActions(() => publicPath(window.location.pathname))
+  }, [])
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {

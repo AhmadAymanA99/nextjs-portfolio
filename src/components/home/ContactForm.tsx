@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
 import Spinner from '@/components/ui/Spinner'
 import { useTheme } from '@/lib/ThemeContext'
@@ -18,6 +18,20 @@ export default function ContactForm() {
   const [token, setToken] = useState('')
   // Load the Cloudflare check only once someone starts filling in the form
   const [armed, setArmed] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Arriving from another page's "Get in touch" link (/#contact): the form
+  // loads after the page, too late for the browser's own jump, so scroll here
+  useEffect(() => {
+    if (window.location.hash !== '#contact' || !sectionRef.current) return
+    const target = sectionRef.current
+    const frame = requestAnimationFrame(() => {
+      const lenis = (window as any).__lenis
+      if (lenis) lenis.scrollTo(target, { offset: -16 })
+      else target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -60,7 +74,7 @@ export default function ContactForm() {
   }
 
   return (
-    <section id="contact" className={styles.section}>
+    <section id="contact" ref={sectionRef} className={styles.section}>
       <h2 className={styles.title}>{t.title}</h2>
       {status === 'success' ? (
         <div className={styles.success}>

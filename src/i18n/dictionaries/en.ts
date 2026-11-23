@@ -74,6 +74,9 @@ const en = {
     shareX: 'Share on X',
     copyLink: 'Copy link',
     related: 'Related Projects',
+    ctaTitle: 'Need something similar?',
+    ctaBody: "I build web and mobile apps like this one. Tell me what you're working on.",
+    ctaButton: 'Get in touch',
   },
   contact: {
     title: 'Get in Touch',

@@ -3,6 +3,9 @@ import 'highlight.js/styles/github-dark.css'
 import { notFound } from 'next/navigation'
 import { getAllPostIds, getPostData, getSortedPostsData } from '@/lib/content/posts'
 import { alternates, getDictionary, isLocale, ogLocale } from '@/i18n'
+import JsonLd from '@/components/seo/JsonLd'
+import { projectJsonLd } from '@/lib/structuredData'
+import { getCvUrl, ogImageUrl } from '@/lib/site'
 import PostClient from './post-client'
 
 export const revalidate = 3600
@@ -29,7 +32,8 @@ export async function generateMetadata({ params }: Props) {
       type: 'article',
       description,
       locale: ogLocale[lang],
-      ...(postData.screenshots[0] && { images: [postData.screenshots[0]] }),
+      // The first screenshot, or the home card for a project without one
+      images: [postData.screenshots[0] ?? ogImageUrl(lang)],
     },
     alternates: alternates(lang, `/posts/${id}`),
   }
@@ -41,5 +45,10 @@ export default async function PostPage({ params }: Props) {
   const postData = await getPostData(id, lang)
   const allPosts = getSortedPostsData(lang)
 
-  return <PostClient postData={postData} allPosts={allPosts} />
+  return (
+    <>
+      <JsonLd data={projectJsonLd(lang, postData)} />
+      <PostClient postData={postData} allPosts={allPosts} cvUrl={getCvUrl()} />
+    </>
+  )
 }

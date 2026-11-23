@@ -6,6 +6,8 @@ import styles from './ProjectHeader.module.css'
 import { useI18n } from '@/i18n/I18nProvider'
 
 type Props = {
+  /** The project's id, recorded when its live link is clicked */
+  id?: string
   summary: string
   company?: string
   role?: string
@@ -18,6 +20,7 @@ type Props = {
 
 /** The at-a-glance block at the top of a case study. */
 export default function ProjectHeader({
+  id,
   summary,
   company,
   role,
@@ -75,7 +78,14 @@ export default function ProjectHeader({
       )}
 
       {link && (
-        <a className={styles.link} href={link} target="_blank" rel="noopener noreferrer">
+        <a
+          className={styles.link}
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-track="live_site"
+          data-track-target={id}
+        >
           {t.visitLive} <FaArrowUpRightFromSquare aria-hidden="true" className="rtl-flip" />
         </a>
       )}

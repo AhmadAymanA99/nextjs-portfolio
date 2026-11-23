@@ -1,0 +1,76 @@
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin: 2.5rem 0 0;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-inline-start: 4px solid var(--primary-color);
+  border-radius: 12px;
+  background-color: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+
+.text {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 0.35rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.body {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    filter 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.primary {
+  background-color: var(--primary-color);
+  color: var(--on-primary);
+}
+
+.primary:hover {
+  filter: brightness(1.1);
+  text-decoration: none;
+}
+
+.secondary {
+  color: var(--primary-color);
+}
+
+.secondary:hover {
+  background-color: var(--primary-color);
+  color: var(--on-primary);
+  text-decoration: none;
+}

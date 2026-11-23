@@ -95,6 +95,9 @@ const ar: Dictionary = {
     shareX: 'مشاركة على X',
     copyLink: 'نسخ الرابط',
     related: 'مشاريع ذات صلة',
+    ctaTitle: 'تحتاج إلى شيء مشابه؟',
+    ctaBody: 'أبني تطبيقات ويب وجوال مثل هذا التطبيق. أخبرني بما تعمل عليه.',
+    ctaButton: 'تواصل معي',
   },
   contact: {
     title: 'تواصل معي',

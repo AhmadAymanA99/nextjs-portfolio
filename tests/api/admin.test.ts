@@ -41,6 +41,8 @@ beforeAll(async () => {
     CREATE TABLE ip_networks (ip TEXT PRIMARY KEY, asn TEXT, holder TEXT, prefix TEXT,
       fetched_at TIMESTAMPTZ DEFAULT NOW());
     CREATE TABLE owner_ips (ip TEXT NOT NULL, day DATE NOT NULL, PRIMARY KEY (ip, day));
+    CREATE TABLE actions (id SERIAL PRIMARY KEY, name TEXT NOT NULL, target TEXT, path TEXT, user_agent TEXT,
+      ip_address TEXT, timestamp TIMESTAMPTZ DEFAULT NOW(), country TEXT, device_type TEXT);
     CREATE TABLE rate_limits (key TEXT PRIMARY KEY, window_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       count INT NOT NULL DEFAULT 0);
     INSERT INTO page_views (path, referrer, user_agent, ip_address, country, device_type, timestamp) VALUES
@@ -56,6 +58,15 @@ beforeAll(async () => {
       ('/', 'direct', '$UA_HUMAN', '66.249.66.1', 'US', 'desktop', NOW() - interval '1 day'),
       -- The development machine
       ('/', 'direct', '$UA_HUMAN', '::1', 'Unknown', 'desktop', NOW() - interval '1 day');
+    INSERT INTO actions (name, target, path, user_agent, ip_address, timestamp) VALUES
+      ('cv_download', NULL, '/', '$UA_HUMAN', '192.0.2.1', NOW() - interval '1 day'),
+      ('live_site', 'rehlte', '/posts/rehlte', '$UA_PHONE', '192.0.2.2', NOW() - interval '2 days'),
+      ('live_site', 'rehlte', '/posts/rehlte', '$UA_HUMAN', '192.0.2.1', NOW() - interval '2 days'),
+      -- Older than a week
+      ('cv_download', NULL, '/', '$UA_HUMAN', '192.0.2.3', NOW() - interval '10 days'),
+      -- A bot and a cloud network: never counted
+      ('contact_click', NULL, '/', 'Mozilla/5.0 HeadlessChrome/120', '192.0.2.8', NOW() - interval '1 day'),
+      ('cv_download', NULL, '/', '$UA_HUMAN', '66.249.66.1', NOW() - interval '1 day');
     INSERT INTO contact_messages (name, email, message) VALUES ('A', 'a@x.com', 'hi'), ('B', 'b@x.com', 'yo');
     INSERT INTO guestbook_entries (name, message, flagged) VALUES ('A', 'nice', false), ('S', 'casino', true);
   `)
@@ -82,6 +93,17 @@ describe('admin analytics', () => {
     expect(data.stats.excludedBots).toBe(5)
     expect(data.dailyViews).toHaveLength(7)
     expect(data.referrers.map((r: any) => r.source).sort()).toEqual(['Direct', 'linkedin.com'])
+  }, 30_000) // first import of the route
+
+  it("counts real visitors' actions, listing every kind", async () => {
+    const { GET } = await import('@/app/api/admin/analytics/route')
+    const data = await (
+      await GET(new Request('https://x/api/admin/analytics?days=7', { headers: await auth() }))
+    ).json()
+    const byName = Object.fromEntries(data.actions.map((a: any) => [a.name, a.count]))
+    expect(byName).toEqual({ cv_download: 1, live_site: 2, contact_click: 0, message_link: 0 })
+    expect(data.actions.find((a: any) => a.name === 'live_site').visitors).toBe(2)
+    expect(data.liveSites).toEqual([{ target: 'rehlte', count: 2 }])
   })
 
   it('all-time has no previous period', async () => {
@@ -248,6 +270,13 @@ describe('weekly summary', () => {
     const mail = formatWeeklySummary(s)
     expect(mail.subject).toBe('[Portfolio] Weekly summary: 3 visitors')
     expect(mail.text).toContain('Visitors: 3 (+200% vs last week)')
+    // Only actions that happened, plus which live sites were opened
+    expect(s.actions).toEqual([
+      { label: 'Live site links', value: 2 },
+      { label: 'CV downloads', value: 1 },
+      { label: 'Live site: rehlte', value: 2 },
+    ])
+    expect(mail.text).toContain('Actions (clicks):')
   })
 
   it('only runs for the cron secret', async () => {
@@ -279,6 +308,34 @@ describe('track', () => {
     // Cloud networks: Azure (e-mail link scanners) and AWS
     expect((await post('/', UA_HUMAN, '20.40.1.1')).status).toBe(204)
     expect((await post('/', UA_HUMAN, '3.80.0.1')).status).toBe(204)
+  }, 30_000) // first import of the route loads the geo-IP database
+
+  it('records known actions from real visitors', async () => {
+    const { POST } = await import('@/app/api/track/route')
+    const post = (body: object, ua = UA_HUMAN, ip = '192.0.2.6') =>
+      POST(
+        new Request('https://x/api/track', {
+          method: 'POST',
+          headers: { 'user-agent': ua, 'x-forwarded-for': ip },
+          body: JSON.stringify(body),
+        }),
+      )
+    expect((await post({ action: 'live_site', path: '/posts/kptc', target: 'kptc' })).status).toBe(
+      200,
+    )
+    expect((await post({ action: 'made_up', path: '/' })).status).toBe(204)
+    expect((await post({ action: 'cv_download', path: '/' }, 'Googlebot/2.1')).status).toBe(204)
+    expect((await post({ action: 'cv_download', path: '/' }, UA_HUMAN, '20.40.1.1')).status).toBe(
+      204,
+    )
+    const rows = (
+      await pg.query(`SELECT name, target, path FROM actions WHERE ip_address = '192.0.2.6'`)
+    ).rows
+    expect(rows).toEqual([{ name: 'live_site', target: 'kptc', path: '/posts/kptc' }])
+    // Not recorded as a page view
+    expect(
+      (await pg.query(`SELECT 1 FROM page_views WHERE ip_address = '192.0.2.6'`)).rows,
+    ).toHaveLength(0)
   })
 })
 

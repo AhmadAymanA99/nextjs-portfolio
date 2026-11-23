@@ -86,10 +86,14 @@ export default function BentoHome({
                 </span>
               </p>
               <div className={styles.heroActions}>
-                <a href="#contact" className={`${styles.cvButton} ${styles.ctaPrimary}`}>
+                <a
+                  href="#contact"
+                  className={`${styles.cvButton} ${styles.ctaPrimary}`}
+                  data-track="contact_click"
+                >
                   {t.contactMe}
                 </a>
-                <a href={cvUrl} className={styles.cvButton} download>
+                <a href={cvUrl} className={styles.cvButton} download data-track="cv_download">
                   <span aria-hidden="true">↓</span> {t.downloadCv}
                 </a>
               </div>
@@ -145,7 +149,12 @@ export default function BentoHome({
           <TiltCard className={`${styles.card} ${styles.midCard}`} maxTilt={4} glare>
             <span className={styles.midCardLabel}>{t.connect}</span>
             <div className={styles.contactLinks}>
-              <a href="mailto:ahmadaymana99@gmail.com" className={styles.contactLink}>
+              <a
+                href="mailto:ahmadaymana99@gmail.com"
+                className={styles.contactLink}
+                data-track="message_link"
+                data-track-target="email"
+              >
                 <FaEnvelope /> ahmadaymana99@gmail.com
               </a>
               <a
