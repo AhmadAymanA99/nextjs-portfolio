@@ -7,6 +7,9 @@ import { getTestimonials } from '@/lib/content/testimonials'
 import { getCvUrl } from '@/lib/site'
 import { alternates, isLocale } from '@/i18n'
 import BentoHome from '@/components/home/BentoHome'
+import JsonLd from '@/components/seo/JsonLd'
+import { homeJsonLd } from '@/lib/structuredData'
+import { feedPath } from '@/lib/rss'
 
 export const revalidate = 3600
 
@@ -14,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const { lang } = await params
   if (!isLocale(lang)) return {}
   return {
-    alternates: { ...alternates(lang, '/'), types: { 'application/rss+xml': '/rss.xml' } },
+    alternates: { ...alternates(lang, '/'), types: { 'application/rss+xml': feedPath(lang) } },
   }
 }
 
@@ -23,15 +26,18 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
   if (!isLocale(lang)) return null
 
   return (
-    <BentoHome
-      lang={lang}
-      allPostsData={getSortedPostsData(lang)}
-      allExperiencesData={getSortedExperiencesData(lang)}
-      allTags={getAllTags()}
-      cvUrl={getCvUrl()}
-      skillCategories={skillCategories}
-      articles={getSortedArticles(lang)}
-      testimonials={getTestimonials(lang)}
-    />
+    <>
+      <JsonLd data={homeJsonLd(lang)} />
+      <BentoHome
+        lang={lang}
+        allPostsData={getSortedPostsData(lang)}
+        allExperiencesData={getSortedExperiencesData(lang)}
+        allTags={getAllTags()}
+        cvUrl={getCvUrl()}
+        skillCategories={skillCategories}
+        articles={getSortedArticles(lang)}
+        testimonials={getTestimonials(lang)}
+      />
+    </>
   )
 }

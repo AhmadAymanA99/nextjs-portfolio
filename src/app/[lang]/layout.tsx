@@ -3,7 +3,8 @@ import type { ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import RootDocument from '../root-document'
 import { getDictionary, isLocale, localePath, locales, ogLocale } from '@/i18n'
-import { siteUrl } from '@/lib/site'
+import { ogImageUrl, siteUrl } from '@/lib/site'
+import { feedPath } from '@/lib/rss'
 
 // Only /en (served at the unprefixed URLs) and /ar exist
 export const dynamicParams = false
@@ -18,13 +19,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params
   if (!isLocale(lang)) return {}
   const { meta } = getDictionary(lang)
+  const image = { url: ogImageUrl(lang), width: 1200, height: 630, alt: meta.title }
 
   return {
     metadataBase: new URL(siteUrl),
     title: meta.title,
     description: meta.description,
     // Pages set their own canonical and language alternates
-    alternates: { types: { 'application/rss+xml': '/rss.xml' } },
+    alternates: { types: { 'application/rss+xml': feedPath(lang) } },
     icons: { icon: '/favicon.svg?v=2' },
     manifest: '/manifest.json',
     openGraph: {
@@ -35,13 +37,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: ogLocale[lang],
       alternateLocale: locales.filter((l) => l !== lang).map((l) => ogLocale[l]),
       type: 'website',
-      images: [{ url: `${siteUrl}/images/og-card.png`, width: 1200, height: 630 }],
+      images: [image],
     },
     twitter: {
       card: 'summary_large_image',
       title: meta.title,
       description: meta.description,
-      images: [`${siteUrl}/images/og-card.png`],
+      images: [image],
     },
     other: {
       'mobile-web-app-capable': 'yes',

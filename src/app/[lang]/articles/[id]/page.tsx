@@ -3,6 +3,9 @@ import 'highlight.js/styles/github-dark.css'
 import { notFound } from 'next/navigation'
 import { getArticle, getArticleIds } from '@/lib/content/articles'
 import { alternates, getDictionary, isLocale, ogLocale } from '@/i18n'
+import JsonLd from '@/components/seo/JsonLd'
+import { articleJsonLd } from '@/lib/structuredData'
+import { ogImageUrl } from '@/lib/site'
 import ArticleClient from './article-client'
 
 export const revalidate = 3600
@@ -28,7 +31,9 @@ export async function generateMetadata({ params }: Props) {
       type: 'article',
       publishedTime: data.date,
       locale: ogLocale[lang],
+      images: [{ url: ogImageUrl(lang, id), width: 1200, height: 630, alt: data.title }],
     },
+    twitter: { card: 'summary_large_image', title, images: [ogImageUrl(lang, id)] },
     alternates: alternates(lang, `/articles/${id}`),
     // Drafts are only served by the dev server, but never let them be indexed
     ...(data.draft ? { robots: { index: false } } : {}),
@@ -38,5 +43,11 @@ export async function generateMetadata({ params }: Props) {
 export default async function ArticlePage({ params }: Props) {
   const { lang, id } = await params
   if (!isLocale(lang)) notFound()
-  return <ArticleClient data={await getArticle(id, lang)} />
+  const data = await getArticle(id, lang)
+  return (
+    <>
+      <JsonLd data={articleJsonLd(lang, data)} />
+      <ArticleClient data={data} />
+    </>
+  )
 }
