@@ -83,23 +83,26 @@ Open: review the Arabic copy (especially Arabic brand names: رحلتي, عيا�
 Decisions:
 - Visitors stay anonymous: no fingerprinting, no paid "identify the visitor" services, and no per-recipient tracking links (considered and declined, 2026-11-17). The admin shows network, location and device only.
 
-## Phase 6 — Turn visits into contacts (planned)
+## Phase 6 — Turn visits into contacts (in progress, 2026-11-23)
 
 Visitors read several case studies and leave (e.g. the Jordan visitor in September: 20 views over 4 days, no message). This phase makes the next step obvious and measures it.
 
-- [ ] Search engines: structured data (JSON-LD) describing a person named Ahmad Ayman, a frontend and mobile engineer, with links to GitHub and LinkedIn, plus each case study and article, so Google can show a rich result for the name. Then verify the site in Google Search Console (owner) to see which searches bring visitors in
-- [ ] A "Need something similar? Get in touch" prompt at the end of every case study, linking to the contact form (both languages)
-- [ ] Count actions, not just pages, still anonymously: CV downloads, "Contact me" clicks, live-site link clicks; shown in the admin and the weekly summary
-- [ ] Generated preview images (Open Graph) for the home page and articles, with name and role, so shared links look right on LinkedIn and WhatsApp
-- [ ] GitHub Dependabot for dependency and security updates
-- [ ] Accessibility checks (axe) in the end-to-end tests
-- [ ] Arabic RSS feed (`/ar/rss.xml`)
+- [x] Search engines: structured data (JSON-LD) on the home page (a profile page about the Person: name in both languages, role, Cairo, GitHub and LinkedIn), each case study and each article, all pointing at the same Person (2026-11-23)
+- [ ] Verify the site in Google Search Console (needs the owner's Google account) to see which searches bring visitors in, then check the pages with the Rich Results Test
+- [x] A "Need something similar? Get in touch" prompt at the end of every case study, with a CV download, in both languages; arriving at `/#contact` from another page now scrolls to the form (2026-11-23)
+- [x] Count actions, not just pages, still anonymously (2026-11-23): CV downloads, "Contact me"/"Get in touch" clicks, email/WhatsApp/Telegram links and live-site links, in an `actions` table with the same real-visitor filter as page views. Shown in the admin ("Actions", "Live sites opened") and the weekly summary. Links opt in with `data-track` (see `src/lib/actions.ts`)
+- [x] Generated preview images (Open Graph) for the home page and articles, in both languages (`/api/og`), with the site's fonts in `assets/fonts`. The renderer has no right-to-left support, so Arabic is joined and ordered in code (`src/lib/arabicShape.ts`). Case studies keep their screenshot; one without (KPTC) gets the home card (2026-11-23)
+- [x] GitHub Dependabot (2026-11-23): weekly npm updates (minor and patch grouped in one pull request), monthly GitHub Actions updates
+- [x] Accessibility checks (axe, WCAG 2.1 A/AA) in the end-to-end tests, for the main pages in both themes and languages (2026-11-23). Fixed what they found: unreadable code blocks in light mode, white text on the light-blue buttons in dark mode (now dark text), light-mode blue darkened to #0062d6 for contrast on grey, code blocks reachable by keyboard
+- [x] Arabic RSS feed (`/ar/rss.xml`); each language's pages link their own feed (2026-11-23)
 
 Content (needs the owner; see Phase 3 and 4 for details):
 - [ ] Review and publish the draft article; write one or two posts from client work (HyperPay, React Native RTL)
 - [ ] Testimonials (LinkedIn recommendations are a good source, with permission)
 - [ ] Result numbers in case studies where they can be shared; Rehlte app screens at launch
 - [ ] Review the Arabic copy, especially brand names
+
+Also shipped (2026-11-23): card shadows no longer cut off, a smoother tilt on the home cards (capped by card size), and a light/dark switch next to the language switch.
 
 Decisions:
 - No custom domain for now; the site stays at ahmad-ayman.vercel.app (2026-11-17)
